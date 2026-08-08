@@ -1,0 +1,56 @@
+# --- Core Data Science Libraries ---
+numpy
+pandas
+scipy
+matplotlib
+seaborn
+scikit-learn
+statsmodels
+sympy
+networkx
+pillow
+opencv-python
+tensorflow
+
+# --- Web & API Development ---
+requests
+beautifulsoup4
+lxml
+fastapi
+flask
+sqlalchemy
+alembic
+psycopg2-binary
+aiohttp
+
+# --- Development & Utility Tools ---
+ipython
+jupyter
+notebook
+nbconvert
+pytest
+pytest-cov
+pytest-asyncio
+tqdm
+click
+fire
+python-dotenv
+pydantic
+
+# --- Visualization & Dashboards ---
+plotly
+dash
+rich
+
+urllib3
+
+
+#obvezni cosmeticsi
+colormaps
+matplotlib-label-lines
+black
+
+#za gpu racunanje/pospeseno multithreadanje na cpuju
+numba
+#jax cuda #samo za linux + nvidia gpu
+jax[cuda13]
