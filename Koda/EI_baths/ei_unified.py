@@ -143,8 +143,7 @@ class OpenSol:
     hist: dict[str, Arr]
 
 
-def tb_1d(nk: int, gap: float, ta: float, tb: float,
-          a0: float = 1.0) -> Bands:
+def tb_1d(nk: int, gap: float, ta: float, tb: float, a0: float = 1.0) -> Bands:
     """Nearest-neighbor one-dimensional tight-binding bands."""
     k = np.linspace(-np.pi / a0, np.pi / a0, nk, endpoint=False)
     c = np.cos(k * a0)
@@ -153,8 +152,7 @@ def tb_1d(nk: int, gap: float, ta: float, tb: float,
     return Bands(k[:, None], ea, eb, np.ones(nk), (nk,))
 
 
-def tb_2d(nk: int, gap: float, ta: float, tb: float,
-          a0: float = 1.0) -> Bands:
+def tb_2d(nk: int, gap: float, ta: float, tb: float, a0: float = 1.0) -> Bands:
     """Nearest-neighbor square-lattice tight-binding bands."""
     q = np.linspace(-np.pi / a0, np.pi / a0, nk, endpoint=False)
     kx, ky = np.meshgrid(q, q, indexing="ij")
@@ -162,12 +160,12 @@ def tb_2d(nk: int, gap: float, ta: float, tb: float,
     ea = 0.5 * gap - 2.0 * ta * c
     eb = -0.5 * gap - 2.0 * tb * c
     k = np.stack((kx, ky), axis=-1).reshape(-1, 2)
-    return Bands(k, ea.reshape(-1), eb.reshape(-1),
-                 np.ones(nk * nk), (nk, nk))
+    return Bands(k, ea.reshape(-1), eb.reshape(-1), np.ones(nk * nk), (nk, nk))
 
 
-def free_1d(nk: int, kmax: float, gap: float,
-            ma: float = 1.0, mb: float = 1.0) -> Bands:
+def free_1d(
+    nk: int, kmax: float, gap: float, ma: float = 1.0, mb: float = 1.0
+) -> Bands:
     """One-dimensional electron and hole parabolic bands."""
     k = np.linspace(-kmax, kmax, nk, endpoint=False)
     ea = 0.5 * gap + k * k / (2.0 * ma)
@@ -201,28 +199,34 @@ def _fill(n: Arr, w: Arr) -> float:
     return float(np.sum(w * np.sum(n, axis=0)))
 
 
-def fermi(st: MFState, t: float,
-          tol: float = 1.0e-13, nmax: int = 120,
-          prog: bool = False) -> FDState:
+def fermi(
+    st: MFState, t: float, tol: float = 1.0e-13, nmax: int = 120, prog: bool = False
+) -> FDState:
     """Return the weighted FD distribution and its chemical potential."""
     n0 = st.p.n
 
-    es = max(np.ptp(st.e), t, 1.0) #kostruira ptp energijsko skalo, za interval za iskanje mu
-    lo = float(st.e.min() - 50.0 * es) #meje za mu
-    hi = float(st.e.max() + 50.0 * es) #meje za mu
-    mu = 0.5 * (lo + hi) #init guess
+    es = max(
+        np.ptp(st.e), t, 1.0
+    )  # kostruira ptp energijsko skalo, za interval za iskanje mu
+    lo = float(st.e.min() - 50.0 * es)  # meje za mu
+    hi = float(st.e.max() + 50.0 * es)  # meje za mu
+    mu = 0.5 * (lo + hi)  # init guess
 
     for _ in trange(nmax, desc="FD kemijski potencial", disable=not prog):
-        mu = 0.5 * (lo + hi) 
-        z = np.clip((st.e - mu) / t, -500.0, 500.0)  #clipped (energija(diagonalizirano)-mu) / T
-        n = 1.0 / (np.exp(z) + 1.0) 
-        q = _fill(n, st.bd.w) #zracuna current filing sum_k (n_alpha,k + n_beta,k) * w_k
-        if q < n0: 
+        mu = 0.5 * (lo + hi)
+        z = np.clip(
+            (st.e - mu) / t, -500.0, 500.0
+        )  # clipped (energija(diagonalizirano)-mu) / T
+        n = 1.0 / (np.exp(z) + 1.0)
+        q = _fill(
+            n, st.bd.w
+        )  # zracuna current filing sum_k (n_alpha,k + n_beta,k) * w_k
+        if q < n0:
             lo = mu
         else:
             hi = mu
         if hi - lo <= tol * max(1.0, abs(mu)):
-            break #bisekcija
+            break  # bisekcija
 
     mu = 0.5 * (lo + hi)
     z = np.clip((st.e - mu) / t, -500.0, 500.0)
@@ -275,19 +279,24 @@ def targets(st: MFState, n: ArrayLike) -> Targets:
     d = st.p.v * np.sum(w * st.u * st.v * (n[1] - n[0]))
     ma = np.sum(w * na)
     mb = np.sum(w * nb)
-    return Targets(float(d), float(ma - mb), _fill(n, w),
-                   float(ma), float(mb))
+    return Targets(float(d), float(ma - mb), _fill(n, w), float(ma), float(mb))
 
 
-def solve_eq(bd: Bands, p: MFPars, t: float, d: float = 0.2,
-             m: float = 0.0, mix: tuple[float, float] = (0.2, 0.2),
-             tol: float = 1.0e-10, nmax: int = 20000,
-             chk: int = 20, prog: bool = True) -> EqSol:
+def solve_eq(
+    bd: Bands,
+    p: MFPars,
+    t: float,
+    d: float = 0.2,
+    m: float = 0.0,
+    mix: tuple[float, float] = (0.2, 0.2),
+    tol: float = 1.0e-10,
+    nmax: int = 20000,
+    chk: int = 20,
+    prog: bool = True,
+) -> EqSol:
     """Solve the weighted equilibrium EI fixed-point equations."""
-    ad, am = map(float, mix)
-    if not 0.0 < ad <= 1.0 or not 0.0 < am <= 1.0:
-        raise ValueError("mix entries must lie in (0, 1]")
-    hs = {"it": [], "err": [], "d": [], "m": [], "mu": []}
+    ad, am = map(float, mix)  # mixture update parameteri
+    hs = {"it": [], "err": [], "d": [], "m": [], "mu": []}  # history slovar
     ok = False
     it = 0
     bar = trange(1, nmax + 1, desc="Equilibrium EI", disable=not prog)
@@ -320,19 +329,27 @@ def solve_eq(bd: Bands, p: MFPars, t: float, d: float = 0.2,
     tg = targets(st, fs.n)
     er = max(abs(tg.d - d), abs(tg.m - m), abs(tg.n - p.n))
     hh = {q: np.asarray(z) for q, z in hs.items()}
-    return EqSol(float(abs(d)), float(m), fs.mu, fs.n, st, float(er),
-                 it, ok or er < tol, hh)
+    return EqSol(
+        float(abs(d)), float(m), fs.mu, fs.n, st, float(er), it, ok or er < tol, hh
+    )
 
 
-def solve_normal(bd: Bands, p: MFPars, t: float, m: float = 0.0,
-                 mix: float = 0.3, tol: float = 1.0e-11,
-                 nmax: int = 10000, prog: bool = False) -> NormalSol:
+def solve_normal(
+    bd: Bands,
+    p: MFPars,
+    t: float,
+    m: float = 0.0,
+    mix: float = 0.3,
+    tol: float = 1.0e-11,
+    nmax: int = 10000,
+    prog: bool = False,
+) -> NormalSol:
     """Solve the normal-state polarization at fixed filling."""
     ok = False
     it = 0
     bar = trange(1, nmax + 1, desc="Normal state", disable=not prog)
     for it in bar:
-        st = mf_state(bd, p, 0.0, m)
+        st = mf_state(bd, p, 0.0, m)  # fix delta=0
         fs = fermi(st, t)
         tg = targets(st, fs.n)
         er = max(abs(tg.m - m), abs(tg.n - p.n))
@@ -345,12 +362,12 @@ def solve_normal(bd: Bands, p: MFPars, t: float, m: float = 0.0,
     fs = fermi(st, t)
     tg = targets(st, fs.n)
     er = max(abs(tg.m - m), abs(tg.n - p.n))
-    return NormalSol(float(m), fs.mu, fs.n, st, float(er), it,
-                     ok or er < tol)
+    return NormalSol(float(m), fs.mu, fs.n, st, float(er), it, ok or er < tol)
 
 
-def pair_lambda(bd: Bands, p: MFPars, t: float, m: float = 0.0,
-                tol: float = 1.0e-11) -> tuple[float, NormalSol]:
+def pair_lambda(
+    bd: Bands, p: MFPars, t: float, m: float = 0.0, tol: float = 1.0e-11
+) -> tuple[float, NormalSol]:
     """Return the normal-state linearized pairing eigenvalue."""
     s = solve_normal(bd, p, t, m=m, tol=tol)
     ek = 0.5 * (s.st.e[0] - s.st.e[1])
@@ -359,26 +376,30 @@ def pair_lambda(bd: Bands, p: MFPars, t: float, m: float = 0.0,
     q[ix] = (s.n[1, ix] - s.n[0, ix]) / (2.0 * ek[ix])
     f0 = 0.5 * (s.n[0, ~ix] + s.n[1, ~ix])
     q[~ix] = f0 * (1.0 - f0) / t
-    la = p.v * np.sum(bd.w * q)
+    la = p.v * np.sum(bd.w * q)  # λ​=V ∑​wk (​nβk​−nαk​​) / ​2Ek.
     return float(la), s
 
 
-def critical_temperature(bd: Bands, p: MFPars, tlo: float = 1.0e-4,
-                         thi: float = 5.0, tol: float = 1.0e-8,
-                         nmax: int = 80, prog: bool = True) -> float:
+def critical_temperature(
+    bd: Bands,
+    p: MFPars,
+    tlo: float = 1.0e-4,
+    thi: float = 5.0,
+    tol: float = 1.0e-8,
+    nmax: int = 80,
+    prog: bool = True,
+) -> float:
     """Find a continuous transition from the linearized gap equation."""
-    if not 0.0 < tlo < thi:
-        raise ValueError("require 0 < tlo < thi")
     ll, sl = pair_lambda(bd, p, tlo)
     lh, sh = pair_lambda(bd, p, thi)
     if ll <= 1.0:
-        raise ValueError("no low-temperature pairing instability")
+        raise ValueError("ni nestabilnosti")
     if lh >= 1.0:
-        raise ValueError("increase thi to bracket the transition")
+        raise ValueError("povecaj thi")
 
     ml = sl.m
     mh = sh.m
-    for _ in trange(nmax, desc="Critical temperature", disable=not prog):
+    for _ in trange(nmax, desc="kriticna temp bisekcija", disable=not prog):
         tm = 0.5 * (tlo + thi)
         lm, sm = pair_lambda(bd, p, tm, m=0.5 * (ml + mh))
         if lm >= 1.0:
@@ -387,18 +408,20 @@ def critical_temperature(bd: Bands, p: MFPars, tlo: float = 1.0e-4,
             thi, mh = tm, sm.m
         if thi - tlo <= tol * max(1.0, tm):
             return 0.5 * (tlo + thi)
-    raise RuntimeError("critical-temperature search did not converge")
+    raise RuntimeError("Tc did not converge")
 
 
-def gam_db(t: float, kap: float = 1.0, wc: float = np.inf,
-           orb: str | None = None) -> GamFn:
+def gam_db(
+    t: float, kap: float = 1.0, wc: float = np.inf, orb: str | None = None
+) -> GamFn:
     """Make a bounded dense transfer rate with detailed balance."""
+
     def gam(st: MFState, n: Arr) -> Arr:
         de = st.e[:, :, None, None] - st.e[None, None, :, :]
         if np.isinf(wc):
             sp = 1.0
         else:
-            sp = np.exp(-(de / wc) ** 2)
+            sp = np.exp(-((de / wc) ** 2))
         r = kap * sp * np.exp(-np.logaddexp(0.0, de / t))
 
         if orb is not None:
@@ -413,17 +436,21 @@ def gam_db(t: float, kap: float = 1.0, wc: float = np.inf,
     return gam
 
 
-def gam_scalar(fn: Callable[[int, int, int, int, MFState, Arr], float],
-               prog: bool = False) -> GamFn:
+def gam_scalar(
+    fn: Callable[[int, int, int, int, MFState, Arr], float], prog: bool = False
+) -> GamFn:
     """Adapt a scalar rate function to the dense transfer tensor."""
+
     def gam(st: MFState, n: Arr) -> Arr:
         sh = (2, st.bd.size, 2, st.bd.size)
         r = np.empty(sh, dtype=float)
         it = np.ndindex(sh)
-        for a, k, b, q in tqdm(it, total=int(np.prod(sh)),
-                               desc="Scalar rates", disable=not prog):
+        for a, k, b, q in tqdm(
+            it, total=int(np.prod(sh)), desc="Scalar rates", disable=not prog
+        ):
             r[a, k, b, q] = fn(a, k, b, q, st, n)
         return r
+
     return gam
 
 
@@ -467,8 +494,7 @@ def number_rate(dn: ArrayLike, bd: Bands) -> float:
     return float(np.sum(bd.w * np.sum(dn, axis=0)))
 
 
-def check_db(r: ArrayLike, st: MFState, t: float,
-             eps: float = 1.0e-250) -> float:
+def check_db(r: ArrayLike, st: MFState, t: float, eps: float = 1.0e-250) -> float:
     """Return the largest local detailed-balance log residual."""
     r = np.asarray(r, dtype=float).reshape(2 * st.bd.size, 2 * st.bd.size)
     e = st.e.reshape(-1)
@@ -481,8 +507,7 @@ def check_db(r: ArrayLike, st: MFState, t: float,
     return float(np.max(np.abs(z)))
 
 
-def lim_step(n: ArrayLike, dn: ArrayLike, dt: float,
-             fac: float = 0.8) -> float:
+def lim_step(n: ArrayLike, dn: ArrayLike, dt: float, fac: float = 0.8) -> float:
     """Limit an Euler step so all occupations stay in the unit interval."""
     n = np.asarray(n, dtype=float)
     dn = np.asarray(dn, dtype=float)
@@ -498,25 +523,24 @@ def lim_step(n: ArrayLike, dn: ArrayLike, dt: float,
     return float(dt)
 
 
-def solve_open(bd: Bands, p: MFPars, n: ArrayLike,
-               ds: Iterable[Dissipator], d: float = 0.2,
-               m: float = 0.0, dt: float = 0.1,
-               td: float = 0.5, tm: float = 0.5,
-               tol: float = 1.0e-8, nmax: int = 50000,
-               chk: int = 10, prog: bool = True) -> OpenSol:
+def solve_open(
+    bd: Bands,
+    p: MFPars,
+    n: ArrayLike,
+    ds: Iterable[Dissipator],
+    d: float = 0.2,
+    m: float = 0.0,
+    dt: float = 0.1,
+    td: float = 0.5,
+    tm: float = 0.5,
+    tol: float = 1.0e-8,
+    nmax: int = 50000,
+    chk: int = 10,
+    prog: bool = True,
+) -> OpenSol:
     """Relax occupations and mean fields to a coupled steady state."""
     n = np.asarray(n, dtype=float).copy()
     ds = tuple(ds)
-    if n.shape != (2, bd.size):
-        raise ValueError("n must have shape (2, N)")
-    if np.any(n < 0.0) or np.any(n > 1.0):
-        raise ValueError("occupations must lie in the unit interval")
-    if abs(_fill(n, bd.w) - p.n) > 1.0e-10:
-        raise ValueError("initial occupations have the wrong filling")
-    if not ds:
-        raise ValueError("at least one dissipator is required")
-    if dt <= 0.0 or td <= 0.0 or tm <= 0.0:
-        raise ValueError("dt, td, and tm must be positive")
 
     hs = {q: [] for q in ("it", "t", "err", "cur", "ed", "em", "d", "m", "n0")}
     tt = 0.0
@@ -530,16 +554,16 @@ def solve_open(bd: Bands, p: MFPars, n: ArrayLike,
         dn = total_current(ds, st, n)
         h = lim_step(n, dn, dt)
         if h <= 0.0:
-            raise RuntimeError("occupation step collapsed to zero")
-        n = np.clip(n + h * dn, 0.0, 1.0)
-        tg = targets(st, n)
-        zd = -np.expm1(-h / td)
-        zm = -np.expm1(-h / tm)
-        d += zd * (tg.d - d)
-        m += zm * (tg.m - m)
-        tt += h
+            raise RuntimeError("korak kolapsiral na 0")
+        n = np.clip(n + h * dn, 0.0, 1.0)  # current update
+        tg = targets(st, n)  # targets update (d, m, n)
+        zd = -np.expm1(-h / td)  # update koraki
+        zm = -np.expm1(-h / tm)  # update koraki
+        d += zd * (tg.d - d)  # zΔ​=1−e−h/td​,
+        m += zm * (tg.m - m)  # zm​=1−e−h/tm
+        tt += h  # time tracker
 
-        if it == 1 or it % chk == 0 or it == nmax:
+        if it == 1 or it % chk == 0 or it == nmax:  # zgodovina update
             stc = mf_state(bd, p, d, m)
             dnc = total_current(ds, stc, n)
             tgc = targets(stc, n)
@@ -566,21 +590,45 @@ def solve_open(bd: Bands, p: MFPars, n: ArrayLike,
     st = mf_state(bd, p, d, m)
     dn = total_current(ds, st, n)
     tg = targets(st, n)
-    er = max(float(np.max(np.abs(dn))), abs(tg.d - d),
-             abs(tg.m - m), abs(tg.n - p.n))
+    er = max(float(np.max(np.abs(dn))), abs(tg.d - d), abs(tg.m - m), abs(tg.n - p.n))
     nc = np.clip(n, 1.0e-14, 1.0 - 1.0e-14)
     eta = np.log((1.0 - nc) / nc)
     hh = {q: np.asarray(z) for q, z in hs.items()}
-    return OpenSol(float(d), float(m), n, eta, st, dn, float(er),
-                   it, tt, ok or er < tol, hh)
+    return OpenSol(
+        float(d), float(m), n, eta, st, dn, float(er), it, tt, ok or er < tol, hh
+    )
 
 
 __all__ = [
-    "Bands", "MFPars", "MFState", "FDState", "Targets", "EqSol",
-    "NormalSol", "OpenSol", "Dissipator", "from_fn", "tb_1d",
-    "tb_2d", "free_1d", "reshape_mode", "mf_state", "fermi",
-    "fermi_zero", "band_occ", "targets", "solve_eq", "solve_normal",
-    "pair_lambda", "critical_temperature", "gam_db", "gam_scalar",
-    "dense_current", "total_current", "number_rate", "check_db",
-    "lim_step", "solve_open",
+    "Bands",
+    "MFPars",
+    "MFState",
+    "FDState",
+    "Targets",
+    "EqSol",
+    "NormalSol",
+    "OpenSol",
+    "Dissipator",
+    "from_fn",
+    "tb_1d",
+    "tb_2d",
+    "free_1d",
+    "reshape_mode",
+    "mf_state",
+    "fermi",
+    "fermi_zero",
+    "band_occ",
+    "targets",
+    "solve_eq",
+    "solve_normal",
+    "pair_lambda",
+    "critical_temperature",
+    "gam_db",
+    "gam_scalar",
+    "dense_current",
+    "total_current",
+    "number_rate",
+    "check_db",
+    "lim_step",
+    "solve_open",
 ]
