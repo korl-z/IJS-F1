@@ -15,7 +15,7 @@ CurFn = Callable[[Arr, Any, "MFState"], Arr]
 
 @dataclass(frozen=True)
 class Bands:
-    """Two bare bands on a weighted momentum grid."""
+    """bare bands na diskretiziranem k gridu, uniform utezi."""
 
     k: Arr
     ea: Arr
@@ -39,10 +39,6 @@ class Bands:
             raise ValueError("k and the energy arrays have different sizes")
         if np.prod(self.shape, dtype=int) != ea.size:
             raise ValueError("shape is inconsistent with the number of modes")
-        if np.any(~np.isfinite(k)) or np.any(~np.isfinite(ea + eb + w)):
-            raise ValueError("band data must be finite")
-        if np.any(w < 0.0) or np.sum(w) <= 0.0:
-            raise ValueError("weights must be nonnegative with positive sum")
 
         w = w / np.sum(w)
         object.__setattr__(self, "k", k)
@@ -61,7 +57,7 @@ class Bands:
 
 @dataclass(frozen=True)
 class MFPars:
-    """Mean-field parameters: V, na+nb, U_H=V, ce none, sicer custom"""
+    """MF parametri, V, U_H, n_0 (band filing naceloma fiksiran)"""
 
     v: float
     n: float = 1.0
@@ -74,7 +70,7 @@ class MFPars:
 
 @dataclass(frozen=True)
 class MFState:
-    """Diagonalized mean-field state."""
+    """Diagonaliziran MF state."""
 
     bd: Bands
     p: MFPars
@@ -144,7 +140,7 @@ class OpenSol:
 
 
 def tb_1d(nk: int, gap: float, ta: float, tb: float, a0: float = 1.0) -> Bands:
-    """Nearest-neighbor one-dimensional tight-binding bands."""
+    """NN 1d tb."""
     k = np.linspace(-np.pi / a0, np.pi / a0, nk, endpoint=False)
     c = np.cos(k * a0)
     ea = 0.5 * gap - 2.0 * ta * c
@@ -153,7 +149,7 @@ def tb_1d(nk: int, gap: float, ta: float, tb: float, a0: float = 1.0) -> Bands:
 
 
 def tb_2d(nk: int, gap: float, ta: float, tb: float, a0: float = 1.0) -> Bands:
-    """Nearest-neighbor square-lattice tight-binding bands."""
+    """NN 2d tb"""
     q = np.linspace(-np.pi / a0, np.pi / a0, nk, endpoint=False)
     kx, ky = np.meshgrid(q, q, indexing="ij")
     c = np.cos(kx * a0) + np.cos(ky * a0)
@@ -166,7 +162,7 @@ def tb_2d(nk: int, gap: float, ta: float, tb: float, a0: float = 1.0) -> Bands:
 def free_1d(
     nk: int, kmax: float, gap: float, ma: float = 1.0, mb: float = 1.0
 ) -> Bands:
-    """One-dimensional electron and hole parabolic bands."""
+    """1d free electr"""
     k = np.linspace(-kmax, kmax, nk, endpoint=False)
     ea = 0.5 * gap + k * k / (2.0 * ma)
     eb = -0.5 * gap - k * k / (2.0 * mb)
@@ -174,13 +170,13 @@ def free_1d(
 
 
 def reshape_mode(a: ArrayLike, bd: Bands) -> Arr:
-    """Restore the original grid shape on the last array axis."""
+    """unflattena grid, ce ni bil originalno 2d"""
     a = np.asarray(a, dtype=float)
     return a.reshape(a.shape[:-1] + bd.shape)
 
 
 def mf_state(bd: Bands, p: MFPars, d: float, m: float) -> MFState:
-    """Build and diagonalize the Hartree-shifted EI Hamiltonian."""
+    """diagonalizira Hamiltonko, poracuna u_k, v_k, E_\pm, in okupacije in ostale parametre"""
     na = 0.5 * (p.n + m)
     nb = 0.5 * (p.n - m)
     eah = bd.ea + p.h * nb
@@ -202,7 +198,7 @@ def _fill(n: Arr, w: Arr) -> float:
 def fermi(
     st: MFState, t: float, tol: float = 1.0e-13, nmax: int = 120, prog: bool = False
 ) -> FDState:
-    """Return the weighted FD distribution and its chemical potential."""
+    """poracuna mu za FD pri fiksnem fillingu"""
     n0 = st.p.n
 
     es = max(
@@ -235,7 +231,7 @@ def fermi(
 
 
 def fermi_zero(st: MFState) -> FDState:
-    """Return an exact zero-temperature filling on the discrete grid."""
+    """zero temp filling na gridu"""
     n0 = st.p.n
     y = st.e.reshape(-1)
     w = np.tile(st.bd.w, 2)
@@ -262,7 +258,7 @@ def fermi_zero(st: MFState) -> FDState:
 
 
 def band_occ(st: MFState, n: ArrayLike) -> tuple[Arr, Arr]:
-    """Transform diagonal quasiparticle occupations to the a and b bands."""
+    """rotira med a, b in alpha beta Bogoljubov kvazidelci"""
     n = np.asarray(n, dtype=float)
     u2 = st.u * st.u
     v2 = st.v * st.v
@@ -272,7 +268,7 @@ def band_occ(st: MFState, n: ArrayLike) -> tuple[Arr, Arr]:
 
 
 def targets(st: MFState, n: ArrayLike) -> Targets:
-    """Return weighted gap, imbalance, filling, and band occupations."""
+    """gap, razlika zasedenosti, integriran n, posebaj zasedenosti n_a, n_b"""
     n = np.asarray(n, dtype=float)
     na, nb = band_occ(st, n)
     w = st.bd.w
@@ -294,7 +290,7 @@ def solve_eq(
     chk: int = 20,
     prog: bool = True,
 ) -> EqSol:
-    """Solve the weighted equilibrium EI fixed-point equations."""
+    """navaden equlibrium solver, ok za init pogoje, hiter"""
     ad, am = map(float, mix)  # mixture update parameteri
     hs = {"it": [], "err": [], "d": [], "m": [], "mu": []}  # history slovar
     ok = False
@@ -344,7 +340,7 @@ def solve_normal(
     nmax: int = 10000,
     prog: bool = False,
 ) -> NormalSol:
-    """Solve the normal-state polarization at fixed filling."""
+    """fiskira Delta=0, poracuna mu, n_a, n_b v tem stanju"""
     ok = False
     it = 0
     bar = trange(1, nmax + 1, desc="Normal state", disable=not prog)
@@ -368,7 +364,7 @@ def solve_normal(
 def pair_lambda(
     bd: Bands, p: MFPars, t: float, m: float = 0.0, tol: float = 1.0e-11
 ) -> tuple[float, NormalSol]:
-    """Return the normal-state linearized pairing eigenvalue."""
+    """pogleda, ce je lam>1, stanje s fiksim OP Delta =0 nestabilno, prehod pri lam=1, lam<1, stabilno"""
     s = solve_normal(bd, p, t, m=m, tol=tol)
     ek = 0.5 * (s.st.e[0] - s.st.e[1])
     q = np.empty_like(ek)
@@ -389,7 +385,7 @@ def critical_temperature(
     nmax: int = 80,
     prog: bool = True,
 ) -> float:
-    """Find a continuous transition from the linearized gap equation."""
+    """iz zgornje funkcije najde max transition temp."""
     ll, sl = pair_lambda(bd, p, tlo)
     lh, sh = pair_lambda(bd, p, thi)
     if ll <= 1.0:
@@ -408,13 +404,13 @@ def critical_temperature(
             thi, mh = tm, sm.m
         if thi - tlo <= tol * max(1.0, tm):
             return 0.5 * (tlo + thi)
-    raise RuntimeError("Tc did not converge")
+    raise RuntimeError("T_c ne konvergira")
 
 
 def gam_db(
     t: float, kap: float = 1.0, wc: float = np.inf, orb: str | None = None
 ) -> GamFn:
-    """Make a bounded dense transfer rate with detailed balance."""
+    """Dense transfer matrika Gamma_k,p,lam,lam' za mozne prehode, uposteva DB"""
 
     def gam(st: MFState, n: Arr) -> Arr:
         de = st.e[:, :, None, None] - st.e[None, None, :, :]
@@ -439,7 +435,7 @@ def gam_db(
 def gam_scalar(
     fn: Callable[[int, int, int, int, MFState, Arr], float], prog: bool = False
 ) -> GamFn:
-    """Adapt a scalar rate function to the dense transfer tensor."""
+    """skalarni / const. rate"""
 
     def gam(st: MFState, n: Arr) -> Arr:
         sh = (2, st.bd.size, 2, st.bd.size)
@@ -455,7 +451,7 @@ def gam_scalar(
 
 
 def dense_current(n: Arr, r: ArrayLike, st: MFState) -> Arr:
-    """Pauli-blocked current for number-conserving transfer jumps."""
+    """enacba za EI tok za open sistem"""
     n = np.asarray(n, dtype=float)
     r = np.asarray(r, dtype=float)
 
@@ -469,7 +465,7 @@ def dense_current(n: Arr, r: ArrayLike, st: MFState) -> Arr:
 
 @dataclass(frozen=True)
 class Dissipator:
-    """A compatible rate builder and kinetic current law."""
+    """disipator builder"""
 
     gam: GamFn
     cur: CurFn = dense_current
@@ -480,7 +476,7 @@ class Dissipator:
 
 
 def total_current(ds: Iterable[Dissipator], st: MFState, n: Arr) -> Arr:
-    """Add currents from independent dissipators."""
+    """sesteje vse tokove, za dn v propagiranju toka proti NESS"""
     out = np.zeros_like(n, dtype=float)
     for d in ds:
         q = d.current(st, n)
@@ -489,13 +485,13 @@ def total_current(ds: Iterable[Dissipator], st: MFState, n: Arr) -> Arr:
 
 
 def number_rate(dn: ArrayLike, bd: Bands) -> float:
-    """Return the weighted total particle-number rate."""
+    """vrne dn sestet cez k"""
     dn = np.asarray(dn, dtype=float)
     return float(np.sum(bd.w * np.sum(dn, axis=0)))
 
 
 def check_db(r: ArrayLike, st: MFState, t: float, eps: float = 1.0e-250) -> float:
-    """Return the largest local detailed-balance log residual."""
+    """preveri ce drzi DB"""
     r = np.asarray(r, dtype=float).reshape(2 * st.bd.size, 2 * st.bd.size)
     e = st.e.reshape(-1)
     de = e[:, None] - e[None, :]
@@ -508,7 +504,7 @@ def check_db(r: ArrayLike, st: MFState, t: float, eps: float = 1.0e-250) -> floa
 
 
 def lim_step(n: ArrayLike, dn: ArrayLike, dt: float, fac: float = 0.8) -> float:
-    """Limit an Euler step so all occupations stay in the unit interval."""
+    """limitira euler step da ne grejo zasedenosti nad 1"""
     n = np.asarray(n, dtype=float)
     dn = np.asarray(dn, dtype=float)
     z = []
@@ -538,7 +534,7 @@ def solve_open(
     chk: int = 10,
     prog: bool = True,
 ) -> OpenSol:
-    """Relax occupations and mean fields to a coupled steady state."""
+    """self consisten loop solver za odprt sistem"""
     n = np.asarray(n, dtype=float).copy()
     ds = tuple(ds)
 
