@@ -13,7 +13,6 @@ from tqdm.auto import tqdm
 
 import ei_unified as eu
 
-
 F32 = jnp.float32
 I32 = jnp.int32
 
@@ -42,6 +41,27 @@ class JTargets(NamedTuple):
     nb: Any
 
 
+def _kap_mat(kap):
+    """glede na aa, ab, bb scatteing"""
+    a = np.asarray(kap, dtype=float)
+
+    if a.ndim == 0:
+        z = float(a)
+        a = np.full((2, 2), z, dtype=float)
+
+    elif a.shape == (3,):
+        kaa, kab, kbb = map(float, a)
+        a = np.array(
+            [
+                [kaa, kab],
+                [kab, kbb],
+            ],
+            dtype=float,
+        )
+
+    return a
+
+
 @dataclass(frozen=True)
 class Bath:
     """Parameters of a detailed-balance transfer bath."""
@@ -51,18 +71,38 @@ class Bath:
     wc: float = np.inf
     orb: str | None = None
     name: str = "bath"
+    mu: float = 0.0
 
     def __post_init__(self) -> None:
-        if self.t <= 0.0 or self.kap < 0.0 or self.wc <= 0.0:
+        if self.t <= 0.0 or self.wc <= 0.0:
             raise ValueError("t and wc must be positive, and kap nonnegative")
         if self.orb not in (None, "a", "b"):
             raise ValueError("orb must be None, 'a', or 'b'")
 
+        a = _kap_mat(self.kap)
 
-def gam_db(t: float, kap: float = 1.0, wc: float = np.inf,
-           orb: str | None = None, name: str = "bath") -> Bath:
-    """Return a JAX detailed-balance bath specification."""
-    return Bath(float(t), float(kap), float(wc), orb, name)
+        q = tuple(tuple(float(x) for x in row) for row in a)
+
+        object.__setattr__(self, "kap", q)
+
+
+def gam_db(
+    t: float,
+    kap: Any = 1.0,
+    wc: float = np.inf,
+    orb: str | None = None,
+    name: str = "bath",
+    mu: float = 0.0,
+) -> Bath:
+    """Return a JAX detailed-balance product bath."""
+    return Bath(
+        t=float(t),
+        kap=kap,
+        wc=float(wc),
+        orb=orb,
+        name=name,
+        mu=float(mu),
+    )
 
 
 def _pars(bd: eu.Bands, p: eu.MFPars) -> tuple[Any, ...]:
@@ -77,18 +117,17 @@ def _pars(bd: eu.Bands, p: eu.MFPars) -> tuple[Any, ...]:
 
 def _baths(bs: Iterable[Bath]) -> tuple[Any, ...]:
     bs = tuple(bs)
-    if not bs:
-        raise ValueError("at least one bath is required")
+
     oc = {None: 0, "a": 1, "b": 2}
     bt = jnp.asarray([b.t for b in bs], dtype=F32)
-    bk = jnp.asarray([b.kap for b in bs], dtype=F32)
+    bk = jnp.asarray(np.stack([_kap_mat(b.kap) for b in bs]), dtype=F32)
     bw = jnp.asarray([b.wc for b in bs], dtype=F32)
     bo = jnp.asarray([oc[b.orb] for b in bs], dtype=I32)
-    return bt, bk, bw, bo
+    bm = jnp.asarray([b.mu for b in bs], dtype=F32)
+    return bt, bk, bw, bo, bm
 
 
-def _mf(ea: Any, eb: Any, pn: Any, ph: Any,
-        d: Any, m: Any) -> JState:
+def _mf(ea: Any, eb: Any, pn: Any, ph: Any, d: Any, m: Any) -> JState:
     na = F32(0.5) * (pn + m)
     nb = F32(0.5) * (pn - m)
     eah = ea + ph * nb
@@ -104,13 +143,11 @@ def _mf(ea: Any, eb: Any, pn: Any, ph: Any,
 
 
 @jax.jit
-def _mf_jit(ea: Any, eb: Any, pn: Any, ph: Any,
-            d: Any, m: Any) -> JState:
+def _mf_jit(ea: Any, eb: Any, pn: Any, ph: Any, d: Any, m: Any) -> JState:
     return _mf(ea, eb, pn, ph, d, m)
 
 
-def mf_state(bd: eu.Bands, p: eu.MFPars,
-             d: float, m: float) -> JState:
+def mf_state(bd: eu.Bands, p: eu.MFPars, d: float, m: float) -> JState:
     """Build a compatible mean-field state on the JAX device."""
     ea, eb, _, _, pn, ph = _pars(bd, p)
     return _mf_jit(ea, eb, pn, ph, F32(d), F32(m))
@@ -149,8 +186,7 @@ def _targets_jit(st: JState, n: Any, w: Any, pv: Any) -> JTargets:
     return _targets(st, n, w, pv)
 
 
-def targets(bd: eu.Bands, p: eu.MFPars,
-            st: JState, n: Any) -> JTargets:
+def targets(bd: eu.Bands, p: eu.MFPars, st: JState, n: Any) -> JTargets:
     """Return the device-side gap, imbalance, and filling targets."""
     n = jnp.asarray(n, dtype=F32)
     if n.shape != st.e.shape:
@@ -172,19 +208,47 @@ def _af(qa: Any, qb: Any, o: Any) -> Any:
 
 
 def _rates(st: JState, bp: tuple[Any, ...]) -> Any:
-    bt, bk, bw, bo = bp
+    bt, bk, bw, bo, bm = bp
+
     e = st.e.reshape(-1)
-    de = e[:, None] - e[None, :]
+    ei = e[:, None]
+    ej = e[None, :]
+    de = ei - ej
+
+    la = jnp.repeat(
+        jnp.arange(2, dtype=I32),
+        st.e.shape[1],
+    )
+
     qa, qb = _qv(st)
     r0 = jnp.zeros_like(de)
 
     def body(i: int, r: Any) -> Any:
         sp = jnp.exp(-jnp.square(de / bw[i]))
-        th = jax.nn.sigmoid(-de / bt[i])
-        return r + bk[i] * sp * th * _af(qa, qb, bo[i])
 
-    r = jax.lax.fori_loop(0, bt.shape[0], body, r0)
+        fi = jax.nn.sigmoid((bm[i] - ei) / bt[i])
+
+        hj = jax.nn.sigmoid((ej - bm[i]) / bt[i])
+
+        af = _af(qa, qb, bo[i])
+
+        km = bk[
+            i,
+            la[:, None],
+            la[None, :],
+        ]
+
+        return r + km * sp * fi * hj * af
+
+    r = jax.lax.fori_loop(
+        0,
+        bt.shape[0],
+        body,
+        r0,
+    )
+
     ma = F32(1.0) - jnp.eye(e.size, dtype=F32)
+
     return r * ma
 
 
@@ -198,8 +262,7 @@ def dense_rates(st: JState, bs: Iterable[Bath]) -> Any:
     return _rates_jit(st, _baths(bs))
 
 
-def _cur_dense(st: JState, n: Any, w: Any,
-               bp: tuple[Any, ...]) -> Any:
+def _cur_dense(st: JState, n: Any, w: Any, bp: tuple[Any, ...]) -> Any:
     y = n.reshape(-1)
     ww = jnp.tile(w, 2)
     r = _rates(st, bp)
@@ -208,16 +271,17 @@ def _cur_dense(st: JState, n: Any, w: Any,
     return (ga - lo).reshape(n.shape)
 
 
-def _cur_block(st: JState, n: Any, w: Any,
-               bp: tuple[Any, ...], block: int) -> Any:
-    bt, bk, bw, bo = bp
+def _cur_block(st: JState, n: Any, w: Any, bp: tuple[Any, ...], block: int) -> Any:
+    bt, bk, bw, bo, bm = bp
     y = n.reshape(-1)
     e = st.e.reshape(-1)
     ww = jnp.tile(w, 2)
     qa, qb = _qv(st)
     nm = e.size
+    la = jnp.repeat(jnp.arange(2, dtype=I32), st.e.shape[1])
     nb = (nm + block - 1) // block
     npad = nb * block - nm
+    lp = jnp.pad(la, (0, npad))
     ep = jnp.pad(e, (0, npad))
     yp = jnp.pad(y, (0, npad))
     wp = jnp.pad(ww, (0, npad))
@@ -238,8 +302,9 @@ def _cur_block(st: JState, n: Any, w: Any,
         pm = vm[None, :] & (ii != jj[None, :])
         de = e[:, None] - ej[None, :]
 
-        def bath_body(ir: int,
-                      xy: tuple[Any, Any]) -> tuple[Any, Any]:
+        lj = jax.lax.dynamic_slice_in_dim(lp, j0, block)
+        
+        def bath_body(ir: int, xy: tuple[Any, Any]) -> tuple[Any, Any]:
             xg, xl = xy
             qi = jnp.where(
                 bo[ir] == 1,
@@ -253,14 +318,33 @@ def _cur_block(st: JState, n: Any, w: Any,
             )
             aa = qj[None, :] * qi[:, None]
             af = jnp.where(bo[ir] == 0, jnp.ones_like(aa), aa * aa)
-            sp = jnp.exp(-jnp.square(de / bw[ir]))
-            c = bk[ir] * sp * af * pm
-            rf = c * jax.nn.sigmoid(-de / bt[ir])
-            rr = c * jax.nn.sigmoid(de / bt[ir])
-            xg = xg + jnp.sum(rf * (wj * yj)[None, :], axis=1)
-            xl = xl + jnp.sum(
-                rr * (wj * (F32(1.0) - yj))[None, :], axis=1
+            km = bk[
+                ir,
+                la[:, None],
+                lj[None, :],
+            ]
+
+            sp = jnp.exp(
+                -jnp.square(de / bw[ir])
             )
+
+            c = km * sp * af * pm
+            # rf = c * jax.nn.sigmoid(-de / bt[ir])
+            # rr = c * jax.nn.sigmoid(de / bt[ir])
+
+            rf = (
+                c
+                * jax.nn.sigmoid((bm[ir] - e[:, None]) / bt[ir])
+                * jax.nn.sigmoid((ej[None, :] - bm[ir]) / bt[ir])
+            )
+            rr = (
+                c
+                * jax.nn.sigmoid((bm[ir] - ej[None, :]) / bt[ir])
+                * jax.nn.sigmoid((e[:, None] - bm[ir]) / bt[ir])
+            )
+
+            xg = xg + jnp.sum(rf * (wj * yj)[None, :], axis=1)
+            xl = xl + jnp.sum(rr * (wj * (F32(1.0) - yj))[None, :], axis=1)
             return xg, xl
 
         return jax.lax.fori_loop(0, bt.shape[0], bath_body, (ga, lo))
@@ -271,8 +355,7 @@ def _cur_block(st: JState, n: Any, w: Any,
     return dn.reshape(n.shape)
 
 
-def _cur(st: JState, n: Any, w: Any, bp: tuple[Any, ...],
-         mode: str, block: int) -> Any:
+def _cur(st: JState, n: Any, w: Any, bp: tuple[Any, ...], mode: str, block: int) -> Any:
     if mode == "dense":
         return _cur_dense(st, n, w, bp)
     if mode == "block":
@@ -281,14 +364,20 @@ def _cur(st: JState, n: Any, w: Any, bp: tuple[Any, ...],
 
 
 @partial(jax.jit, static_argnames=("mode", "block"))
-def _cur_jit(st: JState, n: Any, w: Any, bp: tuple[Any, ...],
-             mode: str, block: int) -> Any:
+def _cur_jit(
+    st: JState, n: Any, w: Any, bp: tuple[Any, ...], mode: str, block: int
+) -> Any:
     return _cur(st, n, w, bp, mode, block)
 
 
-def total_current(bd: eu.Bands, st: JState, n: Any,
-                  bs: Iterable[Bath], mode: str = "dense",
-                  block: int = 512) -> Any:
+def total_current(
+    bd: eu.Bands,
+    st: JState,
+    n: Any,
+    bs: Iterable[Bath],
+    mode: str = "dense",
+    block: int = 512,
+) -> Any:
     """Evaluate the summed bath current on the JAX device."""
     if block <= 0:
         raise ValueError("block must be positive")
@@ -299,14 +388,14 @@ def total_current(bd: eu.Bands, st: JState, n: Any,
     return _cur_jit(st, n, w, _baths(bs), mode=mode, block=block)
 
 
-def dense_current(bd: eu.Bands, st: JState, n: Any,
-                  bs: Iterable[Bath]) -> Any:
+def dense_current(bd: eu.Bands, st: JState, n: Any, bs: Iterable[Bath]) -> Any:
     """Evaluate the current using a full rate matrix."""
     return total_current(bd, st, n, bs, mode="dense")
 
 
-def blocked_current(bd: eu.Bands, st: JState, n: Any,
-                    bs: Iterable[Bath], block: int = 512) -> Any:
+def blocked_current(
+    bd: eu.Bands, st: JState, n: Any, bs: Iterable[Bath], block: int = 512
+) -> Any:
     """Evaluate the current using source blocks of the rate matrix."""
     return total_current(bd, st, n, bs, mode="block", block=block)
 
@@ -337,10 +426,22 @@ def lim_step(n: Any, dn: Any, dt: float, fac: float = 0.8) -> Any:
     )
 
 
-def _step(ca: tuple[Any, ...], _: Any, ea: Any, eb: Any, w: Any,
-          pv: Any, pn: Any, ph: Any, bp: tuple[Any, ...],
-          dt: Any, td: Any, tm: Any, mode: str,
-          block: int) -> tuple[tuple[Any, ...], None]:
+def _step(
+    ca: tuple[Any, ...],
+    _: Any,
+    ea: Any,
+    eb: Any,
+    w: Any,
+    pv: Any,
+    pn: Any,
+    ph: Any,
+    bp: tuple[Any, ...],
+    dt: Any,
+    td: Any,
+    tm: Any,
+    mode: str,
+    block: int,
+) -> tuple[tuple[Any, ...], None]:
     n, d, m, tt = ca
     st = _mf(ea, eb, pn, ph, d, m)
     dn = _cur(st, n, w, bp, mode, block)
@@ -356,10 +457,25 @@ def _step(ca: tuple[Any, ...], _: Any, ea: Any, eb: Any, w: Any,
 
 
 @partial(jax.jit, static_argnames=("ns", "mode", "block"))
-def _chunk(ea: Any, eb: Any, w: Any, pv: Any, pn: Any, ph: Any,
-           bp: tuple[Any, ...], n: Any, d: Any, m: Any, tt: Any,
-           dt: Any, td: Any, tm: Any, ns: int,
-           mode: str, block: int) -> tuple[Any, ...]:
+def _chunk(
+    ea: Any,
+    eb: Any,
+    w: Any,
+    pv: Any,
+    pn: Any,
+    ph: Any,
+    bp: tuple[Any, ...],
+    n: Any,
+    d: Any,
+    m: Any,
+    tt: Any,
+    dt: Any,
+    td: Any,
+    tm: Any,
+    ns: int,
+    mode: str,
+    block: int,
+) -> tuple[Any, ...]:
     fn = partial(
         _step,
         ea=ea,
@@ -380,9 +496,20 @@ def _chunk(ea: Any, eb: Any, w: Any, pv: Any, pn: Any, ph: Any,
 
 
 @partial(jax.jit, static_argnames=("mode", "block"))
-def _diag(ea: Any, eb: Any, w: Any, pv: Any, pn: Any, ph: Any,
-          bp: tuple[Any, ...], n: Any, d: Any, m: Any,
-          mode: str, block: int) -> tuple[Any, ...]:
+def _diag(
+    ea: Any,
+    eb: Any,
+    w: Any,
+    pv: Any,
+    pn: Any,
+    ph: Any,
+    bp: tuple[Any, ...],
+    n: Any,
+    d: Any,
+    m: Any,
+    mode: str,
+    block: int,
+) -> tuple[Any, ...]:
     st = _mf(ea, eb, pn, ph, d, m)
     dn = _cur(st, n, w, bp, mode, block)
     tg = _targets(st, n, w, pv)
@@ -403,8 +530,7 @@ def number_rate(dn: Any, bd: eu.Bands) -> float:
     return float(jax.device_get(jnp.sum(w * jnp.sum(q, axis=0))))
 
 
-def check_db(r: Any, st: JState, t: float,
-             eps: float = 1.0e-20) -> float:
+def check_db(r: Any, st: JState, t: float, eps: float = 1.0e-20) -> float:
     """Return the largest detailed-balance residual on the host."""
     rr = np.asarray(jax.device_get(r), dtype=np.float64)
     e = np.asarray(jax.device_get(st.e), dtype=np.float64).reshape(-1)
@@ -416,6 +542,7 @@ def check_db(r: Any, st: JState, t: float,
         return float("nan")
     z = np.log(rr[ma]) - np.log(rr.T[ma]) + de[ma] / t
     return float(np.max(np.abs(z)))
+
 
 def _fix_fill(n, w, pn):
     nf = jnp.sum(w * jnp.sum(n, axis=0))
@@ -434,6 +561,7 @@ def _fix_fill(n, w, pn):
     )
 
     return jnp.clip(q, 0.0, 1.0)
+
 
 def solve_open(
     bd: eu.Bands,
@@ -489,12 +617,37 @@ def solve_open(
     for i0 in bar:
         ns = min(chk, nmax - i0)
         n, d, m, tt = _chunk(
-            ea, eb, w, pv, pn, ph, bp, n, d, m, tt,
-            dh, thd, thm, ns=ns, mode=mode, block=block,
+            ea,
+            eb,
+            w,
+            pv,
+            pn,
+            ph,
+            bp,
+            n,
+            d,
+            m,
+            tt,
+            dh,
+            thd,
+            thm,
+            ns=ns,
+            mode=mode,
+            block=block,
         )
         dn, erj, ec, ed, em, n0 = _diag(
-            ea, eb, w, pv, pn, ph, bp, n, d, m,
-            mode=mode, block=block,
+            ea,
+            eb,
+            w,
+            pv,
+            pn,
+            ph,
+            bp,
+            n,
+            d,
+            m,
+            mode=mode,
+            block=block,
         )
         er, ec0, ed0, em0, n00, d0, m0, t0 = map(
             float,
@@ -520,8 +673,18 @@ def solve_open(
         tp = t0
 
     dn, erj, _, _, _, _ = _diag(
-        ea, eb, w, pv, pn, ph, bp, n, d, m,
-        mode=mode, block=block,
+        ea,
+        eb,
+        w,
+        pv,
+        pn,
+        ph,
+        bp,
+        n,
+        d,
+        m,
+        mode=mode,
+        block=block,
     )
     n0, dn0, d0, m0, t0, er = jax.device_get((n, dn, d, m, tt, erj))
     n0 = np.asarray(n0, dtype=np.float32)
@@ -536,13 +699,34 @@ def solve_open(
     st0 = eu.mf_state(bd, p, d0, m0)
     hh = {q: np.asarray(z) for q, z in hs.items()}
     return eu.OpenSol(
-        d0, m0, n0, eta, st0, dn0, er,
-        it, t0, ok or er < tol, hh,
+        d0,
+        m0,
+        n0,
+        eta,
+        st0,
+        dn0,
+        er,
+        it,
+        t0,
+        ok or er < tol,
+        hh,
     )
 
 
 __all__ = [
-    "Bath", "JState", "JTargets", "gam_db", "mf_state", "band_occ",
-    "targets", "dense_rates", "dense_current", "blocked_current",
-    "total_current", "number_rate", "check_db", "lim_step", "solve_open",
+    "Bath",
+    "JState",
+    "JTargets",
+    "gam_db",
+    "mf_state",
+    "band_occ",
+    "targets",
+    "dense_rates",
+    "dense_current",
+    "blocked_current",
+    "total_current",
+    "number_rate",
+    "check_db",
+    "lim_step",
+    "solve_open",
 ]
