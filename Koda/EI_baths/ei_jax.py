@@ -19,7 +19,7 @@ RateFn = Callable[[Any, Any, Any, Any, Any], Any]
 
 
 class JState(NamedTuple):
-    """Mean-field state stored on the JAX device."""
+    """state vektor za MF, jax verzija"""
     d: Any
     m: Any
     na: Any
@@ -32,7 +32,7 @@ class JState(NamedTuple):
 
 
 class JTargets(NamedTuple):
-    """Self-consistent targets stored on the JAX device."""
+    """update targets za self consistent loop"""
     d: Any
     m: Any
     n: Any
@@ -42,20 +42,20 @@ class JTargets(NamedTuple):
 
 def rate_db(ei: Any, ej: Any, de: Any,
             t: Any, mu: Any) -> Any:
-    """Original bounded detailed-balance factor."""
+    """originalni rate za gamma_ij"""
     return jax.nn.sigmoid(-de / t)
 
 
 def rate_product(ei: Any, ej: Any, de: Any,
                  t: Any, mu: Any) -> Any:
-    """Product of occupied target and empty source bath factors."""
+    """product rate iz clanka, dodan mu, ker imamo Hartree shifte"""
     fi = jax.nn.sigmoid((mu - ei) / t)
     hj = jax.nn.sigmoid((ej - mu) / t)
     return fi * hj
 
 
 def _kap_mat(kap):
-    """Return the alpha and beta scattering matrix."""
+    """"""
     a = np.asarray(kap, dtype=float)
 
     if a.ndim == 0:
@@ -336,14 +336,73 @@ def _cur_block(st: JState, n: Any, w: Any, bp: tuple[Any, ...],
     dn = (F32(1.0) - y) * ga - y * lo
     return dn.reshape(n.shape)
 
+def _cur_pair(
+    st: JState,
+    n: Any,
+    bp: tuple[Any, ...],
+    rf: tuple[RateFn, ...],
+) -> Any:
+    bt, bk, bw, bo, bm = bp
+
+    ea = st.e[0]
+    eb = st.e[1]
+    de = ea - eb
+
+    na = n[0]
+    nb = n[1]
+
+    uv = jnp.square(st.u * st.v)
+
+    rab = jnp.zeros_like(de)
+    rba = jnp.zeros_like(de)
+
+    for ir, fn in enumerate(rf):
+        sp = jnp.exp(-jnp.square(de / bw[ir]))
+
+        af = jnp.where(
+            bo[ir] == 0,
+            jnp.ones_like(de),
+            uv,
+        )
+
+        cf = bk[ir, 0, 1] * sp * af
+        cr = bk[ir, 1, 0] * sp * af
+
+        rab = rab + cf * fn(
+            ea,
+            eb,
+            de,
+            bt[ir],
+            bm[ir],
+        )
+
+        rba = rba + cr * fn(
+            eb,
+            ea,
+            -de,
+            bt[ir],
+            bm[ir],
+        )
+
+    q = (
+        (F32(1.0) - na) * rab * nb
+        - na * rba * (F32(1.0) - nb)
+    )
+
+    return jnp.stack((q, -q))
+
 
 def _cur(st: JState, n: Any, w: Any, bp: tuple[Any, ...],
          rf: tuple[RateFn, ...], mode: str, block: int) -> Any:
+    if mode == "pair":
+        return _cur_pair(st, n, bp, rf)
     if mode == "dense":
         return _cur_dense(st, n, w, bp, rf)
     if mode == "block":
         return _cur_block(st, n, w, bp, rf, block)
-    raise ValueError("mode must be 'dense' or 'block'")
+    raise ValueError(
+        "mode must be 'pair', 'dense', or 'block'"
+    )
 
 
 @partial(jax.jit, static_argnames=("rf", "mode", "block"))
@@ -574,8 +633,6 @@ def solve_open(
     block: int = 512,
 ) -> eu.OpenSol:
     """Relax the open EI state in float32 on the selected JAX device."""
-    if mode not in ("dense", "block"):
-        raise ValueError("mode must be 'dense' or 'block'")
     if block <= 0 or chk <= 0 or nmax <= 0:
         raise ValueError("block, chk, and nmax must be positive")
     if dt <= 0.0 or td <= 0.0 or tm <= 0.0 or tol <= 0.0:
