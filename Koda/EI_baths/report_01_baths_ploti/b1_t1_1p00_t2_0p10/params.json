@@ -1,0 +1,69 @@
+{
+  "created_utc": "2026-08-20T17:46:08.336700+00:00",
+  "point": {
+    "t1_over_tc": 1.0,
+    "t2_over_tc": 0.1,
+    "t1": 0.6195541953906416,
+    "t2": 0.061955419539064166,
+    "tc_reference": 0.6195541953906416
+  },
+  "grid": {
+    "nk": 100,
+    "n_points": 10000,
+    "path_points_per_segment": 240,
+    "path": "Gamma-X-M-Gamma"
+  },
+  "bands": {
+    "gap": 1.0,
+    "ta": 1.0,
+    "tb": -0.3
+  },
+  "mean_field": {
+    "v": 5.0,
+    "filling": 1.0,
+    "uh": null
+  },
+  "bath": {
+    "rate": "ej.rate_db",
+    "kap_aa": 0.3,
+    "kap_ab": 0.3,
+    "kap_bb": 0.3,
+    "wc": "inf",
+    "mu": 0.0,
+    "orbital": null
+  },
+  "solver": {
+    "dt": 0.8,
+    "td": 0.3,
+    "tm": 0.3,
+    "tol": 0.0001,
+    "nmax": 20000,
+    "chk": 20,
+    "mode": "block",
+    "block": 512
+  },
+  "seed": {
+    "equilibrium_temperature": 0.061955419539064166,
+    "equilibrium_t_over_tc": 0.1,
+    "equilibrium_d": 1.3438528042575417,
+    "equilibrium_m": -0.7795439937785336,
+    "equilibrium_mu": 1.3220304615926315,
+    "d_used": 1.3438528051317822,
+    "m_used": -0.8632876873016357
+  },
+  "fine_reference": {
+    "delta_0": 1.3438528043955609,
+    "mu_0": 2.452325280461837
+  },
+  "result": {
+    "ok": true,
+    "iterations": 380,
+    "error": 8.362531661987305e-05,
+    "relax_time": null,
+    "d": 0.6761853694915771,
+    "abs_d": 0.6761853694915771,
+    "abs_d_over_delta_0": 0.5031692215694057,
+    "m": -0.8646350502967834,
+    "filling": 1.000000096744299
+  }
+}
