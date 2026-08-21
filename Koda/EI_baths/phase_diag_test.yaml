@@ -1,0 +1,60 @@
+figure: phase_diag_test.pdf
+simulation:
+  model:
+    nk:
+      scan: 20
+      reference: 100
+    band:
+      name: tb_2d
+      pars:
+        gap: 1.0
+        ta: 1.0
+        tb: -0.3
+    mean_field:
+      v: 5.0
+      n: 1.0
+      uh: null
+  equilibrium:
+    initial:
+      t: 0.0
+      d: 1.0
+      m: 0.0
+    solve:
+      mix:
+      - 0.15
+      - 0.15
+      tol: 1.0e-10
+      nmax: 20000
+      chk: 20
+      prog: false
+    critical:
+      tlo: 0.0001
+      thi: 2.0
+      tol: 1.0e-07
+      nmax: 100
+      prog: true
+  scan:
+    temperature:
+      nt: 10
+      min_ratio: 0.03
+      max_ratio: 2.0
+    continuation:
+      d_floor_frac: 0.1
+  open_system:
+    bath:
+      rate: rate_product
+      pars:
+        wc: .inf
+        kap:
+        - 0.3
+        - 0.6
+        - 0.3
+        mu: 1.4
+    solve:
+      dt: 0.8
+      td: 0.3
+      tm: 0.3
+      tol: 0.0001
+      nmax: 20000
+      chk: 20
+      prog: false
