@@ -1,4 +1,7 @@
-figure: nalpha_beta_test.pdf
+figure: nalpha_beta_bz_test.pdf
+plot:
+  q0: 4
+  ratio: 3.2399999999999993
 simulation:
   model:
     nk:
