@@ -11,8 +11,8 @@ import jax.numpy as jnp
 
 from tqdm.auto import tqdm
 
-# import ei_unified as eu
-from Koda.EI_baths import ei_unified as eu
+import ei_unified as eu
+# from Koda.EI_baths import ei_unified as eu
 
 F32 = jnp.float32
 I32 = jnp.int32
