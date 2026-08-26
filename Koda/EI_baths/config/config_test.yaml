@@ -6,9 +6,9 @@ model:
   band:
     name: tb_2d
     pars:
-      gap: 1.0
+      gap: -0.5
       ta: 1.0
-      tb: -0.1
+      tb: -0.6
 
   mean_field:
     v: 2.0
@@ -53,7 +53,7 @@ open_system:
     pars:
       wc: .inf
       kap: [0.3, 0.6, 0.3]
-      mu: 0.0
+      mu: 1.5
 
   solve:
     dt: 0.8
