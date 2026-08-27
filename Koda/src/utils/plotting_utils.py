@@ -82,6 +82,7 @@ def plot_phase_diag(
         print("Saved:", plot_file)
 
         plt.show()
+        plt.close(fig)
 
 
 def plot_nalpha_beta(
@@ -176,6 +177,7 @@ def plot_nalpha_beta(
         print("Saved:", plot_file)
 
     plt.show()
+    plt.close(fig)
 
 
 def plot_nalpha_beta_bz(
@@ -276,6 +278,7 @@ def plot_nalpha_beta_bz(
         print("Saved:", plot_file)
 
     plt.show()
+    plt.close(fig)
 
 
 def plot_energies_uv(
@@ -336,7 +339,6 @@ def plot_energies_uv(
             color="k",
             linestyle="-.",
             linewidth=0.5,
-            label=r"$E_c$",
         )
 
     for a in ax:
@@ -378,6 +380,7 @@ def plot_energies_uv(
         print("Saved:", plot_file)
 
     plt.show()
+    plt.close(fig)
 
 
 def newfig(nrows=1, ncols=1, W=3.47412, h=0.6, sharex=False, sharey=False):

@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from tqdm import tqdm
-import yaml
+from tempfile import TemporaryDirectory
 from pathlib import Path
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
@@ -68,8 +68,6 @@ from EI import ei_jax as ej
 from utils.plotting_utils import plot_phase_diag, plot_energies_uv, plot_nalpha_beta, plot_nalpha_beta_bz
 from utils.logger import logger, tqdm_bar
 
-OUT = "/home/kzeleznikar/IJS-F1/Koda/EI_baths/plots/"
-
 #setup config, bands and params
 cfg_path = Path("/home/kzeleznikar/IJS-F1/Koda/EI_baths/config/config_test.yaml")
 run_path = Path("/home/kzeleznikar/IJS-F1/Koda/EI_baths/runs/")
@@ -77,6 +75,13 @@ run_path = Path("/home/kzeleznikar/IJS-F1/Koda/EI_baths/runs/")
 ex = Experiment("phase_diag_diagnostics")
 ex.add_config(str(cfg_path))
 ex.observers.append(FileStorageObserver(run_path))
+
+def addplot(run, fun, *args, name, **kwargs):
+    with TemporaryDirectory() as tmp:
+        fn = Path(tmp) / f"{name}.pdf"
+        fun(*args, OUT=tmp, name=name, save=True, overwrite=True, **kwargs)
+        run.add_artifact(str(fn), name=fn.name)
+
 
 @ex.main
 def main(_config, _run):
@@ -187,7 +192,10 @@ def main(_config, _run):
             ok[i, j] = ok[j, i]
 
     #make plot PD:
-    plot_phase_diag(da, d0, tn, config = cfg, OUT=OUT, name="phase_diag_test", save=False, overwrite=True)
+    addplot(
+        _run, plot_phase_diag, da, d0, tn, config=cfg, name="phase_diag_test"
+    )
+
 
     #make reference points
     rs = cfg["ratio_sweep"]
@@ -309,12 +317,14 @@ def main(_config, _run):
 
     #plot dispersion
     ra = r
-    plot_energies_uv(eaa, eba, ua, va, eah, ebh, ra, ks, kt, kl, OUT=OUT, name="energies_uv_test", save=False, overwrite=True, Ec=Ec)
+    addplot(_run, plot_energies_uv, eaa, eba, ua, va, eah, ebh, ra, ks, kt, kl,name="energies_uv_test", Ec=Ec)
 
     #plot n alpha, beta
-    plot_nalpha_beta(naa, nba, nea, neb, r, ks, kt, kl, OUT=OUT, name="nalpha_beta_test", save=False, overwrite=True)
+    addplot(_run, plot_nalpha_beta, naa, nba, nea, neb, r, ks, kt, kl, cfg, name="nalpha_beta_test")
+
     q0 = 4
-    plot_nalpha_beta_bz(nfa, r, q0, cfg, OUT=OUT, name="nalpha_beta_bz_test", save=False, overwrite=True)
+    addplot(_run, plot_nalpha_beta_bz, nfa, r, q0, name="nalpha_beta_bz_test")
+
 
 
 if __name__ == "__main__":

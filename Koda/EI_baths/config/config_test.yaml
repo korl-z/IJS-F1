@@ -6,7 +6,7 @@ model:
   band:
     name: tb_2d
     pars:
-      gap: -0.5
+      gap: -0.2
       ta: 1.0
       tb: -0.6
 
