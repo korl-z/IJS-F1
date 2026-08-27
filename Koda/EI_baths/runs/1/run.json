@@ -1,0 +1,96 @@
+{
+  "artifacts": [],
+  "command": "main",
+  "experiment": {
+    "base_dir": "/home/kzeleznikar/IJS-F1/Koda/EI_baths",
+    "dependencies": [
+      "jax==0.11.0",
+      "numpy==2.4.6",
+      "open-system-ei==0.1.0",
+      "pyyaml==6.0.3",
+      "sacred==0.8.7",
+      "tqdm==4.70.0"
+    ],
+    "mainfile": "phase_diag_diagnostics.py",
+    "name": "phase_diag_diagnostics",
+    "repositories": [
+      {
+        "commit": "9593f5c536ece33421a45f16a1f837c06f2b43dc",
+        "dirty": true,
+        "url": "https://github.com/korl-z/IJS-F1.git"
+      }
+    ],
+    "sources": [
+      [
+        "phase_diag_diagnostics.py",
+        "_sources/phase_diag_diagnostics_52d29e505e9da36d76d7b449e64c1fe5.py"
+      ]
+    ]
+  },
+  "fail_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/home/kzeleznikar/IJS-F1/.venv/lib/python3.13/site-packages/sacred/config/captured_function.py\", line 42, in captured_function\n    result = wrapped(*args, **kwargs)\n",
+    "  File \"/home/kzeleznikar/IJS-F1/Koda/EI_baths/phase_diag_diagnostics.py\", line 286, in main\n    sp = ej.solve_open(bd_dense, p, n, bs, d=d, m=m, **op[\"solve\"])\n",
+    "  File \"/home/kzeleznikar/IJS-F1/Koda/src/EI/ei_jax.py\", line 672, in solve_open\n    n, d, m, tt = _chunk(\n                  ~~~~~~^\n        ea,\n        ^^^\n    ...<16 lines>...\n        block=block,\n        ^^^^^^^^^^^^\n    )\n    ^\n",
+    "jax.errors.JaxRuntimeError: RESOURCE_EXHAUSTED: Failed to get configs for: 2 out of 21 instructions. See logs for all failures. Example failure: \nOut of memory while trying to allocate 1.50GiB. [tf-allocator-allocation-error='']\n",
+    "--------------------\n",
+    "For simplicity, JAX has removed its internal frames from the traceback of the following exception. Set JAX_TRACEBACK_FILTERING=off to include these.\n"
+  ],
+  "heartbeat": "2026-08-27T13:39:56.783433",
+  "host": {
+    "ENV": {},
+    "cpu": "AMD Ryzen 9 9950X 16-Core Processor",
+    "gpus": {
+      "driver_version": "580.173.02",
+      "gpus": [
+        {
+          "model": "NVIDIA GeForce RTX 5060 Ti",
+          "persistence_mode": false,
+          "total_memory": 16311
+        }
+      ]
+    },
+    "hostname": "fedora",
+    "os": [
+      "Linux",
+      "Linux-7.1.6-101.fc43.x86_64-x86_64-with-glibc2.42"
+    ],
+    "python_version": "3.13.11"
+  },
+  "meta": {
+    "command": "main",
+    "config_updates": {},
+    "named_configs": [],
+    "options": {
+      "--beat-interval": null,
+      "--capture": null,
+      "--comment": null,
+      "--debug": false,
+      "--enforce_clean": false,
+      "--file_storage": null,
+      "--force": false,
+      "--help": false,
+      "--id": null,
+      "--loglevel": null,
+      "--mongo_db": null,
+      "--name": null,
+      "--pdb": false,
+      "--print-config": false,
+      "--priority": null,
+      "--queue": false,
+      "--s3": null,
+      "--sql": null,
+      "--tiny_db": null,
+      "--unobserved": false,
+      "COMMAND": null,
+      "UPDATE": [],
+      "help": false,
+      "with": false
+    }
+  },
+  "resources": [],
+  "result": null,
+  "start_time": "2026-08-27T13:39:44.522187",
+  "status": "FAILED",
+  "stop_time": "2026-08-27T13:39:56.784040"
+}

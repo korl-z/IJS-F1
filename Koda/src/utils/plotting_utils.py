@@ -25,15 +25,13 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import yaml
 from pathlib import Path
 
-def newfig(W=3.47412, h=0.6):
-    fig, ax = plt.subplots(figsize=(W, h * W))
-    ax.tick_params(which="both", direction="in")
-    return fig, ax
 
-def plot_phase_diag(da, d0, tn, config=None, OUT=None, name="phase_diag", save=False, overwrite=False):
+def plot_phase_diag(
+    da, d0, tn, config=None, OUT=None, name="phase_diag", save=False, overwrite=False
+):
     z = da / d0
 
-    h=0.85
+    h = 0.85
     cm = cmaps.lipari
 
     fig, ax = plt.subplots(figsize=(3.47412, h * 3.47412))
@@ -43,10 +41,23 @@ def plot_phase_diag(da, d0, tn, config=None, OUT=None, name="phase_diag", save=F
 
     cbar = plt.colorbar(im, ax=ax)
     cbar.set_label(r"$\Delta/\Delta_0$", rotation=90, labelpad=5)
-    
-    #probe points
-    r = np.array([x**2 for x in np.arange(config["ratio_sweep"]["r_min"], config["ratio_sweep"]["r_max"], config["ratio_sweep"]["r_step"])])
-    ax.scatter(config["ratio_sweep"]["x0"] * np.sqrt(r), config["ratio_sweep"]["x0"] / np.sqrt(r), color="green")
+
+    # probe points
+    r = np.array(
+        [
+            x**2
+            for x in np.arange(
+                config["ratio_sweep"]["r_min"],
+                config["ratio_sweep"]["r_max"],
+                config["ratio_sweep"]["r_step"],
+            )
+        ]
+    )
+    ax.scatter(
+        config["ratio_sweep"]["x0"] * np.sqrt(r),
+        config["ratio_sweep"]["x0"] / np.sqrt(r),
+        color="green",
+    )
 
     ax.set_xlabel(r"$T_1/T_c$")
     ax.set_ylabel(r"$T_2/T_c$")
@@ -59,34 +70,35 @@ def plot_phase_diag(da, d0, tn, config=None, OUT=None, name="phase_diag", save=F
         if OUT is None:
             raise ValueError("OUT must be provided when save=True")
 
-        if config is None:
-            raise ValueError("config must be provided when save=True")
-
         OUT = Path(OUT)
         OUT.mkdir(parents=True, exist_ok=True)
-
-        plot_file = OUT / f"{name}.pdf"
-        pars_file = OUT / f"{name}.yaml"
-
-        if not overwrite and (plot_file.exists() or pars_file.exists()):
+        
+        if not overwrite and (plot_file.exists()):
             raise FileExistsError(f"{name} already exists in {OUT}")
-
-        meta = {
-            "figure": plot_file.name,
-            "simulation": config
-        }
-
-        txt = yaml.safe_dump(meta, sort_keys=False)
+        
+        plot_file = OUT / f"{name}.pdf"
         fig.savefig(plot_file, bbox_inches="tight")
-        pars_file.write_text(txt, encoding="utf-8")
 
         print("Saved:", plot_file)
-        print("Saved:", pars_file)
 
         plt.show()
 
 
-def plot_nalpha_beta(naa, nba, nea, neb, r, ks, kt, kl, config, OUT=None, name="nalpha_beta", save=False, overwrite=False):
+def plot_nalpha_beta(
+    naa,
+    nba,
+    nea,
+    neb,
+    r,
+    ks,
+    kt,
+    kl,
+    config,
+    OUT=None,
+    name="nalpha_beta",
+    save=False,
+    overwrite=False,
+):
     x0 = config["ratio_sweep"]["x0"]
     ra = r
 
@@ -104,8 +116,22 @@ def plot_nalpha_beta(naa, nba, nea, neb, r, ks, kt, kl, config, OUT=None, name="
         ax[0].plot(ks, naa[q], color=cl, linewidth=1.3)
         ax[1].plot(ks, nba[q], color=cl, linewidth=1.3)
 
-    ax[0].plot(ks, nea, color="black", linestyle="--", linewidth=1.5, label=rf"eq, $T/T_c={x0:.1f}$")
-    ax[1].plot(ks, neb, color="black", linestyle="--", linewidth=1.5, label=rf"eq, $T/T_c={x0:.1f}$")
+    ax[0].plot(
+        ks,
+        nea,
+        color="black",
+        linestyle="--",
+        linewidth=1.5,
+        label=rf"eq, $T/T_c={x0:.1f}$",
+    )
+    ax[1].plot(
+        ks,
+        neb,
+        color="black",
+        linestyle="--",
+        linewidth=1.5,
+        label=rf"eq, $T/T_c={x0:.1f}$",
+    )
 
     ax[0].set_ylabel(r"$n_{\alpha\mathbf{k}}$")
     ax[1].set_ylabel(r"$n_{\beta\mathbf{k}}$")
@@ -118,8 +144,15 @@ def plot_nalpha_beta(naa, nba, nea, neb, r, ks, kt, kl, config, OUT=None, name="
         a.grid(alpha=0.3)
         a.legend(loc="best", fontsize=7)
 
-    cax = inset_axes(ax[1], width="3%", height="211%", loc="lower left",
-                     bbox_to_anchor=(1.02, 0, 1, 1), bbox_transform=ax[1].transAxes, borderpad=0)
+    cax = inset_axes(
+        ax[1],
+        width="3%",
+        height="211%",
+        loc="lower left",
+        bbox_to_anchor=(1.02, 0, 1, 1),
+        bbox_transform=ax[1].transAxes,
+        borderpad=0,
+    )
 
     cbar = fig.colorbar(sm, cax=cax)
     cbar.set_label(r"$T_1/T_2$", rotation=90, labelpad=5)
@@ -134,26 +167,20 @@ def plot_nalpha_beta(naa, nba, nea, neb, r, ks, kt, kl, config, OUT=None, name="
         OUT.mkdir(parents=True, exist_ok=True)
 
         plot_file = OUT / f"{name}.pdf"
-        pars_file = OUT / f"{name}.yaml"
 
-        if not overwrite and (plot_file.exists() or pars_file.exists()):
+        if not overwrite and (plot_file.exists()):
             raise FileExistsError(f"{name} already exists in {OUT}")
 
-        meta = {
-            "figure": plot_file.name,
-            "simulation": config,
-        }
-
-        txt = yaml.safe_dump(meta, sort_keys=False)
         fig.savefig(plot_file, bbox_inches="tight")
-        pars_file.write_text(txt, encoding="utf-8")
 
         print("Saved:", plot_file)
-        print("Saved:", pars_file)
 
     plt.show()
 
-def plot_nalpha_beta_bz(nfa, r, q0, config, OUT=None, name="nalpha_beta_bz", save=False, overwrite=False):
+
+def plot_nalpha_beta_bz(
+    nfa, r, q0, OUT=None, name="nalpha_beta_bz", save=False, overwrite=False
+):
     if q0 < 0 or q0 >= r.size:
         raise IndexError("q0 is outside the ratio sweep")
 
@@ -163,22 +190,49 @@ def plot_nalpha_beta_bz(nfa, r, q0, config, OUT=None, name="nalpha_beta_bz", sav
     ke = np.linspace(-1.0, 1.0, nk1 + 1)
 
     h = 0.62
-    fig, ax = plt.subplots(1, 2, figsize=(3.47412, h * 3.47412), sharex=True, sharey=True)
+    fig, ax = plt.subplots(
+        1, 2, figsize=(3.47412, h * 3.47412), sharex=True, sharey=True
+    )
 
-    im0 = ax[0].pcolormesh(ke, ke, nf[0].T, shading="flat", cmap=cmaps.lipari, vmin=0.0, vmax=1.0)
+    im0 = ax[0].pcolormesh(
+        ke, ke, nf[0].T, shading="flat", cmap=cmaps.lipari, vmin=0.0, vmax=1.0
+    )
     im0.set_edgecolor("face")
 
-    im1 = ax[1].pcolormesh(ke, ke, nf[1].T, shading="flat", cmap=cmaps.lipari, vmin=0.0, vmax=1.0)
+    im1 = ax[1].pcolormesh(
+        ke, ke, nf[1].T, shading="flat", cmap=cmaps.lipari, vmin=0.0, vmax=1.0
+    )
     im1.set_edgecolor("face")
 
-    ax[0].text(0.05, 0.93, r"$n_{\alpha\mathbf{k}}$", transform=ax[0].transAxes,
-               color="white", ha="left", va="top")
+    ax[0].text(
+        0.05,
+        0.93,
+        r"$n_{\alpha\mathbf{k}}$",
+        transform=ax[0].transAxes,
+        color="white",
+        ha="left",
+        va="top",
+    )
 
-    ax[1].text(0.05, 0.93, r"$n_{\beta\mathbf{k}}$", transform=ax[1].transAxes,
-               color="k", ha="left", va="top")
+    ax[1].text(
+        0.05,
+        0.93,
+        r"$n_{\beta\mathbf{k}}$",
+        transform=ax[1].transAxes,
+        color="k",
+        ha="left",
+        va="top",
+    )
 
-    ax[1].text(0.95, 0.93, rf"$T_1/T_2={r[q0]:.2f}$", transform=ax[1].transAxes,
-               color="k", ha="right", va="top")
+    ax[1].text(
+        0.95,
+        0.93,
+        rf"$T_1/T_2={r[q0]:.2f}$",
+        transform=ax[1].transAxes,
+        color="k",
+        ha="right",
+        va="top",
+    )
     ax[0].tick_params(which="both", direction="in")
     ax[1].tick_params(which="both", direction="in")
 
@@ -190,8 +244,15 @@ def plot_nalpha_beta_bz(nfa, r, q0, config, OUT=None, name="nalpha_beta_bz", sav
 
     ax[0].set_ylabel(r"$k_y/\pi$")
 
-    cax = inset_axes(ax[1], width="3%", height="100%", loc="lower left",
-                     bbox_to_anchor=(1.02, 0, 1, 1), bbox_transform=ax[1].transAxes, borderpad=0)
+    cax = inset_axes(
+        ax[1],
+        width="3%",
+        height="100%",
+        loc="lower left",
+        bbox_to_anchor=(1.02, 0, 1, 1),
+        bbox_transform=ax[1].transAxes,
+        borderpad=0,
+    )
 
     cbar = fig.colorbar(im1, cax=cax)
     cbar.set_label(r"$n_{\lambda\mathbf{k}}$", rotation=90, labelpad=5)
@@ -206,31 +267,34 @@ def plot_nalpha_beta_bz(nfa, r, q0, config, OUT=None, name="nalpha_beta_bz", sav
         OUT.mkdir(parents=True, exist_ok=True)
 
         plot_file = OUT / f"{name}.pdf"
-        pars_file = OUT / f"{name}.yaml"
 
-        if not overwrite and (plot_file.exists() or pars_file.exists()):
+        if not overwrite and (plot_file.exists()):
             raise FileExistsError(f"{name} already exists in {OUT}")
 
-        meta = {
-            "figure": plot_file.name,
-            "plot": {
-                "q0": int(q0),
-                "ratio": float(r[q0]),
-            },
-            "simulation": config,
-        }
-
-        txt = yaml.safe_dump(meta, sort_keys=False)
         fig.savefig(plot_file, bbox_inches="tight")
-        pars_file.write_text(txt, encoding="utf-8")
 
         print("Saved:", plot_file)
-        print("Saved:", pars_file)
 
     plt.show()
 
 
-def plot_energies_uv(eaa, eba, ua, va, eah, ebh, ra, ks, kt, kl, config, OUT=None, name="energies_uv", save=False, overwrite=False):
+def plot_energies_uv(
+    eaa,
+    eba,
+    ua,
+    va,
+    eah,
+    ebh,
+    ra,
+    ks,
+    kt,
+    kl,
+    OUT=None,
+    name="energies_uv",
+    save=False,
+    overwrite=False,
+    Ec=None,
+):
     norm = Normalize(vmin=ra.min(), vmax=ra.max())
     cm = cmaps.guppy
     sm = ScalarMappable(norm=norm, cmap=cm)
@@ -264,6 +328,17 @@ def plot_energies_uv(eaa, eba, ua, va, eah, ebh, ra, ks, kt, kl, config, OUT=Non
     ax[0].tick_params(which="both", direction="in")
     ax[1].tick_params(which="both", direction="in")
 
+    if Ec is not None:
+        ax[0].axhline(
+            Ec,
+            xmin=0.0,
+            xmax=1.0,
+            color="k",
+            linestyle="-.",
+            linewidth=0.5,
+            label=r"$E_c$",
+        )
+
     for a in ax:
         a.set_xlim(ks[0], ks[-1])
         a.set_xticks(kt)
@@ -271,12 +346,54 @@ def plot_energies_uv(eaa, eba, ua, va, eah, ebh, ra, ks, kt, kl, config, OUT=Non
         a.grid(alpha=0.3)
         a.legend(loc="best", ncol=2, fontsize=8)
 
-    cax = inset_axes(ax[1], width="3%", height="208%", loc="lower left",
-                     bbox_to_anchor=(1.02, 0, 1, 1), bbox_transform=ax[1].transAxes, borderpad=0)
+    cax = inset_axes(
+        ax[1],
+        width="3%",
+        height="208%",
+        loc="lower left",
+        bbox_to_anchor=(1.02, 0, 1, 1),
+        bbox_transform=ax[1].transAxes,
+        borderpad=0,
+    )
 
     cbar = fig.colorbar(sm, cax=cax)
     cbar.set_label(r"$T_1/T_2$", rotation=90, labelpad=5)
 
+    plt.tight_layout()
+
+    if save:
+        if OUT is None:
+            raise ValueError("OUT must be provided when save=True")
+
+        OUT = Path(OUT)
+        OUT.mkdir(parents=True, exist_ok=True)
+
+        plot_file = OUT / f"{name}.pdf"
+
+        if not overwrite and (plot_file.exists()):
+            raise FileExistsError(f"{name} already exists in {OUT}")
+
+        fig.savefig(plot_file, bbox_inches="tight")
+
+        print("Saved:", plot_file)
+
+    plt.show()
+
+
+def newfig(nrows=1, ncols=1, W=3.47412, h=0.6, sharex=False, sharey=False):
+    fig, ax = plt.subplots(
+        nrows,
+        ncols,
+        figsize=(W, h * W),
+        sharex=sharex,
+        sharey=sharey,
+    )
+    for a in np.atleast_1d(ax).ravel():
+        a.tick_params(which="both", direction="in")
+    return fig, ax
+
+
+def finishfig(fig, config=None, OUT=None, name="figure", save=False, overwrite=False):
     plt.tight_layout()
 
     if save:
@@ -292,14 +409,12 @@ def plot_energies_uv(eaa, eba, ua, va, eah, ebh, ra, ks, kt, kl, config, OUT=Non
         if not overwrite and (plot_file.exists() or pars_file.exists()):
             raise FileExistsError(f"{name} already exists in {OUT}")
 
-        meta = {
-            "figure": plot_file.name,
-            "simulation": config,
-        }
-
-        txt = yaml.safe_dump(meta, sort_keys=False)
+        meta = {"figure": plot_file.name, "simulation": config}
         fig.savefig(plot_file, bbox_inches="tight")
-        pars_file.write_text(txt, encoding="utf-8")
+        pars_file.write_text(
+            yaml.safe_dump(meta, sort_keys=False),
+            encoding="utf-8",
+        )
 
         print("Saved:", plot_file)
         print("Saved:", pars_file)

@@ -10,7 +10,6 @@ from typing import Any, Iterable, Optional, TypeVar
 
 from tqdm.auto import tqdm
 
-
 T = TypeVar("T")
 
 CLR = {
@@ -126,4 +125,3 @@ def tqdm_bar(
 
 
 logger = setup_logger()
-
