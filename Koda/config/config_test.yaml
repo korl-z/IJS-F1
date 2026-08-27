@@ -1,6 +1,6 @@
 model:
   nk:
-    scan: 20
+    scan: 40
     reference: 100
 
   band:
@@ -39,7 +39,7 @@ equilibrium:
 
 scan:
   temperature:
-    nt: 20
+    nt: 200
     min_ratio: 0.03
     max_ratio: 2.0
 

@@ -1,0 +1,36 @@
+model:
+  nk: 15
+  nt: 10
+
+  band:
+    name: tb_2d
+    pars:
+      gap: 1.0
+      ta: 1.0
+      tb: -0.3
+
+  mean_field:
+    v: 5.0
+    n: 1.0
+    uh: null
+
+
+equilibrium:
+  initial:
+    t: 0.1
+    d: 1.0
+    m: 0.0
+
+  solve:
+    mix: [0.15, 0.15]
+    tol: 1.0e-10
+    nmax: 20000
+    chk: 20
+    prog: false
+
+  critical:
+    tlo: 1.0e-4
+    thi: 2.0
+    tol: 1.0e-7
+    nmax: 100
+    prog: true

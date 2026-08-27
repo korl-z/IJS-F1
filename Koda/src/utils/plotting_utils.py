@@ -25,7 +25,6 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import yaml
 from pathlib import Path
 
-
 def newfig(W=3.47412, h=0.6):
     fig, ax = plt.subplots(figsize=(W, h * W))
     ax.tick_params(which="both", direction="in")

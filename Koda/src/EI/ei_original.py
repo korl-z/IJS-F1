@@ -1,50 +1,10 @@
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
-import matplotlib.pyplot as plt
 from scipy.optimize import brentq, root
 from scipy.special import expit
 
-from multiprocessing import Pool, cpu_count
-from tqdm import tqdm
-
-import matplotlib.cm as cm
-import colormaps as cmaps
-import matplotlib.colors as colors
-from labellines import labelLines
-from matplotlib.cm import brg, ScalarMappable
-from matplotlib.colors import (
-    LogNorm,
-    TwoSlopeNorm,
-    LinearSegmentedColormap,
-    Normalize,
-    ListedColormap,
-)
-from matplotlib.lines import Line2D
-
 from dataclasses import dataclass
 from typing import Callable, Iterable
-
-import jax
-import jax.numpy as jnp
-from jax import random
-from jax import vmap
-
-W = 3.47412
-
-
-def newfig(h=0.6):
-    fig, ax = plt.subplots(figsize=(W, h * W))
-    ax.tick_params(which="both", direction="in")
-    return fig, ax
-
-
-# fermi dirac (E, mu, T)
-def fd(e, mu, t):
-    te = max(t, 1e-5)
-    return expit((mu - e) / te)
-
-
-
 
 Arr = NDArray[np.float64]
 

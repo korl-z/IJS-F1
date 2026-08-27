@@ -61,11 +61,12 @@ from matplotlib_inline.backend_inline import set_matplotlib_formats
 set_matplotlib_formats("png", dpi=300)
 
 #racunanje
-from Koda.EI_baths import ei_unified as eu
-from Koda.EI_baths import ei_jax as ej
-from Koda.utils.plotting_utils import plot_phase_diag, plot_energies_uv, plot_nalpha_beta, plot_nalpha_beta_bz
+from EI import ei_unified as eu
+from EI import ei_jax as ej
+from utils.plotting_utils import plot_phase_diag, plot_energies_uv, plot_nalpha_beta, plot_nalpha_beta_bz
+from utils.logger import logger, tqdm_bar
 
-OUT = "/home/kzeleznikar/IJS-F1/Koda/EI_baths/"
+OUT = "/home/kzeleznikar/IJS-F1/Koda/EI_baths/plots/"
 
 #setup config, bands and params
 cfg_path = Path("/home/kzeleznikar/IJS-F1/Koda/EI_baths/config/config_test.yaml")
@@ -96,9 +97,9 @@ def main():
     # za normalizacijo
     tc = eu.critical_temperature(bd_ref, p, **eq["critical"])
 
-    print("Delta_0 =", d0)
-    print("T_c     =", tc)
-    print("mu0     =", mu0)
+    logger.info(f"Delta_0 = {d0}")
+    logger.info(f"T_c     = {tc}")
+    logger.info(f"mu0     = {mu0}")
 
     #temperature grid
     tg = sc["temperature"]
@@ -115,17 +116,6 @@ def main():
     de = s0.d
     me = s0.m
 
-    # for q in tqdm(range(nt), desc="eq. mu_B refs"):
-    #     sq = eu.solve_eq(bd, p, t=t1a[q], d=1.0, m=0.0, **eq["solve"])
-
-    #     mua[q] = sq.mu
-
-    #     de = sq.d
-    #     me = sq.m
-
-    # print(mua)
-    # mu_B = np.mean(mua)
-
     #bath params
     bc = op["bath"]
 
@@ -133,6 +123,11 @@ def main():
 
     bpars = dict(bc["pars"])
     bpars["rate"] = rf
+
+    Ec = md["mean_field"]["v"] * md["mean_field"]["n"] /2 + (md["band"]["pars"]["ta"] + md["band"]["pars"]["tb"]) / (2 * (md["band"]["pars"]["ta"] - md["band"]["pars"]["tb"])) * (md["mean_field"]["v"] * s0.m - md["band"]["pars"]["gap"])
+    logger.info(Ec)
+
+    bpars["mu"] = Ec
 
     #plot phase diagram
     da = np.full((nt, nt), np.nan)
@@ -185,7 +180,7 @@ def main():
             ok[i, j] = ok[j, i]
 
     #make plot PD:
-    plot_phase_diag(da, d0, tn, config = cfg, OUT=OUT, name="phase_diag_test", save=True, overwrite=True)
+    plot_phase_diag(da, d0, tn, config = cfg, OUT=OUT, name="phase_diag_test", save=False, overwrite=True)
 
     #make reference points
     rs = cfg["ratio_sweep"]
@@ -302,17 +297,17 @@ def main():
 
         bar.set_postfix(r=f"{r[q]:.2f}", t1=f"{x1:.2f}", t2=f"{x2:.2f}", d=f"{abs(sp.d):.3e}", err=f"{sp.err:.2e}")
 
-    print("All converged:", np.all(oka))
-    print("Largest error:", np.max(era))
+    logger.info(f"All converged: {np.all(oka)}")
+    logger.info(f"Largest error: {np.max(era)}")
 
     #plot dispersion
     ra = r
-    plot_energies_uv(eaa, eba, ua, va, eah, ebh, ra, ks, kt, kl, cfg, OUT=OUT, name="energies_uv_test", save=True, overwrite=True)
+    plot_energies_uv(eaa, eba, ua, va, eah, ebh, ra, ks, kt, kl, cfg, OUT=OUT, name="energies_uv_test", save=False, overwrite=True)
 
     #plot n alpha, beta
-    plot_nalpha_beta(naa, nba, nea, neb, r, ks, kt, kl,cfg, OUT=OUT, name="nalpha_beta_test", save=True, overwrite=True)
+    plot_nalpha_beta(naa, nba, nea, neb, r, ks, kt, kl,cfg, OUT=OUT, name="nalpha_beta_test", save=False, overwrite=True)
     q0 = 4
-    plot_nalpha_beta_bz(nfa, r, q0, cfg, OUT=OUT, name="nalpha_beta_bz_test", save=True, overwrite=True)
+    plot_nalpha_beta_bz(nfa, r, q0, cfg, OUT=OUT, name="nalpha_beta_bz_test", save=False, overwrite=True)
 
 
 if __name__ == "__main__":

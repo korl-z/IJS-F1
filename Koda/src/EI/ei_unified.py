@@ -176,7 +176,7 @@ def reshape_mode(a: ArrayLike, bd: Bands) -> Arr:
 
 
 def mf_state(bd: Bands, p: MFPars, d: float, m: float) -> MFState:
-    """diagonalizira Hamiltonko, poracuna u_k, v_k, E_\pm, in okupacije in ostale parametre"""
+    """diagonalizira Hamiltonko, poracuna u_k, v_k, E_pm, in okupacije in ostale parametre"""
     na = 0.5 * (p.n + m)
     nb = 0.5 * (p.n - m)
     eah = bd.ea + p.h * nb
