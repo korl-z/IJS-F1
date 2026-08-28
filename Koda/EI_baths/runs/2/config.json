@@ -10,7 +10,7 @@
     "initial": {
       "d": 1.0,
       "m": 0.0,
-      "t": 0.0
+      "t": 0.1
     },
     "solve": {
       "chk": 20,
@@ -27,7 +27,7 @@
     "band": {
       "name": "tb_2d",
       "pars": {
-        "gap": -0.2,
+        "gap": -0.3,
         "ta": 1.0,
         "tb": -0.6
       }
@@ -39,7 +39,7 @@
     },
     "nk": {
       "reference": 100,
-      "scan": 20
+      "scan": 40
     }
   },
   "open_system": {
@@ -78,8 +78,8 @@
     "temperature": {
       "max_ratio": 2.0,
       "min_ratio": 0.03,
-      "nt": 20
+      "nt": 200
     }
   },
-  "seed": 315262317
+  "seed": 711925208
 }

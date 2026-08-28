@@ -1,12 +1,12 @@
 model:
   nk:
-    scan: 20
-    reference: 100
+    scan: 25
+    reference: 50
 
   band:
     name: tb_2d
     pars:
-      gap: -0.2
+      gap: -0.3
       ta: 1.0
       tb: -0.6
 
@@ -18,7 +18,7 @@ model:
 
 equilibrium:
   initial:
-    t: 0.0
+    t: 0.1
     d: 1.0
     m: 0.0
 

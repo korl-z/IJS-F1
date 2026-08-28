@@ -1,13 +1,13 @@
 model:
-  nk: 15
-  nt: 10
+  nk: 20
+  nt: 30
 
   band:
     name: tb_2d
     pars:
       gap: 1.0
       ta: 1.0
-      tb: -0.3
+      tb: -1.0
 
   mean_field:
     v: 5.0

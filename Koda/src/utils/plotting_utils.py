@@ -15,15 +15,12 @@ from matplotlib.colors import (
     Normalize,
     ListedColormap,
 )
-from matplotlib.lines import Line2D
 
-import jax
-import jax.numpy as jnp
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-
 
 import yaml
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 
 def plot_phase_diag(
@@ -82,7 +79,7 @@ def plot_phase_diag(
         print("Saved:", plot_file)
 
         plt.show()
-        plt.close(fig)
+        # plt.close(fig)
 
 
 def plot_nalpha_beta(
@@ -176,8 +173,8 @@ def plot_nalpha_beta(
 
         print("Saved:", plot_file)
 
-    plt.show()
-    plt.close(fig)
+        plt.show()
+        # plt.close(fig)
 
 
 def plot_nalpha_beta_bz(
@@ -277,8 +274,8 @@ def plot_nalpha_beta_bz(
 
         print("Saved:", plot_file)
 
-    plt.show()
-    plt.close(fig)
+        plt.show()
+        # plt.close(fig)
 
 
 def plot_energies_uv(
@@ -379,8 +376,8 @@ def plot_energies_uv(
 
         print("Saved:", plot_file)
 
-    plt.show()
-    plt.close(fig)
+        plt.show()
+        # plt.close(fig)
 
 
 def newfig(nrows=1, ncols=1, W=3.47412, h=0.6, sharex=False, sharey=False):
@@ -423,3 +420,10 @@ def finishfig(fig, config=None, OUT=None, name="figure", save=False, overwrite=F
         print("Saved:", pars_file)
 
     plt.show()
+
+
+def addplot(run, fun, *args, name, **kwargs):
+    with TemporaryDirectory() as tmp:
+        fn = Path(tmp) / f"{name}.pdf"
+        fun(*args, OUT=tmp, name=name, save=True, overwrite=True, **kwargs)
+        run.add_artifact(str(fn), name=fn.name)
