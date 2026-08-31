@@ -1,17 +1,17 @@
 model:
   nk:
-    scan: 25
-    reference: 50
+    scan: 20
+    reference: 100
 
   band:
     name: tb_2d
     pars:
-      gap: -0.3
+      gap: 3.0
       ta: 1.0
-      tb: -0.6
+      tb: -1.0
 
   mean_field:
-    v: 2.0
+    v: 4.5
     n: 1.0
     uh: null
 
@@ -39,7 +39,7 @@ equilibrium:
 
 scan:
   temperature:
-    nt: 20
+    nt: 150
     min_ratio: 0.03
     max_ratio: 2.0
 
@@ -52,14 +52,14 @@ open_system:
     rate: rate_product
     pars:
       wc: .inf
-      kap: [0.3, 0.6, 0.3]
+      kap: [0.1, 0.2, 0.1]
       mu: 1.5
 
   solve:
     dt: 0.8
     td: 0.3
     tm: 0.3
-    tol: 5.0e-5
+    tol: 1.0e-6
     nmax: 20000
     chk: 20
     prog: false
@@ -67,5 +67,5 @@ open_system:
 ratio_sweep:
   x0: 0.7
   r_min: 1.0
-  r_max: 3.0
+  r_max: 4.0
   r_step: 0.2

@@ -40,16 +40,8 @@ def plot_phase_diag(
     cbar.set_label(r"$\Delta/\Delta_0$", rotation=90, labelpad=5)
 
     # probe points
-    r = np.array(
-        [
-            x**2
-            for x in np.arange(
-                config["ratio_sweep"]["r_min"],
-                config["ratio_sweep"]["r_max"],
-                config["ratio_sweep"]["r_step"],
-            )
-        ]
-    )
+    r = np.arange(config["ratio_sweep"]["r_min"], config["ratio_sweep"]["r_max"] + config["ratio_sweep"]["r_step"], config["ratio_sweep"]["r_step"])
+
     ax.scatter(
         config["ratio_sweep"]["x0"] * np.sqrt(r),
         config["ratio_sweep"]["x0"] / np.sqrt(r),
