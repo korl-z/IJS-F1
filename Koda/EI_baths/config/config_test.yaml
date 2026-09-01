@@ -1,17 +1,17 @@
 model:
   nk:
     scan: 20
-    reference: 100
+    reference: 50
 
   band:
     name: tb_2d
     pars:
-      gap: 3.0
+      gap: 2.0
       ta: 1.0
       tb: -1.0
 
   mean_field:
-    v: 4.5
+    v: 4.4
     n: 1.0
     uh: null
 
@@ -68,4 +68,4 @@ ratio_sweep:
   x0: 0.7
   r_min: 1.0
   r_max: 4.0
-  r_step: 0.2
+  r_step: 0.7

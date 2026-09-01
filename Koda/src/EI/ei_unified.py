@@ -153,7 +153,9 @@ def tb_2d(nk: int, gap: float, ta: float, tb: float, a0: float = 1.0) -> Bands:
     q = np.linspace(-np.pi / a0, np.pi / a0, nk, endpoint=False)
     kx, ky = np.meshgrid(q, q, indexing="ij")
     c = np.cos(kx * a0) + np.cos(ky * a0)
-    ea = 0.5 * gap - 2.0 * ta * c
+    # ea = 0.5 * gap - 2.0 * ta * c  + 4 * ta 
+    # eb = -0.5 * gap - 2.0 * tb * c + 4 * tb 
+    ea = 0.5 * gap - 2.0 * ta * c 
     eb = -0.5 * gap - 2.0 * tb * c
     k = np.stack((kx, ky), axis=-1).reshape(-1, 2)
     return Bands(k, ea.reshape(-1), eb.reshape(-1), np.ones(nk * nk), (nk, nk))

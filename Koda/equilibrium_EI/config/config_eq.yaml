@@ -1,23 +1,22 @@
 model:
-  nk: 20
+  nk: 50
   nt: 30
 
   band:
     name: tb_2d
     pars:
-      gap: 3.0
+      gap: 1.0
       ta: 1.0
       tb: -1.0
 
   mean_field:
-    v: 5.0
+    v: 15.129
     n: 1.0
     uh: null
 
-
 equilibrium:
   initial:
-    t: 0.1
+    t: 0.001
     d: 1.0
     m: 0.0
 
@@ -30,7 +29,7 @@ equilibrium:
 
   critical:
     tlo: 1.0e-4
-    thi: 2.0
+    thi: 5.0
     tol: 1.0e-7
     nmax: 100
     prog: true

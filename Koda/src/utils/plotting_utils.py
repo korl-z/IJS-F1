@@ -42,11 +42,11 @@ def plot_phase_diag(
     # probe points
     r = np.arange(config["ratio_sweep"]["r_min"], config["ratio_sweep"]["r_max"] + config["ratio_sweep"]["r_step"], config["ratio_sweep"]["r_step"])
 
-    ax.scatter(
-        config["ratio_sweep"]["x0"] * np.sqrt(r),
-        config["ratio_sweep"]["x0"] / np.sqrt(r),
-        color="green",
-    )
+    # ax.scatter(
+    #     config["ratio_sweep"]["x0"] * np.sqrt(r),
+    #     config["ratio_sweep"]["x0"] / np.sqrt(r),
+    #     color="green",
+    # )
 
     ax.set_xlabel(r"$T_1/T_c$")
     ax.set_ylabel(r"$T_2/T_c$")
