@@ -11,14 +11,14 @@ model:
       tb: -1.0
 
   mean_field:
-    v: 4.4
+    v: 6.3673
     n: 1.0
     uh: null
 
 
 equilibrium:
   initial:
-    t: 0.1
+    t: 0.001
     d: 1.0
     m: 0.0
 
@@ -39,9 +39,9 @@ equilibrium:
 
 scan:
   temperature:
-    nt: 150
+    nt: 200
     min_ratio: 0.03
-    max_ratio: 2.0
+    max_ratio: 3.0
 
   continuation:
     d_floor_frac: 0.1
@@ -53,7 +53,7 @@ open_system:
     pars:
       wc: .inf
       kap: [0.1, 0.2, 0.1]
-      mu: 1.5
+      mu: 0.0 #dodatno nastavljeno v kodi na V/2, ko ta=-tb
 
   solve:
     dt: 0.8
@@ -68,4 +68,4 @@ ratio_sweep:
   x0: 0.7
   r_min: 1.0
   r_max: 4.0
-  r_step: 0.7
+  r_step: 1.0
