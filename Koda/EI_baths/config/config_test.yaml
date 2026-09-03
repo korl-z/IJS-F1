@@ -11,7 +11,7 @@ model:
       tb: -1.0
 
   mean_field:
-    v: 6.3673
+    v: 6.37
     n: 1.0
     uh: null
 
@@ -39,9 +39,9 @@ equilibrium:
 
 scan:
   temperature:
-    nt: 200
+    nt: 20
     min_ratio: 0.03
-    max_ratio: 3.0
+    max_ratio: 6.0
 
   continuation:
     d_floor_frac: 0.1
@@ -67,5 +67,5 @@ open_system:
 ratio_sweep:
   x0: 0.7
   r_min: 1.0
-  r_max: 4.0
-  r_step: 1.0
+  r_max: 100.0
+  r_step: 10.0

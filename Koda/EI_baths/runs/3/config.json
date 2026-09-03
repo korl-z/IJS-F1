@@ -1,0 +1,85 @@
+{
+  "equilibrium": {
+    "critical": {
+      "nmax": 100,
+      "prog": true,
+      "thi": 2.0,
+      "tlo": 0.0001,
+      "tol": 1e-07
+    },
+    "initial": {
+      "d": 1.0,
+      "m": 0.0,
+      "t": 0.001
+    },
+    "solve": {
+      "chk": 20,
+      "mix": [
+        0.15,
+        0.15
+      ],
+      "nmax": 20000,
+      "prog": false,
+      "tol": 1e-10
+    }
+  },
+  "model": {
+    "band": {
+      "name": "tb_2d",
+      "pars": {
+        "gap": 2.0,
+        "ta": 1.0,
+        "tb": -1.0
+      }
+    },
+    "mean_field": {
+      "n": 1.0,
+      "uh": null,
+      "v": 7.8
+    },
+    "nk": {
+      "reference": 50,
+      "scan": 20
+    }
+  },
+  "open_system": {
+    "bath": {
+      "pars": {
+        "kap": [
+          0.1,
+          0.2,
+          0.1
+        ],
+        "mu": 0.0,
+        "wc": Infinity
+      },
+      "rate": "rate_product"
+    },
+    "solve": {
+      "chk": 20,
+      "dt": 0.8,
+      "nmax": 20000,
+      "prog": false,
+      "td": 0.3,
+      "tm": 0.3,
+      "tol": 1e-06
+    }
+  },
+  "ratio_sweep": {
+    "r_max": 100.0,
+    "r_min": 1.0,
+    "r_step": 10.0,
+    "x0": 0.7
+  },
+  "scan": {
+    "continuation": {
+      "d_floor_frac": 0.1
+    },
+    "temperature": {
+      "max_ratio": 6.0,
+      "min_ratio": 0.03,
+      "nt": 20
+    }
+  },
+  "seed": 773706405
+}

@@ -1,19 +1,63 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 from tqdm import tqdm
 from pathlib import Path
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
 
+#jax import 
+from utils.logger import jax, jnp
+# import os
+# os.environ["XLA_PYTHON_CLIENT_PREALLOCATE"] = "false"
+# os.environ["JAX_ENABLE_X64"] = "true"
+
+# import jax
+# jax.config.update("jax_enable_x64", True)
+# import jax.numpy as jnp
+
+# print("JAX x64:", jax.config.x64_enabled)
+# print("JAX dtype:", jnp.asarray(1.0).dtype)
+
+# #kozmetika
+# import matplotlib.cm as cm
+# import colormaps as cmaps
+# from matplotlib.colors import LinearSegmentedColormap
+
+# plt.rcParams.update(
+#     {
+#         "text.usetex": False,
+#         "font.family": "sans-serif",
+#         "font.sans-serif": ["Calibri"],
+#         "font.size": 8,
+#         "mathtext.fontset": "cm",
+#     }
+# )
+
+# gnuplot_barve = cm.gnuplot2_r(np.linspace(0.3, 1, 10))
+# gnuplot_custom = LinearSegmentedColormap.from_list("gnuplot_custom", gnuplot_barve)
+
+# brg_barve = cmaps.guppy(np.linspace(0, 1, 10))
+# bgr_custom = LinearSegmentedColormap.from_list("bgr_custom", brg_barve)
+
+# YlGn_barve = cm.YlGn(np.linspace(0, 0.8, 10))
+# ylgn_custom = LinearSegmentedColormap.from_list("ylgn_custom", YlGn_barve)
+
+# markers = ["o", "D", "^", "x", "v", "<", ">", "p", "*", "X"]
+
+# set1_list = ["#e41a1c","#377eb8","#4daf4a","#984ea3","#ff7f00","#f781bf","#999999","#a65628",
+# ]
+# bold_list = ["#7f3c8d","#11a579","#3969ac","#e73f74","#f2b701","#80ba5a","#e68310","#008695","#cf1c90","#f97b72","#a5aa99"]
+
 #kozmetika
-from utils.cosmetics import apply_plt_style
+from utils.cosmetics import apply_plt_style, SET1_LIST
 apply_plt_style()
 
 #racunanje
 from EI import ei_unified as eu
 from EI import ei_jax as ej
 from utils.plotting_utils import plot_phase_diag, plot_energies_uv, plot_nalpha_beta, plot_nalpha_beta_bz, addplot
-from utils.logger import logger, jax, jnp
+from utils.logger import logger
 
 #setup config, bands and params
 cfg_path = Path("/home/kzeleznikar/IJS-F1/Koda/EI_baths/config/config_test.yaml")
