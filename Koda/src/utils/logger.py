@@ -125,3 +125,18 @@ def tqdm_bar(
 
 
 logger = setup_logger()
+
+
+# JAX Configuration before jax import
+os.environ["XLA_PYTHON_CLIENT_PREALLOCATE"] = "false"
+os.environ["JAX_ENABLE_X64"] = "true"
+
+import jax
+import jax.numpy as jnp
+
+jax.config.update("jax_enable_x64", True)
+
+def init_jax():
+    """Prints and verifies JAX x64 configuration."""
+    print("JAX x64:", jax.config.x64_enabled)
+    print("JAX dtype:", jnp.asarray(1.0).dtype)
