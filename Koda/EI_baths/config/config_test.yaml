@@ -1,7 +1,7 @@
 model:
   nk:
     scan: 20
-    reference: 50
+    reference: 100
 
   band:
     name: tb_2d
@@ -11,7 +11,7 @@ model:
       tb: -1.0
 
   mean_field:
-    v: 6.37
+    v: 7.784
     n: 1.0
     uh: null
 
@@ -39,8 +39,8 @@ equilibrium:
 
 scan:
   temperature:
-    nt: 20
-    min_ratio: 0.03
+    nt: 200
+    min_ratio: 0.01
     max_ratio: 6.0
 
   continuation:

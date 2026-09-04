@@ -1,85 +1,0 @@
-INFO - phase_diag_diagnostics - Running command 'main'
-INFO - phase_diag_diagnostics - Started run with ID "3"
-kriticna temp bisekcija:   0%|          | 0/100 [00:00<?, ?it/s]kriticna temp bisekcija:   2%|▏         | 2/100 [00:00<00:06, 15.61it/s]kriticna temp bisekcija:   4%|▍         | 4/100 [00:00<00:05, 17.08it/s]kriticna temp bisekcija:   7%|▋         | 7/100 [00:00<00:04, 20.21it/s]kriticna temp bisekcija:  11%|█         | 11/100 [00:00<00:03, 25.20it/s]kriticna temp bisekcija:  24%|██▍       | 24/100 [00:00<00:01, 41.54it/s]
-[90m[08:24:58][0m [32m[1m[INFO    ][0m Delta_0 = 1.0033924410493213
-[90m[08:24:58][0m [32m[1m[INFO    ][0m T_c     = 0.5496037150278688
-[90m[08:24:58][0m [32m[1m[INFO    ][0m mu0     = 2.6955506032178915
-[90m[08:24:58][0m [32m[1m[INFO    ][0m 3.9
-T2:   0%|          | 0/20 [00:00<?, ?it/s]
-T1:   0%|          | 0/20 [00:00<?, ?it/s][A
-T1:   5%|▌         | 1/20 [00:00<00:06,  2.77it/s][A
-T1:  15%|█▌        | 3/20 [00:00<00:02,  5.94it/s][A
-T1:  25%|██▌       | 5/20 [00:00<00:01,  7.95it/s][A
-T1:  55%|█████▌    | 11/20 [00:00<00:00, 18.59it/s][A
-                                                   [AT2:   5%|▌         | 1/20 [00:00<00:18,  1.03it/s]
-T1:   0%|          | 0/19 [00:00<?, ?it/s][A
-T1:  11%|█         | 2/19 [00:00<00:01,  9.95it/s][A
-T1:  21%|██        | 4/19 [00:00<00:01, 11.44it/s][A
-T1:  58%|█████▊    | 11/19 [00:00<00:00, 28.89it/s][A
-                                                   [AT2:  10%|█         | 2/20 [00:02<00:23,  1.29s/it]
-T1:   0%|          | 0/18 [00:00<?, ?it/s][A
-T1:  17%|█▋        | 3/18 [00:00<00:00, 22.76it/s][A
-T1:  61%|██████    | 11/18 [00:00<00:00, 47.50it/s][A
-                                                   [AT2:  15%|█▌        | 3/20 [00:04<00:26,  1.58s/it]
-T1:   0%|          | 0/17 [00:00<?, ?it/s][A
-T1:  35%|███▌      | 6/17 [00:00<00:00, 58.78it/s][A
-T1:  76%|███████▋  | 13/17 [00:00<00:00, 15.96it/s][A
-                                                   [AT2:  20%|██        | 4/20 [00:14<01:18,  4.90s/it]
-T1:   0%|          | 0/16 [00:00<?, ?it/s][A
-T1:  44%|████▍     | 7/16 [00:00<00:00, 68.39it/s][A
-                                                  [AT2:  25%|██▌       | 5/20 [00:16<01:00,  4.03s/it]
-T1:   0%|          | 0/15 [00:00<?, ?it/s][A
-T1:  60%|██████    | 9/15 [00:00<00:00, 83.44it/s][A
-                                                  [AT2:  30%|███       | 6/20 [00:17<00:40,  2.89s/it]
-T1:   0%|          | 0/14 [00:00<?, ?it/s][A
-T1:  71%|███████▏  | 10/14 [00:00<00:00, 95.57it/s][A
-                                                   [AT2:  35%|███▌      | 7/20 [00:18<00:27,  2.10s/it]
-T1:   0%|          | 0/13 [00:00<?, ?it/s][A
-T1:  77%|███████▋  | 10/13 [00:00<00:00, 99.87it/s][A
-                                                   [AT2:  40%|████      | 8/20 [00:18<00:18,  1.56s/it]
-T1:   0%|          | 0/12 [00:00<?, ?it/s][A
-T1:  92%|█████████▏| 11/12 [00:00<00:00, 106.40it/s][A
-                                                    [AT2:  45%|████▌     | 9/20 [00:18<00:12,  1.17s/it]
-T1:   0%|          | 0/11 [00:00<?, ?it/s][A
-T1: 100%|██████████| 11/11 [00:00<00:00, 109.36it/s][A
-                                                    [AT2:  50%|█████     | 10/20 [00:19<00:08,  1.11it/s]
-T1:   0%|          | 0/10 [00:00<?, ?it/s][A
-                                          [AT2:  55%|█████▌    | 11/20 [00:19<00:06,  1.44it/s]
-T1:   0%|          | 0/9 [00:00<?, ?it/s][A
-                                         [AT2:  60%|██████    | 12/20 [00:19<00:04,  1.83it/s]
-T1:   0%|          | 0/8 [00:00<?, ?it/s][A
-                                         [AT2:  65%|██████▌   | 13/20 [00:19<00:03,  2.28it/s]
-T1:   0%|          | 0/7 [00:00<?, ?it/s][A
-                                         [AT2:  70%|███████   | 14/20 [00:19<00:02,  2.75it/s]
-T1:   0%|          | 0/6 [00:00<?, ?it/s][A
-                                         [AT2:  75%|███████▌  | 15/20 [00:20<00:01,  3.27it/s]
-T1:   0%|          | 0/5 [00:00<?, ?it/s][A
-                                         [AT2:  80%|████████  | 16/20 [00:20<00:01,  3.81it/s]
-T1:   0%|          | 0/4 [00:00<?, ?it/s][A
-                                         [AT2:  85%|████████▌ | 17/20 [00:20<00:00,  4.35it/s]
-T1:   0%|          | 0/3 [00:00<?, ?it/s][A
-                                         [AT2:  90%|█████████ | 18/20 [00:20<00:00,  4.94it/s]
-T1:   0%|          | 0/2 [00:00<?, ?it/s][A
-                                         [AT2:  95%|█████████▌| 19/20 [00:20<00:00,  5.60it/s]
-T1:   0%|          | 0/1 [00:00<?, ?it/s][A
-                                         [AT2: 100%|██████████| 20/20 [00:20<00:00,  6.30it/s]T2: 100%|██████████| 20/20 [00:20<00:00,  1.04s/it]
-WARNING - matplotlib.font_manager - findfont: Failed to find font weight normal, now using 300.
-WARNING - matplotlib.font_manager - findfont: Failed to find font weight normal, now using 300.
-Saved: /tmp/tmpjc2apm3a/phase_diag_test.pdf
-Ratio sweep:   0%|          | 0/10 [00:00<?, ?it/s]Ratio sweep:   0%|          | 0/10 [00:00<?, ?it/s, d=8.647e-01, err=9.10e-08, r=1.00, t1=0.70, t2=0.70]Ratio sweep:  10%|█         | 1/10 [00:00<00:08,  1.03it/s, d=8.647e-01, err=9.10e-08, r=1.00, t1=0.70, t2=0.70]Ratio sweep:  10%|█         | 1/10 [00:01<00:08,  1.03it/s, d=4.890e-05, err=6.71e-07, r=121.00, t1=7.70, t2=0.06]Ratio sweep:  20%|██        | 2/10 [00:01<00:04,  1.67it/s, d=4.890e-05, err=6.71e-07, r=121.00, t1=7.70, t2=0.06]Ratio sweep:  20%|██        | 2/10 [00:01<00:04,  1.67it/s, d=3.727e-05, err=4.51e-07, r=441.00, t1=14.70, t2=0.03]Ratio sweep:  30%|███       | 3/10 [00:01<00:02,  2.36it/s, d=3.727e-05, err=4.51e-07, r=441.00, t1=14.70, t2=0.03]Ratio sweep:  30%|███       | 3/10 [00:01<00:02,  2.36it/s, d=2.524e-05, err=2.76e-07, r=961.00, t1=21.70, t2=0.02]Ratio sweep:  40%|████      | 4/10 [00:01<00:02,  2.97it/s, d=2.524e-05, err=2.76e-07, r=961.00, t1=21.70, t2=0.02]Ratio sweep:  40%|████      | 4/10 [00:01<00:02,  2.97it/s, d=1.697e-05, err=5.12e-07, r=1681.00, t1=28.70, t2=0.02]Ratio sweep:  50%|█████     | 5/10 [00:01<00:01,  3.67it/s, d=1.697e-05, err=5.12e-07, r=1681.00, t1=28.70, t2=0.02]Ratio sweep:  50%|█████     | 5/10 [00:02<00:01,  3.67it/s, d=1.193e-05, err=9.38e-07, r=2601.00, t1=35.70, t2=0.01]Ratio sweep:  60%|██████    | 6/10 [00:02<00:00,  4.19it/s, d=1.193e-05, err=9.38e-07, r=2601.00, t1=35.70, t2=0.01]Ratio sweep:  60%|██████    | 6/10 [00:02<00:00,  4.19it/s, d=1.016e-05, err=4.79e-07, r=3721.00, t1=42.70, t2=0.01]Ratio sweep:  70%|███████   | 7/10 [00:02<00:00,  4.95it/s, d=1.016e-05, err=4.79e-07, r=3721.00, t1=42.70, t2=0.01]Ratio sweep:  70%|███████   | 7/10 [00:02<00:00,  4.95it/s, d=1.307e-05, err=3.84e-07, r=5041.00, t1=49.70, t2=0.01]Ratio sweep:  80%|████████  | 8/10 [00:02<00:00,  5.77it/s, d=1.307e-05, err=3.84e-07, r=5041.00, t1=49.70, t2=0.01]Ratio sweep:  80%|████████  | 8/10 [00:02<00:00,  5.77it/s, d=1.455e-05, err=1.94e-07, r=6561.00, t1=56.70, t2=0.01]Ratio sweep:  90%|█████████ | 9/10 [00:02<00:00,  6.49it/s, d=1.455e-05, err=1.94e-07, r=6561.00, t1=56.70, t2=0.01]Ratio sweep:  90%|█████████ | 9/10 [00:02<00:00,  6.49it/s, d=1.384e-05, err=9.35e-07, r=8281.00, t1=63.70, t2=0.01]Ratio sweep: 100%|██████████| 10/10 [00:02<00:00,  6.87it/s, d=1.384e-05, err=9.35e-07, r=8281.00, t1=63.70, t2=0.01]Ratio sweep: 100%|██████████| 10/10 [00:02<00:00,  3.94it/s, d=1.384e-05, err=9.35e-07, r=8281.00, t1=63.70, t2=0.01]
-[90m[08:25:28][0m [32m[1m[INFO    ][0m All converged: True
-[90m[08:25:28][0m [32m[1m[INFO    ][0m Largest error: 9.379346010973677e-07
-Plotting:   0%|          | 0/10 [00:00<?, ?it/s]Plotting: 100%|██████████| 10/10 [00:00<00:00, 1385.36it/s]
-/home/kzeleznikar/IJS-F1/Koda/src/utils/plotting_utils.py:356: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
-  plt.tight_layout()
-Saved: /tmp/tmpre7f2rbl/energies_uv_test.pdf
-Plotting:   0%|          | 0/10 [00:00<?, ?it/s]Plotting: 100%|██████████| 10/10 [00:00<00:00, 2770.71it/s]
-/home/kzeleznikar/IJS-F1/Koda/src/utils/plotting_utils.py:153: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
-  plt.tight_layout()
-WARNING - matplotlib.font_manager - findfont: Failed to find font weight normal, now using 300.
-WARNING - matplotlib.font_manager - findfont: Failed to find font weight normal, now using 300.
-Saved: /tmp/tmph8vxgsth/nalpha_beta_test.pdf
-/home/kzeleznikar/IJS-F1/Koda/src/utils/plotting_utils.py:254: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
-  plt.tight_layout()
-Saved: /tmp/tmpgyewpvqa/nalpha_beta_bz_test.pdf
-INFO - phase_diag_diagnostics - Completed after 0:00:51

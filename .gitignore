@@ -451,3 +451,5 @@ papirologija/
 **/naloge/
 .vscode/
 redundant/
+_resources/
+_sources/
