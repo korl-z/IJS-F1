@@ -374,7 +374,7 @@ def pair_lambda(
     q[ix] = (s.n[1, ix] - s.n[0, ix]) / (2.0 * ek[ix])
     f0 = 0.5 * (s.n[0, ~ix] + s.n[1, ~ix])
     q[~ix] = f0 * (1.0 - f0) / t
-    la = p.v * np.sum(bd.w * q)  # λ​=V ∑​wk (​nβk​−nαk​​) / ​2Ek.
+    la = p.v * np.sum(bd.w * q)  # λ​=V ∑​wk (​nβk​−nαk​​) / ​2xik.
     return float(la), s
 
 

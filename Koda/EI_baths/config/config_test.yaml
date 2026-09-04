@@ -39,7 +39,7 @@ equilibrium:
 
 scan:
   temperature:
-    nt: 200
+    nt: 20
     min_ratio: 0.01
     max_ratio: 6.0
 
