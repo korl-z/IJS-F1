@@ -22,10 +22,9 @@ from EI.ei_utils import gap_info
 
 CFG = Path("/home/kzeleznikar/IJS-F1/Koda/EI_baths/config/config_test.yaml")
 RUNS = Path("/home/kzeleznikar/IJS-F1/Koda/EI_baths/runs")
-SHOW = True
+SHOW = False
 
-# Example custom folder:
-# python phase_map_plots.py --id=phase_maps_v5_20260904
+# python phase_map_plots.py --id=phase_maps_v5_20260904 #za custom imena folderjev
 
 
 with CFG.open("r", encoding="utf-8") as f:
@@ -40,20 +39,20 @@ ex.observers.append(FileStorageObserver.create(str(RUNS)))
 
 
 def make_baths(t1, t2, bp):
-    """Build the two bath objects."""
+    """build baths"""
     b1 = ej.gam_db(t=t1, name="bath 1", **bp)
     b2 = ej.gam_db(t=t2, name="bath 2", **bp)
     return b1, b2
 
 
 def put_sym(a, i, j, x):
-    """Write one result to both halves of a symmetric map."""
+    """simetrizita cmap"""
     a[j, i] = x
     a[i, j] = x
 
 
 def scan_maps(bd, p, eq, op, ta, d0, m0, mu):
-    """Compute the upper triangle and mirror it across T1 equals T2."""
+    """mirrora trikotnik"""
     nt = ta.size
     sh = (nt, nt)
     da = np.full(sh, np.nan)
@@ -109,7 +108,7 @@ def scan_maps(bd, p, eq, op, ta, d0, m0, mu):
 
 
 def plot_maps(pt, tn, z, d0):
-    """Save the five maps as separate PDF artifacts."""
+    """save cmaps"""
     maps = (
         ("gap_map", z["delta"] / d0, r"$\Delta/\Delta_0$", cmaps.lipari),
         ("hartree_gap_map", z["hartree"] / d0,
@@ -127,7 +126,7 @@ def plot_maps(pt, tn, z, d0):
 
 
 def save_data(run, tn, z, d0, tc):
-    """Store the numerical map data in the same Sacred run."""
+    """store data"""
     with TemporaryDirectory() as tmp:
         fn = Path(tmp) / "phase_maps.npz"
         np.savez_compressed(fn, tn=tn, d0=d0, tc=tc, **z)
@@ -136,7 +135,7 @@ def save_data(run, tn, z, d0, tc):
 
 @ex.automain
 def main(_run, model, equilibrium, scan, open_system, phase_maps):
-    """Run the map calculation and save five plots plus the raw arrays."""
+    """map loop run"""
     apply_plt_style()
     _run.add_resource(str(CFG))
 

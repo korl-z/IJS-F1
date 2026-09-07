@@ -63,26 +63,26 @@ ex.observers.append(FileStorageObserver.create(str(RUNS)))
 
 
 def fd(z):
-    """Stable Fermi-Dirac function for a dimensionless argument."""
+    """FD"""
     return 1.0 / (np.exp(np.clip(z, -500.0, 500.0)) + 1.0)
 
 
 def fd_t(e, t):
-    """Fermi-Dirac function with a zero-temperature limit."""
+    """FD za T=0"""
     if t <= 0.0:
         return np.where(e < 0.0, 1.0, np.where(e > 0.0, 0.0, 0.5))
     return fd(e / t)
 
 
 def make_baths(t1, t2, bp):
-    """Build the two bath objects without repeating the rate setup."""
+    """naredi kopeli"""
     b1 = ej.gam_db(t=t1, name="bath 1", **bp)
     b2 = ej.gam_db(t=t2, name="bath 2", **bp)
     return b1, b2
 
 
 def k_edges(x):
-    """Convert uniform cell centers to pcolormesh edges."""
+    """"""
     x = np.asarray(x)
     xm = 0.5 * (x[:-1] + x[1:])
     return np.r_[x[0] - 0.5 * (x[1] - x[0]), xm,
@@ -90,7 +90,7 @@ def k_edges(x):
 
 
 def k_path(bd):
-    """Return the Gamma-X-M-Gamma path on the square momentum grid."""
+    """trikotnik Gamma-X-M"""
     kg = np.asarray(bd.k).reshape(bd.shape + (bd.dim,))
     ig = np.unravel_index(np.argmin(np.linalg.norm(kg, axis=-1)), bd.shape)
     i0 = int(ig[0])
@@ -112,7 +112,7 @@ def k_path(bd):
 
 
 def take_path(z, ij, sh):
-    """Take one or two flattened fields along a grid path."""
+    """path iz 2d grida"""
     z = np.asarray(z)
     if z.ndim == 1:
         z = z.reshape(sh)
@@ -122,7 +122,7 @@ def take_path(z, ij, sh):
 
 
 def color_line(ax, x, y, c, w, cmap, norm, ls="-", label=None):
-    """Draw a line colored by occupation and weighted by orbital character."""
+    """line occupation kozmetika"""
     xy = np.column_stack((x, y)).reshape(-1, 1, 2)
     sg = np.concatenate((xy[:-1], xy[1:]), axis=1)
     cc = 0.5 * (c[:-1] + c[1:])
@@ -137,7 +137,7 @@ def color_line(ax, x, y, c, w, cmap, norm, ls="-", label=None):
 
 
 def solve_state(bd, p, eq, op, r1, r2, tc, d0, m0, nc):
-    """Continue from the cold equilibrium state to one selected bath pair."""
+    """main funckija, resi za stanje pri fixed T1, T2"""
     t1, t2 = r1 * tc, r2 * tc
     mu = 0.5 * p.v
     bc = op["bath"]
@@ -168,7 +168,7 @@ def solve_state(bd, p, eq, op, r1, r2, tc, d0, m0, nc):
 
 
 def solve_teff(bd, p, bs, st, t1, t2, mu, op, ep):
-    """Fit the zero-power effective thermal state."""
+    """Najde beta_eff."""
     kw = dict(ep)
     kw.setdefault("mode", op["solve"].get("mode", "block"))
     kw.setdefault("block", op["solve"].get("block", 512))
@@ -181,7 +181,7 @@ def solve_teff(bd, p, bs, st, t1, t2, mu, op, ep):
 
 
 def plot_dispersion(pt, bd, st, mu):
-    """Plot bare, Hartree, and diagonal bands on Gamma-X-M-Gamma."""
+    """band disperzije"""
     ij, x, xt = k_path(bd)
     eb = take_path(np.stack((bd.ea, bd.eb)), ij, bd.shape)
     eh = take_path(np.stack((st.st.eah, st.st.ebh)), ij, bd.shape) - mu
@@ -222,7 +222,7 @@ def plot_dispersion(pt, bd, st, mu):
 
 
 def plot_energy(pt, st, sf, t1, t2, mu, d0):
-    """Plot NESS occupations and thermal curves against energy."""
+    """NESS zasedenosti vs E"""
     en = (np.asarray(st.st.e) - mu) / d0
     ef = (np.asarray(sf.st.e) - mu) / d0
     nn = np.asarray(st.n)
@@ -248,7 +248,7 @@ def plot_energy(pt, st, sf, t1, t2, mu, d0):
 
 
 def plot_xi(pt, bd, p, eq, st, sf, t1, t2, d0):
-    """Plot the same occupation comparison against the normal-state xi."""
+    """NESS okupacije vs xi"""
     es = {**eq["solve"], "prog": False}
     s1 = eu.solve_eq(bd, p, t=t1, d=max(d0, 1.0e-3), m=st.m, **es)
     s2 = eu.solve_eq(bd, p, t=t2, d=max(d0, 1.0e-3), m=st.m, **es)
@@ -281,7 +281,7 @@ def plot_xi(pt, bd, p, eq, st, sf, t1, t2, d0):
 
 
 def plot_bz(pt, bd, st):
-    """Plot alpha and beta occupations over the two-dimensional zone."""
+    """2d cmap stanj"""
     kg = np.asarray(bd.k).reshape(bd.shape + (bd.dim,))
     kx = k_edges(kg[:, 0, 0] / np.pi)
     ky = k_edges(kg[0, :, 1] / np.pi)
@@ -312,12 +312,11 @@ def plot_bz(pt, bd, st):
 @ex.automain
 def main(_run, model, equilibrium, open_system, selected_state,
          effective_temperature):
-    """Run the selected-state calculation and create the four artifacts."""
+    """main run + Sacred"""
     apply_plt_style()
     _run.add_resource(str(CFG))
 
     nk = model["nk"]
-    bd = eu.tb_2d(nk["scan"], **model["band"]["pars"])
     br = eu.tb_2d(nk["reference"], **model["band"]["pars"])
     p = eu.MFPars(**model["mean_field"])
 

@@ -7,10 +7,10 @@ model:
     pars:
       gap: 2.0
       ta: 1.0
-      tb: -1.0
+      tb: -0.6
 
   mean_field:
-    v: 6.3673
+    v: 2.992 #5.110  # primera za nesimetricne bands
     n: 1.0
     uh: null
 
