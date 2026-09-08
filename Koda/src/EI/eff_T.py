@@ -47,13 +47,13 @@ def solve_eff(
     mf: bool = True,
     prog: bool = True,
 ) -> EffSol:
-    """Find the thermal strong-scattering fixed point of two baths."""
+    """thermal strong scattering fixed point iteracija/loop"""
     if beta0 <= 0.0 or dt <= 0.0 or tol <= 0.0:
-        raise ValueError("beta0, dt, and tol must be positive")
+        raise ValueError("beta0, dt, in tol niso > 0.0!")
     if nmax <= 0 or chk <= 0 or block <= 0:
-        raise ValueError("nmax, chk, and block must be positive")
+        raise ValueError("nmax, chk, in block niso > 0.0!")
     if fac <= 0.0 or fac >= 1.0:
-        raise ValueError("fac must lie between zero and one")
+        raise ValueError("fac mora biti 0<fac<1")
 
     ad, am = map(float, mix)
     if ad < 0.0 or am < 0.0:
@@ -61,7 +61,7 @@ def solve_eff(
 
     bs = tuple(bs)
     if not bs:
-        raise ValueError("at least one bath is required")
+        raise ValueError("vsaj en bath je required")
 
     mu = 0.5 * p.h * p.n if mu is None else float(mu)
     be = float(beta0)

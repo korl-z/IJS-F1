@@ -294,7 +294,7 @@ def plot_bz(pt, bd, st):
         im1 = color_map(q.ax[1], kx, ky, nf[1].T, cmap=cmaps.lipari,
                         vmin=0.0, vmax=1.0)
         q.ax[0].text(0.05, 0.93, r"$n_{\alpha\mathbf{k}}$",
-                     transform=q.ax[0].transAxes, ha="left", va="top")
+                     transform=q.ax[0].transAxes, ha="left", va="top", color="white")
         q.ax[1].text(0.05, 0.93, r"$n_{\beta\mathbf{k}}$",
                      transform=q.ax[1].transAxes, ha="left", va="top")
 
