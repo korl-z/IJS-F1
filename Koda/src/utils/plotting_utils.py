@@ -608,13 +608,13 @@ def format_ax(
     return ax
 
 
-def add_legend(ax, top=False, ncol=1, fontsize=8):
+def add_legend(ax, top=False, ncol=1, fontsize=8, loc="best"):
     if top:
         return ax.legend(
             bbox_to_anchor=(0, 1.02, 1, 0.2), loc="lower left",
             mode="expand", borderaxespad=0, ncol=ncol, fontsize=fontsize,
         )
-    return ax.legend(loc="best", ncol=ncol, fontsize=fontsize)
+    return ax.legend(loc=loc, ncol=ncol, fontsize=fontsize)
 
 
 def add_fig_legend(fig, ax, ncol=1, top=0.92, fontsize=8):

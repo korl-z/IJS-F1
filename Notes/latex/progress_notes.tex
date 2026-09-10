@@ -1,0 +1,169 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{tabularx} % extra features for tabular environment
+\usepackage{amsmath,amssymb,amsfonts,amsthm}  % improve math presentation
+\usepackage{graphicx} % takes care of graphic including machinery
+\usepackage{geometry} % decreases margins
+\geometry{
+  a4paper,
+  right=20mm,
+  left=20mm,
+  top=20mm,
+}
+
+%HEADER
+%\usepackage{fancyhdr}
+%\pagestyle{fancy}
+%\lhead{This is my name}
+%\rhead{this is page \thepage}
+% chktex-file 44
+% chktex-file 3
+% chktex-file 1
+% chktex-file 12
+% chktex-file 24
+% chktex-file 46
+% chktex-file 8
+% chktex-file 36
+
+%REFS, CITATI
+\usepackage[final]{hyperref} % advs hyper links inside the generated pdf file
+
+\usepackage[backend=biber, style=numeric, sorting=none]{biblatex}
+\addbibresource{ref.bib} % <-- Add your .bib file name here
+
+\hypersetup{
+	colorlinks=true,       % false: boxed links; true: colored links
+	linkcolor=blue,        % color of internal links
+	citecolor=blue,        % color of links to bibliography
+	filecolor=magenta,     % color of file links
+	urlcolor=blue         
+}
+\renewcommand{\figurename}{Slika}
+\renewcommand{\tablename}{Tabela}
+
+%PACKIGI
+\usepackage{physics}
+\usepackage{mathtools}
+\usepackage{bm}
+\usepackage{placeins}
+\usepackage{tcolorbox}
+\usepackage{lipsum}
+\usepackage{gensymb}
+\usepackage{siunitx}
+\usepackage{mdframed}
+\usepackage{empheq}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{icomma}
+\usepackage{colortbl}
+\usepackage{multirow}
+\usepackage{dsfont}
+\usepackage{fontspec}
+\usepackage[version=4]{mhchem}
+\usepackage{cuted} 
+
+%tikz
+\usepackage{tikz}
+\usepackage[compat=1.1.8]{tikz-feynman}
+%jeziki
+\usepackage[slovene]{babel}
+
+%FONT SETUP
+\setmainfont{Libertinus Serif}
+
+\setsansfont{Schnebel Sans Pro}[
+  BoldFont = {Schnebel Sans Pro Bold},
+  UprightFont = {Calibri}]
+
+%CAPTION SETUP
+\usepackage[labelfont=bf, font={sf, footnotesize}, labelformat=simple]{caption}
+\DeclareCaptionFormat{nature}{\textbf{#1#2}~\footnotesize#3}
+\DeclareCaptionLabelSeparator{pipe}{\,$\bm{|}$}
+
+\captionsetup
+{
+    format=nature,
+    labelsep=pipe
+}
+
+%SECTION/SUBSECTION SETUP
+\usepackage[sc]{titlesec}
+% \titleformat*{\section}{\Large\scshape\bfseries\centering}
+% \titleformat*{\subsection}{\large\scshape\bfseries\centering}
+% \titleformat*{\subsubsection}{\subsubsectionfont\centering}
+\titleformat*{\section}{\Large\bfseries\sffamily\centering}
+\titleformat*{\subsection}{\large\bfseries\sffamily\centering}
+\titleformat*{\subsubsection}{\itshape\subsubsectionfont\centering}
+
+
+%MISC
+\usepackage{xprintlen}
+\DeclareMathOperator\arctanh{arctanh}
+
+\definecolor{titlegray}{gray}{0.9}
+\definecolor{lightgray}{gray}{0.92} 
+
+\renewcommand{\vec}[1]{\mathbf{#1}}
+\AtBeginDocument{\RenewCommandCopy\qty\SI}
+%________________________________________________________________________________
+\begin{document}
+% \begin{titlepage}
+% \scshape
+
+% \centering
+% \includegraphics[width=12cm, keepaspectratio]{UL_FMF-logoENG-HOR-CMYK_color.pdf} \par \vspace{0.5cm}
+
+
+
+% \raisebox{-\baselineskip}{\rule{\textwidth}{1pt}}
+% \rule{\textwidth}{1pt}
+% \vspace{0.2cm}
+
+%     {\fontsize{24pt}{26pt}\selectfont\bfseries Teorija trdne snovi} \par \vspace{0.1cm}
+% {\fontsize{14pt}{20pt}\selectfont Peierlsova nestabilnost}
+
+% \raisebox{-\baselineskip}{\rule{\textwidth}{1pt}}
+% \rule{\textwidth}{1pt}
+% \vspace{0.2cm}
+% \vspace{1cm}
+
+
+% {\fontsize{12pt}{18pt}\selectfont
+% Korl Železnikar\\ \vspace{0.2cm}
+% Mentorja: doc. dr. Denis Golež}
+
+% \vspace{2cm}
+
+
+
+
+% \vfill
+% {\fontsize{12pt}{18pt}\selectfont \today}
+
+% \end{titlepage}
+
+\section{Naloga}
+V seminarju bom pokazal, da je plin elektronov v eni dimenziji nestabilen na periodične modulacije potenciala s poljubno majhno sklopitvijo. Pokazali bomo, da je v primeru enega elektrona na ion v verigi bolj stabilno, če se veriga dimerizira. Temu pravimo Peierlsova nestabilnost.  
+
+\section{Periodična veriga}
+Najprej ponovimo izračun disperzije na periodični mreži, saj je postopek reševanja za deformirano mrežo podoben. Predpostavimo, da ima veriga $N$ ionov z mrežno razdaljo $a$, vsak z enim elektronom, ki so šibko sklopljeni s prekrivalnim integralom $t$ med najbližjimi sosedi. Sistem popiše Hamiltonijan za model tesne vezi
+\begin{equation}
+  H = -t \sum_{j=1}^N c^\dagger_{j}c^{\vphantom{\dagger}}_{j+1} + c^\dagger_{j+1}c^{\vphantom{\dagger}}_{j}\,,
+\end{equation} 
+kjer so $c_j$ kreacijski oziroma anihilacijski operatorji za elektrone na mestu $j$ v verigi. Hamiltonijan lahko diagonaliziramo s pomočjo Fourierove transformacije
+\begin{equation}
+  c_j = \frac{1}{\sqrt{L}}\sum_{k=1}^N e^{ijka} d_k\,,
+\end{equation}
+kjer upoštevamo ortonormiranost
+\begin{equation}
+  \frac{1}{L} \sum_j e^{ij(k-l)} = \delta_{k,l}\,.
+\end{equation}
+S tem dobimo diagonalen Hamiltonijan
+\begin{equation} \label{disp1}
+  H = \sum_{k=1}^N -2t \cos(ka) d_k^\dagger d_k\,,
+\end{equation}
+z znano disperzijo za model tesne vezi $\mathcal{E}(k) = -2t \cos(ka)$. V primeru, ko imamo po en elektron na mesto, so v osnovnem stanju zasedeni vsi valovni vektorji do $k_F = \pi /a$. Na to mrežo lahko gledamo tudi kot na mrežo z osnovno celico dolžine $2a$ z dvema ionoma. V tem primeru je disperzija enaka, prva Brillouinova cona pa se zmanjša za polovico iz $k \in [-\pi/a, \pi/a]$ v $k \in [-\pi/(2a), \pi/(2a)]$, disperzija pa se preslika nazaj. Na to lahko gledamo kot na \textbf{dva energijska pasova brez reže}, torej je energija enaka $\mathcal{E}(k)_\pm = \pm 2t \cos(ka)$.  
+
+\nocite{*}
+\printbibliography
+\end{document} 
