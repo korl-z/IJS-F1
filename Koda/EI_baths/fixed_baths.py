@@ -25,6 +25,7 @@ from utils.plotting_utils import (
 import EI.eff_T as et
 import EI.ei_jax as ej
 import EI.ei_unified as eu
+import EI.ei_phonon as pb
 
 CFG = Path("/home/kzeleznikar/IJS-F1/Koda/EI_baths/config/config_test.yaml")
 RUNS = Path("/home/kzeleznikar/IJS-F1/Koda/EI_baths/runs")
@@ -74,12 +75,19 @@ def fd_t(e, t):
     return fd(e / t)
 
 
-def make_baths(t1, t2, bp):
-    """naredi kopeli"""
-    b1 = ej.gam_db(t=t1, name="bath 1", **bp)
-    b2 = ej.gam_db(t=t2, name="bath 2", **bp)
-    return b1, b2
+# def make_baths(t1, t2, bp):
+#     """naredi kopeli"""
+#     b1 = ej.gam_db(t=t1, name="bath 1", **bp)
+#     b2 = ej.gam_db(t=t2, name="bath 2", **bp)
+#     return b1, b2
 
+
+def make_baths(t1, t2, bp):
+    """Create the two phonon baths."""
+    return (
+        pb.PhononBath(t=t1, name="bath 1", **bp),
+        pb.PhononBath(t=t2, name="bath 2", **bp),
+    )
 
 def k_edges(x):
     """"""
@@ -136,35 +144,53 @@ def color_line(ax, x, y, c, w, cmap, norm, ls="-", label=None):
     return lc
 
 
-def solve_state(bd, p, eq, op, r1, r2, tc, d0, m0, nc):
-    """main funckija, resi za stanje pri fixed T1, T2"""
+def solve_state(bd, p, eq, op, r1, r2, tc, d0, m0, nc=1):
+    """Solve one temperature pair."""
     t1, t2 = r1 * tc, r2 * tc
-    mu = 0.5 * p.v
-    bc = op["bath"]
-    bp = {**bc["pars"], "rate": getattr(ej, bc["rate"]), "mu": mu}
+    bp = {**op["bath"]["pars"], "k": bd.k}
     es = {**eq["solve"], "prog": False}
-    se = eu.solve_eq(bd, p, t=t2, d=max(d0, 1.0e-8), m=m0, **es)
 
-    # n, d, m = se.n.copy(), se.d, se.m
-    # ds = max(0.02 * d0, 1.0e-3)
-    st = None
-    nc = 1 if np.isclose(r1, r2) else max(2, int(nc))
-    # xa = np.linspace(r2, r1, nc)
-    # for x in tqdm_bar(xa, desc="T1 continuation"):
-    #     bs = make_baths(x * tc, t2, bp)
-    #     st = ej.solve_open(bd, p, n, bs, d=d, m=m, **op["solve"])
-    #     n, d, m = st.n.copy(), max(abs(st.d), ds), st.m
+    se = eu.solve_eq(bd, p, t=t2, d=max(d0, 1.e-8), m=m0, **es)
+    if not se.ok:
+        raise RuntimeError(f"Initial equilibrium did not converge: {se.err:.3e}")
+
     bs = make_baths(t1, t2, bp)
     st = ej.solve_open(
         bd, p, se.n.copy(), bs,
-        d=se.d,
-        m=se.m,
-        **op["solve"],
+        d=se.d, m=se.m, **op["solve"],
     )
 
-    if not st.ok:
-        logger.warning("Open-state solver did not converge: err = %.3e", st.err)
-    return st, make_baths(t1, t2, bp), t1, t2, mu
+    ec = 0.5 * p.h * p.n
+    return st, bs, t1, t2, ec
+# def solve_state(bd, p, eq, op, r1, r2, tc, d0, m0, nc):
+#     """main funckija, resi za stanje pri fixed T1, T2"""
+#     t1, t2 = r1 * tc, r2 * tc
+#     mu = 0.5 * p.v
+#     bc = op["bath"]
+#     bp = {**bc["pars"], "rate": getattr(ej, bc["rate"]), "mu": mu}
+#     es = {**eq["solve"], "prog": False}
+#     se = eu.solve_eq(bd, p, t=t2, d=max(d0, 1.0e-8), m=m0, **es)
+
+#     # n, d, m = se.n.copy(), se.d, se.m
+#     # ds = max(0.02 * d0, 1.0e-3)
+#     st = None
+#     nc = 1 if np.isclose(r1, r2) else max(2, int(nc))
+#     # xa = np.linspace(r2, r1, nc)
+#     # for x in tqdm_bar(xa, desc="T1 continuation"):
+#     #     bs = make_baths(x * tc, t2, bp)
+#     #     st = ej.solve_open(bd, p, n, bs, d=d, m=m, **op["solve"])
+#     #     n, d, m = st.n.copy(), max(abs(st.d), ds), st.m
+#     bs = make_baths(t1, t2, bp)
+#     st = ej.solve_open(
+#         bd, p, se.n.copy(), bs,
+#         d=se.d,
+#         m=se.m,
+#         **op["solve"],
+#     )
+
+#     if not st.ok:
+#         logger.warning("Open-state solver did not converge: err = %.3e", st.err)
+#     return st, make_baths(t1, t2, bp), t1, t2, mu
 
 
 def solve_teff(bd, p, bs, st, t1, t2, mu, op, ep):

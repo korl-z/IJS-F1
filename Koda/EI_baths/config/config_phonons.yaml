@@ -1,0 +1,72 @@
+model:
+  nk:
+    scan: 20
+    reference: 50
+
+  band:
+    name: tb_2d
+    pars:
+      gap: 2.0
+      ta: 1.0
+      tb: -1.0
+
+  mean_field:
+    v: 4.4
+    n: 1.0
+    uh: null
+
+
+equilibrium:
+  initial:
+    t: 0.0
+    d: 1.0
+    m: 0.0
+
+  solve:
+    mix: [0.15, 0.15]
+    tol: 1.0e-10
+    nmax: 20000
+    chk: 20
+    prog: false
+
+  critical:
+    tlo: 1.0e-4
+    thi: 2.0
+    tol: 1.0e-7
+    nmax: 100
+    prog: true
+
+
+scan:
+  temperature:
+    nt: 10
+    min_ratio: 0.01
+    max_ratio: 3.0
+
+  continuation:
+    d_floor_frac: 0.1
+
+
+open_system:
+  bath:
+    rate: PhononBath
+    pars:
+      cs: 1.0
+      ktf: 0.7
+      eta: 0.25
+      amp: 0.3
+      ca: 1.0
+      cb: 1.0
+      qd: 3.14159
+      nang: 128
+
+  solve:
+    dt: 5.0
+    td: 0.3
+    tm: 0.3
+    tol: 1.0e-6
+    nmax: 20000
+    chk: 20
+    prog: false
+    mode: dense
+    # block: 128

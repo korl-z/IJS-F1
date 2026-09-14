@@ -11,7 +11,7 @@ model:
       tb: -1.0
 
   mean_field:
-    v: 7.784
+    v: 4.4
     n: 1.0
     uh: null
 
@@ -39,7 +39,7 @@ equilibrium:
 
 scan:
   temperature:
-    nt: 20
+    nt: 10
     min_ratio: 0.01
     max_ratio: 3.0
 
@@ -51,17 +51,17 @@ open_system:
   bath:
     rate: rate_product
     pars:
-      wc: .inf
-      kap: [0.1, 0.2, 0.1]
-      mu: 0.0 #dodatno nastavljeno v kodi na V/2, ko ta=-tb
+      wc: 2.0
+      kap: [0.4, 0.8, 0.4]
+      mu: 2.2 #dodatno nastavljeno v kodi na V/2, ko ta=-tb
 
   solve:
-    dt: 0.8
+    dt: 5.0
     td: 0.3
     tm: 0.3
     tol: 1.0e-6
-    nmax: 20000
-    chk: 20
+    nmax: 30000
+    chk: 200
     prog: false
 
 ratio_sweep:

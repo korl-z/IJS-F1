@@ -142,8 +142,31 @@
 
 % \end{titlepage}
 
-\section{Naloga}
-V seminarju bom pokazal, da je plin elektronov v eni dimenziji nestabilen na periodične modulacije potenciala s poljubno majhno sklopitvijo. Pokazali bomo, da je v primeru enega elektrona na ion v verigi bolj stabilno, če se veriga dimerizira. Temu pravimo Peierlsova nestabilnost.  
+\section{Osnove teorije}
+\[
+\begin{aligned}
+\dot{n}_{\alpha k} = \sum_{p} \bigg( & \Gamma_{\alpha p \to \alpha k} \, n_{\alpha p} (1 - n_{\alpha k}) - \Gamma_{\alpha k \to \alpha p} \, n_{\alpha k} (1 - n_{\alpha p}) + \\
+& + \Gamma_{\beta p \to \alpha k} \, n_{\beta p} (1 - n_{\alpha k}) - \Gamma_{\alpha k \to \beta p} \, n_{\alpha k} (1 - n_{\beta p}) \bigg)
+\end{aligned}
+\]
+
+\vspace{1cm}
+
+\[
+\Gamma_{\mu p \to \nu k} = \frac{2\pi}{V} \sum_{\lambda} \left| G_{\mu \nu}^{\lambda} (k, q) \right|^2 \left\{ (1 + N_{q}) \delta (E_{\nu k} - E_{\mu p} + \omega_{q \lambda}) + N_{-q} \delta (E_{\nu k} - E_{\mu p} - \omega_{-q \lambda}) \right\}
+\]
+
+\vspace{1cm}
+
+\[
+\Gamma_{\nu k \to \mu p} = \frac{2\pi}{V} \sum_{\lambda} \left| G_{\mu \nu}^{\lambda} (k, q) \right|^2 \left\{ (1 + N_{-q}) \delta (E_{\mu p} - E_{\nu k} + \omega_{-q \lambda}) + N_{q} \delta (E_{\mu p} - E_{\nu k} - \omega_{q \lambda}) \right\}
+\]
+
+
+\begin{align*}
+G^\lambda(\vec{k}, \vec{q}) &= \begin{pmatrix} u_{k+q} & -v_{k+q} \\ v_{k+q} & u_{k+q} \end{pmatrix} \begin{pmatrix} g_{a\lambda}(\vec{q}) & 0 \\ 0 & g_{b\lambda}(\vec{q}) \end{pmatrix} \begin{pmatrix} u_k & v_k \\ -v_k & u_k \end{pmatrix} \\[1.5em]
+g_{\substack{a\\b}\lambda}(\vec{q}) &= -i\ \frac{4\pi e^2}{\sqrt{2M\Omega\omega_{\vec{q}\lambda}}} \cdot \frac{1}{|\vec{q}|^2 + \Lambda^2} \left( \vec{q} \cdot \vec{\varepsilon}_{\vec{q}\lambda}^* \right)
+\end{align*}
 
 \section{Periodična veriga}
 Najprej ponovimo izračun disperzije na periodični mreži, saj je postopek reševanja za deformirano mrežo podoben. Predpostavimo, da ima veriga $N$ ionov z mrežno razdaljo $a$, vsak z enim elektronom, ki so šibko sklopljeni s prekrivalnim integralom $t$ med najbližjimi sosedi. Sistem popiše Hamiltonijan za model tesne vezi

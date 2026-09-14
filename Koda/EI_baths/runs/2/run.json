@@ -1,0 +1,97 @@
+{
+  "artifacts": [
+    "gap_map.pdf",
+    "hartree_gap_map.pdf",
+    "diagonal_gap_map.pdf",
+    "indirect_gap_map.pdf",
+    "imbalance_map.pdf",
+    "phase_maps.npz"
+  ],
+  "command": "main",
+  "experiment": {
+    "base_dir": "/home/kzeleznikar/IJS-F1/Koda/EI_baths",
+    "dependencies": [
+      "numpy==2.4.6",
+      "open-system-ei==0.1.0",
+      "pyyaml==6.0.3",
+      "sacred==0.8.7"
+    ],
+    "mainfile": "phase_map_plots_ph.py",
+    "name": "two_bath_phase_maps",
+    "repositories": [
+      {
+        "commit": "aec4773bf2a9b51c3f496cdf5cb8186be6f5e980",
+        "dirty": true,
+        "url": "https://github.com/korl-z/IJS-F1.git"
+      }
+    ],
+    "sources": [
+      [
+        "phase_map_plots_ph.py",
+        "_sources/phase_map_plots_ph_9be35359510356d20b1b1b19c60fb8e6.py"
+      ]
+    ]
+  },
+  "heartbeat": "2026-09-13T17:44:48.087858",
+  "host": {
+    "ENV": {},
+    "cpu": "AMD Ryzen 9 9950X 16-Core Processor",
+    "gpus": {
+      "driver_version": "610.57.04",
+      "gpus": [
+        {
+          "model": "NVIDIA GeForce RTX 5060 Ti",
+          "persistence_mode": false,
+          "total_memory": 16311
+        }
+      ]
+    },
+    "hostname": "fedora",
+    "os": [
+      "Linux",
+      "Linux-7.2.4-200.fc44.x86_64-x86_64-with-glibc2.43"
+    ],
+    "python_version": "3.13.11"
+  },
+  "meta": {
+    "command": "main",
+    "config_updates": {},
+    "named_configs": [],
+    "options": {
+      "--beat-interval": null,
+      "--capture": null,
+      "--comment": null,
+      "--debug": false,
+      "--enforce_clean": false,
+      "--file_storage": null,
+      "--force": false,
+      "--help": false,
+      "--id": null,
+      "--loglevel": null,
+      "--mongo_db": null,
+      "--name": null,
+      "--pdb": false,
+      "--print-config": false,
+      "--priority": null,
+      "--queue": false,
+      "--s3": null,
+      "--sql": null,
+      "--tiny_db": null,
+      "--unobserved": false,
+      "COMMAND": null,
+      "UPDATE": [],
+      "help": false,
+      "with": false
+    }
+  },
+  "resources": [
+    [
+      "/home/kzeleznikar/IJS-F1/Koda/EI_baths/config/config_test.yaml",
+      "/home/kzeleznikar/IJS-F1/Koda/EI_baths/runs/_resources/config_test_2435387f4ed6adee6e95c5b1c181871a.yaml"
+    ]
+  ],
+  "result": null,
+  "start_time": "2026-09-13T17:42:51.409432",
+  "status": "COMPLETED",
+  "stop_time": "2026-09-13T17:44:48.086543"
+}
