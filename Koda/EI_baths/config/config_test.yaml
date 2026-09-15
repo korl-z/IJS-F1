@@ -51,15 +51,15 @@ open_system:
   bath:
     rate: rate_product
     pars:
-      wc: 2.0
-      kap: [0.4, 0.8, 0.4]
+      wc: inf
+      kap: [0.1, 0.2, 0.1]
       mu: 2.2 #dodatno nastavljeno v kodi na V/2, ko ta=-tb
 
   solve:
     dt: 5.0
     td: 0.3
     tm: 0.3
-    tol: 1.0e-6
+    tol: 1.0e-4
     nmax: 30000
     chk: 200
     prog: false

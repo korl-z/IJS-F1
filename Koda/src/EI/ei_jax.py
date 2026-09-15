@@ -317,6 +317,23 @@ def _cur_dense(st: JState, n: Any, w: Any,
     return (ga - lo).reshape(n.shape)
 
 
+def _ab_dense(
+    st: JState,
+    n: Any,
+    w: Any,
+    bp: tuple[Any, ...],
+    rf: tuple[RateFn, ...],
+) -> tuple[Any, Any]:
+    """za  boljs stabilen current?"""
+    y = n.reshape(-1)
+    ww = jnp.tile(w, 2)
+    r = _rates(st, bp, rf)
+
+    a = r @ (ww * y)
+    b = r.T @ (ww * (F32(1.0) - y))
+
+    return a.reshape(n.shape), b.reshape(n.shape)
+
 def _cur_block(st: JState, n: Any, w: Any, bp: tuple[Any, ...],
                rf: tuple[RateFn, ...], block: int) -> Any:
     
@@ -500,20 +517,20 @@ def blocked_current(
     return total_current(bd, st, n, bs, mode="block", block=block)
 
 
-def _lim(n: Any, dn: Any, dt: Any, fac: Any = F32(0.8)) -> Any:
+def _lim(n: Any, dn: Any, dt: Any, fac: Any = F32(0.8), eps: Any = F32(1.0e-6)) -> Any:
     jp = dn > 0.0
     jm = dn < 0.0
     dp = jnp.where(jp, dn, F32(1.0))
     dm = jnp.where(jm, dn, F32(-1.0))
-    hp = jnp.min(jnp.where(jp, (F32(1.0) - n) / dp, jnp.inf))
-    hm = jnp.min(jnp.where(jm, -n / dm, jnp.inf))
+    hp = jnp.min(jnp.where(jp, (F32(1.0) + eps - n) / dp, jnp.inf))
+    hm = jnp.min(jnp.where(jm, (-eps - n) / dm, jnp.inf))
     hb = fac * jnp.maximum(F32(0.0), jnp.minimum(hp, hm))
     return jnp.minimum(dt, hb)
 
 
 @jax.jit
-def _lim_jit(n: Any, dn: Any, dt: Any, fac: Any) -> Any:
-    return _lim(n, dn, dt, fac)
+def _lim_jit(n: Any, dn: Any, dt: Any, fac: Any, eps: Any) -> Any:
+    return _lim(n, dn, dt, fac, eps)
 
 
 def lim_step(n: Any, dn: Any, dt: float, fac: float = 0.8) -> Any:
@@ -545,10 +562,25 @@ def _step(
 ) -> tuple[tuple[Any, ...], None]:
     n, d, m, tt = ca
     st = _mf(ea, eb, pn, ph, d, m)
-    dn = _cur(st, n, w, bp, rf, mode, block)
-    h = _lim(n, dn, dt)
-    n = jnp.clip(n + h * dn, 0.0, 1.0)
+    # dn = _cur(st, n, w, bp, rf, mode, block) #using EULER STEP
+    # h = _lim(n, dn, dt)
+    # n = jnp.clip(n + h * dn, 0.0, 1.0)
+    # n = _fix_fill(n, w, pn)
+#novo - kinda boljse??
+    a, b = _ab_dense(st, n, w, bp, rf) 
+    r = a + b
+
+    ne = jnp.where(
+        r > F32(0.0),
+        a / jnp.maximum(r, F32(1.0e-30)),
+        n,
+    )
+
+    h = dt
+    z = -jnp.expm1(-h * r)
+    n = jnp.clip(n + z * (ne - n), F32(0.0), F32(1.0))
     n = _fix_fill(n, w, pn)
+#novo
     tg = _targets(st, n, w, pv)
     zd = -jnp.expm1(-h / td)
     zm = -jnp.expm1(-h / tm)
@@ -556,7 +588,7 @@ def _step(
     m = m + zm * (tg.m - m)
     return (n, d, m, tt + h), None
 
-
+    
 @partial(jax.jit, static_argnames=("rf", "ns", "mode", "block"))
 def _chunk(
     ea: Any,
@@ -622,6 +654,7 @@ def _diag(
     em = jnp.abs(tg.m - m)
     en = jnp.abs(tg.n - pn)
     er = jnp.maximum(jnp.maximum(ec, ed), jnp.maximum(em, en))
+    # er = jnp.maximum(ed, jnp.maximum(em, en)) #mogoce ce excludam max(dot(n)) iz errorja bo boljse? -ne
     return dn, er, ec, ed, em, tg.n
 
 
@@ -716,6 +749,7 @@ def solve_open(
     ok = False
     it = 0
     er = np.inf
+    erp = None
     tp = -np.inf
     bar = tqdm(range(0, nmax, chk), desc="Open EI JAX", disable=not prog)
 
@@ -770,11 +804,18 @@ def solve_open(
         hs["d"].append(d0)
         hs["m"].append(m0)
         hs["n0"].append(n00)
+
         if prog:
             bar.set_postfix(err=f"{er:.2e}", d=f"{d0:.5f}", m=f"{m0:.5f}")
-        if er < tol:
+
+        falling = erp is not None and er < erp
+
+        if er < tol and falling:
             ok = True
             break
+        
+        erp = er
+
         if t0 <= tp:
             raise RuntimeError("occupation step collapsed to zero")
         tp = t0
@@ -816,7 +857,8 @@ def solve_open(
         er,
         it,
         t0,
-        ok or er < tol,
+        # ok or er < tol,
+        ok,
         hh,
     )
 
