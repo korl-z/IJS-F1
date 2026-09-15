@@ -39,7 +39,7 @@ equilibrium:
 
 scan:
   temperature:
-    nt: 10
+    nt: 30
     min_ratio: 0.01
     max_ratio: 2.0
 
@@ -53,7 +53,7 @@ open_system:
     pars:
       cs: 100.
       ktf: 0.001
-      eta: 0.1
+      eta: 1.0
       amp: 1.0
       ca: 1.0
       cb: 1.0
@@ -61,10 +61,10 @@ open_system:
       nang: 128
 
   solve:
-    dt: 2.5
+    dt: 1.0
     td: 50.
     tm: 50.
-    tol: 1.0e-6
+    tol: 1.0e-4
     nmax: 20000
     chk: 100
     prog: false

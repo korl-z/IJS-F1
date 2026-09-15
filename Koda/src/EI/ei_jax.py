@@ -317,22 +317,24 @@ def _cur_dense(st: JState, n: Any, w: Any,
     return (ga - lo).reshape(n.shape)
 
 
-def _ab_dense(
-    st: JState,
-    n: Any,
-    w: Any,
-    bp: tuple[Any, ...],
-    rf: tuple[RateFn, ...],
-) -> tuple[Any, Any]:
-    """za  boljs stabilen current?"""
+def _ab_mat(n: Any, w: Any, r: Any) -> tuple[Any, Any]:
     y = n.reshape(-1)
     ww = jnp.tile(w, 2)
-    r = _rates(st, bp, rf)
 
     a = r @ (ww * y)
     b = r.T @ (ww * (F32(1.0) - y))
 
     return a.reshape(n.shape), b.reshape(n.shape)
+
+
+def _ab_dense(
+    st: Any,
+    n: Any,
+    w: Any,
+    bp: tuple[Any, ...],
+    rf: tuple[RateFn, ...],
+) -> tuple[Any, Any]:
+    return _ab_mat(n, w, _rates(st, bp, rf))
 
 def _cur_block(st: JState, n: Any, w: Any, bp: tuple[Any, ...],
                rf: tuple[RateFn, ...], block: int) -> Any:
@@ -552,14 +554,12 @@ def _step(
     pv: Any,
     pn: Any,
     ph: Any,
-    bp: tuple[Any, ...],
-    rf: tuple[RateFn, ...],
+    r: Any,
     dt: Any,
     td: Any,
     tm: Any,
-    mode: str,
-    block: int,
 ) -> tuple[tuple[Any, ...], None]:
+    
     n, d, m, tt = ca
     st = _mf(ea, eb, pn, ph, d, m)
     # dn = _cur(st, n, w, bp, rf, mode, block) #using EULER STEP
@@ -567,17 +567,16 @@ def _step(
     # n = jnp.clip(n + h * dn, 0.0, 1.0)
     # n = _fix_fill(n, w, pn)
 #novo - kinda boljse??
-    a, b = _ab_dense(st, n, w, bp, rf) 
-    r = a + b
-
+    a, b = _ab_mat(n, w, r)
+    q = a + b
     ne = jnp.where(
-        r > F32(0.0),
-        a / jnp.maximum(r, F32(1.0e-30)),
+        q > F32(0.0),
+        a / jnp.maximum(q, F32(1.0e-30)),
         n,
     )
 
     h = dt
-    z = -jnp.expm1(-h * r)
+    z = -jnp.expm1(-h * q)
     n = jnp.clip(n + z * (ne - n), F32(0.0), F32(1.0))
     n = _fix_fill(n, w, pn)
 #novo
@@ -589,7 +588,7 @@ def _step(
     return (n, d, m, tt + h), None
 
     
-@partial(jax.jit, static_argnames=("rf", "ns", "mode", "block"))
+@partial(jax.jit, static_argnames=("ns",))
 def _chunk(
     ea: Any,
     eb: Any,
@@ -597,8 +596,7 @@ def _chunk(
     pv: Any,
     pn: Any,
     ph: Any,
-    bp: tuple[Any, ...],
-    rf: tuple[RateFn, ...],
+    r: Any,
     n: Any,
     d: Any,
     m: Any,
@@ -607,8 +605,6 @@ def _chunk(
     td: Any,
     tm: Any,
     ns: int,
-    mode: str,
-    block: int,
 ) -> tuple[Any, ...]:
     fn = partial(
         _step,
@@ -618,19 +614,89 @@ def _chunk(
         pv=pv,
         pn=pn,
         ph=ph,
-        bp=bp,
-        rf=rf,
+        r=r,
         dt=dt,
         td=td,
         tm=tm,
-        mode=mode,
-        block=block,
     )
-    ca, _ = jax.lax.scan(fn, (n, d, m, tt), xs=None, length=ns)
+
+    ca, _ = jax.lax.scan(
+        fn,
+        (n, d, m, tt),
+        xs=None,
+        length=ns,
+    )
+
     return ca
 
+# @partial(jax.jit, static_argnames=("rf", "ns", "mode", "block"))
+# def _chunk(
+#     ea: Any,
+#     eb: Any,
+#     w: Any,
+#     pv: Any,
+#     pn: Any,
+#     ph: Any,
+#     bp: tuple[Any, ...],
+#     rf: tuple[RateFn, ...],
+#     n: Any,
+#     d: Any,
+#     m: Any,
+#     tt: Any,
+#     dt: Any,
+#     td: Any,
+#     tm: Any,
+#     ns: int,
+#     mode: str,
+#     block: int,
+# ) -> tuple[Any, ...]:
+#     fn = partial(
+#         _step,
+#         ea=ea,
+#         eb=eb,
+#         w=w,
+#         pv=pv,
+#         pn=pn,
+#         ph=ph,
+#         bp=bp,
+#         rf=rf,
+#         dt=dt,
+#         td=td,
+#         tm=tm,
+#         mode=mode,
+#         block=block,
+#     )
+#     ca, _ = jax.lax.scan(fn, (n, d, m, tt), xs=None, length=ns)
+#     return ca
 
-@partial(jax.jit, static_argnames=("rf", "mode", "block"))
+
+# @partial(jax.jit, static_argnames=("rf", "mode", "block"))
+# def _diag(
+#     ea: Any,
+#     eb: Any,
+#     w: Any,
+#     pv: Any,
+#     pn: Any,
+#     ph: Any,
+#     bp: tuple[Any, ...],
+#     rf: tuple[RateFn, ...],
+#     n: Any,
+#     d: Any,
+#     m: Any,
+#     mode: str,
+#     block: int,
+# ) -> tuple[Any, ...]:
+#     st = _mf(ea, eb, pn, ph, d, m)
+#     dn = _cur(st, n, w, bp, rf, mode, block)
+#     tg = _targets(st, n, w, pv)
+#     ec = jnp.max(jnp.abs(dn))
+#     ed = jnp.abs(tg.d - d)
+#     em = jnp.abs(tg.m - m)
+#     en = jnp.abs(tg.n - pn)
+#     er = jnp.maximum(jnp.maximum(ec, ed), jnp.maximum(em, en))
+#     # er = jnp.maximum(ed, jnp.maximum(em, en)) #mogoce ce excludam max(dot(n)) iz errorja bo boljse? -ne
+#     return dn, er, ec, ed, em, tg.n
+@jax.jit
 def _diag(
     ea: Any,
     eb: Any,
@@ -638,25 +704,25 @@ def _diag(
     pv: Any,
     pn: Any,
     ph: Any,
-    bp: tuple[Any, ...],
-    rf: tuple[RateFn, ...],
+    r: Any,
     n: Any,
     d: Any,
     m: Any,
-    mode: str,
-    block: int,
 ) -> tuple[Any, ...]:
     st = _mf(ea, eb, pn, ph, d, m)
-    dn = _cur(st, n, w, bp, rf, mode, block)
+
+    a, b = _ab_mat(n, w, r)
+    dn = (F32(1.0) - n) * a - n * b
+
     tg = _targets(st, n, w, pv)
+
     ec = jnp.max(jnp.abs(dn))
     ed = jnp.abs(tg.d - d)
     em = jnp.abs(tg.m - m)
     en = jnp.abs(tg.n - pn)
     er = jnp.maximum(jnp.maximum(ec, ed), jnp.maximum(em, en))
-    # er = jnp.maximum(ed, jnp.maximum(em, en)) #mogoce ce excludam max(dot(n)) iz errorja bo boljse? -ne
-    return dn, er, ec, ed, em, tg.n
 
+    return dn, er, ec, ed, em, tg.n
 
 def number_rate(dn: Any, bd: eu.Bands) -> float:
     """Return the weighted particle-number rate."""
@@ -751,45 +817,66 @@ def solve_open(
     er = np.inf
     erp = None
     tp = -np.inf
+
+    st = _mf(ea, eb, pn, ph, d, m)
+    r = _rates_jit(st, bp, rf)
+
     bar = tqdm(range(0, nmax, chk), desc="Open EI JAX", disable=not prog)
 
     for i0 in bar:
         ns = min(chk, nmax - i0)
+        # n, d, m, tt = _chunk(
+        #     ea,
+        #     eb,
+        #     w,
+        #     pv,
+        #     pn,
+        #     ph,
+        #     bp,
+        #     rf,
+        #     n,
+        #     d,
+        #     m,
+        #     tt,
+        #     dh,
+        #     thd,
+        #     thm,
+        #     ns=ns,
+        #     mode=mode,
+        #     block=block,
+        # )
+        # dn, erj, ec, ed, em, n0 = _diag(
+        #     ea,
+        #     eb,
+        #     w,
+        #     pv,
+        #     pn,
+        #     ph,
+        #     bp,
+        #     rf,
+        #     n,
+        #     d,
+        #     m,
+        #     mode=mode,
+        #     block=block,
+        # )
+
         n, d, m, tt = _chunk(
-            ea,
-            eb,
-            w,
-            pv,
-            pn,
-            ph,
-            bp,
-            rf,
-            n,
-            d,
-            m,
-            tt,
-            dh,
-            thd,
-            thm,
+            ea, eb, w, pv, pn, ph,
+            r, n, d, m, tt,
+            dh, thd, thm,
             ns=ns,
-            mode=mode,
-            block=block,
         )
+
+        # Update the rates at the checkpoint.
+        st = _mf(ea, eb, pn, ph, d, m)
+        r = _rates_jit(st, bp, rf)
+
         dn, erj, ec, ed, em, n0 = _diag(
-            ea,
-            eb,
-            w,
-            pv,
-            pn,
-            ph,
-            bp,
-            rf,
-            n,
-            d,
-            m,
-            mode=mode,
-            block=block,
+            ea, eb, w, pv, pn, ph,
+            r, n, d, m,
         )
+
         er, ec0, ed0, em0, n00, d0, m0, t0 = map(
             float,
             jax.device_get((erj, ec, ed, em, n0, d, m, tt)),
@@ -820,21 +907,27 @@ def solve_open(
             raise RuntimeError("occupation step collapsed to zero")
         tp = t0
 
+    # dn, erj, _, _, _, _ = _diag(
+    #     ea,
+    #     eb,
+    #     w,
+    #     pv,
+    #     pn,
+    #     ph,
+    #     bp,
+    #     rf,
+    #     n,
+    #     d,
+    #     m,
+    #     mode=mode,
+    #     block=block,
+    # )
+
     dn, erj, _, _, _, _ = _diag(
-        ea,
-        eb,
-        w,
-        pv,
-        pn,
-        ph,
-        bp,
-        rf,
-        n,
-        d,
-        m,
-        mode=mode,
-        block=block,
+        ea, eb, w, pv, pn, ph,
+        r, n, d, m,
     )
+    
     n0, dn0, d0, m0, t0, er = jax.device_get((n, dn, d, m, tt, erj))
     n0 = np.asarray(n0, dtype=np.float64)
     dn0 = np.asarray(dn0, dtype=np.float64)
