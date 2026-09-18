@@ -143,6 +143,291 @@
 % \end{titlepage}
 
 \section{Osnove teorije}
+\subsection{BCS teorija pri končni temperaturi}
+BCS model, kjer je $\xi_{\vec{k}, \sigma} = \epsilon_{\vec{k}, \sigma} - E_F$ in $k := (\vec{k}, \uparrow)$, $-k := (\vec{-k}, \downarrow)$:
+\begin{align}
+  H = \sum_k \xi_k (c_k^\dagger c_k + c_{-k}^\dagger c_{-k}) - V \sum_{k,k'} c_k^\dagger c_{-k}^\dagger c_{-k'} c_{k'}
+\end{align}
+Naredimo približek povprečnega polja, definiramo $b_k = c_{k} c_{-k}$ in $b_k = \langle b_k\rangle + \delta b_k = F_k  + \delta b_k$, sledi (do $\mathcal{O}(\delta b_k^2)$)
+\begin{align}
+  b_k^\dagger b_{k'} \simeq  F_k^* F_{k'} + F_k^* \delta b_{k'} + F_{k'} \delta b_k^\dagger = F_k^* b_{k'} + F_{k'} b_k^\dagger - F_k^* F_{k'} =  \langle b_k^\dagger \rangle b_{k'} + b_k^\dagger \langle b_{k'} \rangle - \langle b_k^\dagger \rangle \langle b_{k'} \rangle 
+\end{align}
+Iz česar sledi: 
+\begin{align}
+  H = \sum_k \begin{pmatrix} c_k^\dagger & c_{-k} \end{pmatrix} \begin{pmatrix} \xi_k & -\Delta_k \\ -\Delta_k^* & -\xi_k \end{pmatrix} \begin{pmatrix} c_k \\ c_{-k}^\dagger \end{pmatrix} + \frac{\vert{}\Delta\vert{}^2}{V} + \sum_k \xi_k
+\end{align}
+Ob definiciji $\Delta_k = \sum_{k'} V(k-k') \langle c_{k'}c_{-k'}\rangle$, vzamemo še lokalno interakcijo, zato je $V(q)\simeq V$ in $\Delta_k \simeq \Delta$. Naredimo Bogoljubov rotacijo, privzamemo $u_k, v_k \in \mathbb{R}$ in simetrijo okoli $E_F$: $u_k = u_{-k}$ ter $v_k = v_{-k}$. Iz  CCR sledi $u_k^2+v_k^2=1$. 
+Kvazidelci so definirani z rotacijo 
+\begin{align}
+  \begin{pmatrix} c_k \\ c_{-k}^\dagger \end{pmatrix} = \begin{pmatrix} u_k & v_k \\ -v_k & u_k \end{pmatrix} \begin{pmatrix} \alpha_k \\ \alpha_{-k}^\dagger \end{pmatrix}
+\end{align}
+nov Hamiltonjan pa postane
+\begin{align}
+  H = \sum_k \begin{pmatrix} \alpha_k^\dagger & \alpha_{-k} \end{pmatrix}   \begin{pmatrix} \xi_k u_k^2 + u_k v_k (\Delta_k + \Delta_k^*) - \xi_k v_k^2 & -2\xi_k u_k v_k + \Delta_k u_k^2 - \Delta_k^* v_k^2 \\ -2\xi_k u_k v_k - \Delta_k v_k^2 + \Delta_k^* u_k^2 & \xi_k v_k^2 - \xi_k u_k^2 + u_k v_k (\Delta_k + \Delta_k^*) \end{pmatrix} \begin{pmatrix} \alpha_k \\ \alpha_{-k}^\dagger \end{pmatrix}\,,
+\end{align} 
+kjer zahtevamo, da so izvendiagonalni členi enaki 0. Iz CCR zahteve lahko vzamemo parameterizacijo (tu sem vzel kompleksno nastavimo, da je $\Delta = \Delta^* e^{i2\phi_k}$):
+\begin{align}
+v_k &= \sin\left(\frac{\theta_k}{2}\right) e^{i\phi_k} \\
+u_k &= \cos\left(\frac{\theta_k}{2}\right) \\
+u_k v_k &= \cos\left(\frac{\theta_k}{2}\right) \sin\left(\frac{\theta_k}{2}\right) = \frac{1}{2} \sin\theta_k\\
+u_k^2 - v_k^2 &= \cos^2\left(\frac{\theta_k}{2}\right) - \sin^2\left(\frac{\theta_k}{2}\right) = \cos\theta_k 
+\end{align}
+skupaj dobimo (od tu naprej $\Delta := |\Delta|$): 
+\begin{align}
+  \xi_k \sin(\theta_k) =  \Delta \cos(\theta_k)
+\end{align}
+kar fiksira 
+\begin{align}
+  \tan(\theta_k) = \frac{|\Delta_k|}{\xi_k}\,.
+\end{align}
+Tako iz trikotnika preberemo
+\begin{align}
+  \sin\theta_k = \frac{\vert{}\Delta_k\vert{}}{E_k} = \frac{\vert{}\Delta_k\vert{}}{\sqrt{\xi_k^2 + \vert{}\Delta_k\vert{}^2}} \\
+  \cos\theta_k = \frac{\xi_k}{E_k} = \frac{\xi_k}{\sqrt{\xi_k^2 + \vert{}\Delta_k\vert{}^2}} \\
+\end{align}
+kjer je $E_k = \pm\sqrt{\xi_k^2 + \vert{}\Delta_k\vert{}^2}$ energija kvazidelcev:
+\begin{align}
+  H = \sum_k E_k \alpha_k^\dagger \alpha_k - E_k \alpha_{-k}^\dagger \alpha_{-k} + \xi_k +  \frac{|\Delta|^2}{V}\,.
+\end{align} 
+V termičnem stanju so diagonalni delci porazdeljeni po 
+\begin{align}
+  \langle \alpha_k^\dagger \alpha_k\rangle = \frac{1}{1+ \exp(E_k / T)} = \frac{1}{2}-\frac{1}{2} \tanh\left(\frac{E_k}{2T}\right)\,.
+\end{align}
+Uporabni sta zvezi $f(-E/T) = 1-f(E/T)$ in $1-2f(E/T) = \tanh(E/(2T))$. V definiciji ureditvenega parametra je 
+\begin{align}
+  \langle c_k c_{-k} \rangle = \left\langle \left( u_k \alpha_k - v_k \alpha_{-k}^\dagger \right) \left( u_k \alpha_{-k} + v_k \alpha_k^\dagger \right) \right\rangle= u_k v_k \left( 1 - \langle \alpha_{-k}^\dagger \alpha_{-k} \rangle - \langle \alpha_k^\dagger \alpha_k \rangle \right) = \frac{1}{2} \sin\theta_k \tanh\left(\frac{\beta E_k}{2}\right)
+\end{align}
+iz česar sledi enačba za režo pri $T>0$ (seštevamo po $k$ okoli $E_F$):
+\begin{align}
+  \Delta = \frac{V}{2} \sum^{'}_k \sin\theta_k \tanh\left(\frac{E_k}{2T}\right) = \frac{V \Delta}{2} \sum_k \frac{\tanh\left(\frac{1}{2T} \sqrt{\Delta^2 + \xi_k^2}\right)}{\sqrt{\Delta^2 + \xi_k^2}}
+\end{align}
+\subsection{Minimalni model ekscitonskega izolatorja pri končni temperaturi}
+Pri izolatorju za minimalni model vzamemo dve orbitali ($a, b$) model tesne vezi v vsaki posebej in lokalno Coulombovo interakcijo na mestu $j$ med elektronskima gostotama v posameznih pasovih 
+\begin{align}
+  H = H_0 + H_V &= \sum_{i,j} \left( \epsilon_a^{(0)} \delta_{ij} + t_{ij}^{(a)} \right) c_{a,i}^\dagger c_{a,j} + \sum_{i,j} \left( \epsilon_b^{(0)} \delta_{ij} + t_{ij}^{(b)} \right) c_{b,i}^\dagger c_{b,j} + V \sum_j c_{a,j}^\dagger c_{a,j} c_{b,j}^\dagger c_{b,j} \\
+  &= \sum_k \epsilon_{a,k} c_{a,k}^\dagger c_{a,k} + \sum_k \epsilon_{b,k} c_{b,k}^\dagger c_{b,k} + V \sum_j c_{a,j}^\dagger c_{a,j} c_{b,j}^\dagger c_{b,j}
+\end{align}
+najprej diagonaliziramo vsako orbitalo posebej, kar da gole disperzije (vezavni energiji nastavimo na $\pm G/2$) (delamo v dveh dimenzijah in mrežna konstanta $a_0=1$): 
+\begin{align}
+  \epsilon_{a(b),k} = \pm \frac{G}{2} - 2 t_{a(b)}(\cos(k_x) + \cos(k_y))\,,
+\end{align}
+v tem primeru je najmanjša razdalja med pasovoma $G_0 = G - 4 (t_a -t_b)$ oziroma $G_0=G - 8t_a$, če je $t_b = -t_a$. Za interakcijo spet naredimo približek povprečnega polja: 
+\begin{align}
+  c_{a,j}^\dagger c_{a,j} c_{b,j}^\dagger c_{b,j} \approx \langle c_{a,j}^\dagger c_{a,j} \rangle c_{b,j}^\dagger c_{b,j} + \langle c_{b,j}^\dagger c_{b,j} \rangle c_{a,j}^\dagger c_{a,j} - \langle c_{a,j}^\dagger c_{b,j} \rangle c_{b,j}^\dagger c_{a,j} - \langle c_{b,j}^\dagger c_{a,j} \rangle c_{a,j}^\dagger c_{b,j} + \text{konst.}
+\end{align}
+od tod sledi
+\begin{align}
+  H_V^{\text{MF}} = V n_b \sum_j c_{a,j}^\dagger c_{a,j} + V n_a \sum_j c_{b,j}^\dagger c_{b,j} - V \phi \sum_j c_{b,j}^\dagger c_{a,j} - V \phi^* \sum_j c_{a,j}^\dagger c_{b,j} + N V \vert{}\phi\vert{}^2
+\end{align}
+kjer smo definirali: 
+\begin{align}
+  n_a = \langle c_{a,j}^\dagger c_{a,j} \rangle = \frac{1}{N} \sum_k \langle c_{a,k}^\dagger c_{a,k} \rangle
+\end{align}
+\begin{align}
+  n_b = \langle c_{b,j}^\dagger c_{b,j} \rangle = \frac{1}{N} \sum_k \langle c_{b,k}^\dagger c_{b,k} \rangle
+\end{align}
+\begin{align}
+  \phi = \langle c_{a,j}^\dagger c_{b,j} \rangle = \frac{1}{N} \sum_k \langle c_{a,k}^\dagger c_{b,k} \rangle \\
+  \Delta = -\frac{V}{N} \sum_k \langle c_{a,k}^\dagger c_{b,k} \rangle, \quad \Delta^* = -\frac{V}{N} \sum_k \langle c_{b,k}^\dagger c_{a,k} \rangle
+\end{align}
+\begin{align}
+  \Delta_k = \frac{1}{N} \sum_{k'} V(k - k') \langle a_{k'}^\dagger b_{k'} \rangle, \quad V(q) = \int e^{i \vec{q} \cdot \vec{r}} V(\vec{r}) \, d\vec{r}
+\end{align}
+Uporabimo FT še na celotnem Hamiltonjanu
+\begin{align}
+  c_{a,j}^\dagger = \frac{1}{\sqrt{N}} \sum_k e^{i \vec{k} \cdot \vec{r}_j} c_{a,k}^\dagger
+\end{align}
+\begin{align}
+  H^{\text{MF}} = \sum_k \left( [\epsilon_{a,k} + V n_b] c_{a,k}^\dagger c_{a,k} + [\epsilon_{b,k} + V n_a] c_{b,k}^\dagger c_{b,k} + \Delta^* c_{a,k}^\dagger c_{b,k} + \Delta c_{b,k}^\dagger c_{a,k} \right) + \left( \frac{\vert{}\Delta\vert{}^2}{V} N - V N n_a n_b \right)
+\end{align}
+oziroma: 
+\begin{align}
+  H^{\text{MF}} = \sum_k \begin{pmatrix} c_{a,k}^\dagger & c_{b,k}^\dagger \end{pmatrix} \begin{pmatrix} {\epsilon}^H_{a,k} & \Delta^* \\ \Delta & {\epsilon}^H_{b,k} \end{pmatrix} \begin{pmatrix} c_{a,k} \\ c_{b,k} \end{pmatrix} + \text{konst.}\,,
+\end{align}
+kjer definiramo Hartree energiji ${\epsilon}^H_{a(b),k} = \epsilon_{a(b),k} + V n_{b(a)}$. Transformacija v diagonalno  / Bogoljubov bazo je podobna kot pri BCS, le da ne meša kreatorjev in anihilatorjev / ohranja število delcev:
+\begin{align}
+  \begin{pmatrix} c_{a,k} \\ c_{b,k} \end{pmatrix} = \begin{pmatrix} u_k & v_k \\ -v_k & u_k \end{pmatrix} \begin{pmatrix} \alpha_k \\ \beta_k \end{pmatrix}
+\end{align}
+od tod po enakem postopku kot prej dobimo energiji kvazidelcev
+\begin{align}
+E_{\alpha(\beta)}(k) = \frac{{\epsilon}^H_{a,k} + {\epsilon}^H_{b,k}}{2} \pm \sqrt{\left(\frac{{\epsilon}^H_{a,k} - {\epsilon}^H_{b,k}}{2}\right)^2 + \vert{}\Delta\vert{}^2} := \eta_k \pm \sqrt{\xi_k^2 +\Delta^2}
+\end{align}
+Za bookkeeping: 
+\begin{align}
+  \left( \frac{\epsilon_a^H - \epsilon_b^H}{2} \right)& \sin \theta_k + \Delta \cos \theta_k = 0 \implies \tan \theta_k = \frac{-2 \Delta}{\epsilon_a^H - \epsilon_b^H} = \frac{-\Delta}{\xi_k}\\
+  u_k v_k &= -\frac{\sin \theta_k}{2}\,.
+\end{align}
+Za samousklajeno enačbo zdaj potrebujemo
+\begin{align}
+  \langle c_{a,k}^\dagger c_{b,k} \rangle = \langle (u_k \alpha_k^\dagger + v_k \beta_k^\dagger)(-v_k \alpha_k + u_k \beta_k) \rangle = u_k v_k \left( \langle \beta_k^\dagger \beta_k \rangle - \langle \alpha_k^\dagger \alpha_k \rangle \right) = -\frac{1}{2} \sin\theta_k (f(E_{\beta}) - f(E_{\alpha}))
+\end{align}
+od tod
+\begin{align}
+  \Delta = -\frac{V}{N}\sum_k \langle c_{a,k}^\dagger c_{b,k} \rangle = \frac{V}{N} \sum_k \frac{ \Delta}{2\sqrt{\xi_k^2 + \vert{}\Delta\vert{}^2}} (f(E_{\beta}) - f(E_{\alpha}))
+\end{align}
+Opomba, lahko definiramo tudi $n = n_a + n_b = \text{konst.} = 1$ in $n_a-n_b =: m$ od tod sledi
+
+\begin{align}
+  H^{\text{MF}} = \sum_k \left( \left[\epsilon_{a,k} + \frac{V}{2}n - \frac{V}{2}m\right] c_{a,k}^\dagger c_{a,k} + \left[\epsilon_{b,k} + \frac{V}{2}n -\frac{V}{2}m\right] c_{b,k}^\dagger c_{b,k} + \Delta^* c_{a,k}^\dagger c_{b,k} + \Delta c_{b,k}^\dagger c_{a,k} \right)
+\end{align}
+od koder je v 2D Hartree gap enak: 
+\begin{align}
+  G^H = G-4(t_a-t_b) - V m\,. 
+\end{align}
+Note: v praksi je $m<0$
+V dveh dimenzijah se Hartree pasova srečata na 
+\begin{align}
+  \mu_B = \frac{V}{2}n - \frac{t_a + t_b}{t_a-t_b}\frac{G-Vm}{2}\,.
+\end{align}
+Zamik je enak $V/2$, ko sta osnovna pasova simetrična in je zasedenost polovična. V primeru simetričnih pasov sta disperziji kvazidelcev
+\begin{align}
+  E_{\alpha(\beta)}(k) - V/2 = \pm \sqrt{\left(\frac{{\epsilon}_{a,k} - {\epsilon}_{b,k} - Vm}{2}\right)^2 + \vert{}\Delta\vert{}^2}\,.
+\end{align}
+Velja še
+\begin{align}
+  n_a &= \frac{1}{N} \sum_k \left( u_k^2 f(E_\alpha) + v_k^2 f(E_{\beta}) \right) \\
+  n_b &= \frac{1}{N} \sum_k \left( v_k^2 f(E_\alpha) + u_k^2 f(E_{\beta}) \right)
+\end{align}
+
+\begin{align}
+  u_k^2 &= \frac{1}{2}\left(1 + \frac{\xi_k}{\sqrt{\Delta^2 + \xi_k^2}}\right) \\
+  v_k^2 &= \frac{1}{2}\left(1 - \frac{\xi_k}{\sqrt{\Delta^2 + \xi_k^2}}\right)
+\end{align}
+\subsection{Numerika/psevdokoda}
+
+\subsection{Odprti sistemi in modeliranje kopeli}
+Born-Markov master enačbe in Redfield: ločimo kopel in sistem, 
+\begin{align}
+  \rho_{S}(t) = \text{Tr}_{B}(\rho(t))
+\end{align}
+Hamiltonjan razcepimo na $H = H_0 + H_I$, kjer je $H_0 = H_S \otimes \mathbb{I}_B + \mathbb{I}_S \otimes H_B$ razdenjen na podsistema, za interakcijski del pa privzamemo obliko $H_I = \sum_\alpha A_\alpha \otimes B_\alpha$. V interakcijski sliki je operator za evolucijo
+\begin{align}
+  U_{0}(t, t_{0}) = e^{-i H_{0}(t - t_{0})}
+\end{align}
+\begin{align}
+  \rho_I(t) &= U_0^\dagger(t, 0) \rho(t) U_0(t, 0) = e^{i H_0 t} \rho(t) e^{-i H_0 t}\\
+  H_I(t) &= U_0^\dagger(t, 0) H_I U_0(t, 0) = e^{i H_0 t} H_I e^{-i H_0 t}
+\end{align}
+Von Neumannova enačba je 
+\begin{align}
+  \frac{d}{dt}\rho_I(t) &= -i [H_I(t), \rho_I(t)] \\
+  \rho_I(t) &= \rho_I(0) - i \int_{0}^{t} dt' \, [H_I(t'), \rho_I(t')]
+\end{align}
+vstavimo nazaj v komutator in se znebimo prostosnih stopenj kopeli:
+\begin{align}
+  \frac{d}{dt}\rho_{S}(t) = -\int_{0}^{t} ds \, \text{Tr}_{B}\left( [H_{I}(t), [H_{I}(t-s), \rho_{S}(t) \otimes \rho_{B}]] \right)
+\end{align}
+V interakcijskem členu so operatorji $A_\alpha$ napisani kot lastni operatorji $H_S$ z energijami prehodov $\omega = E_b - E_a$
+\begin{align}
+  A_\alpha(\omega) = \sum_{E_b - E_a = \omega} \vert{}a\rangle \langle a\vert{} A_\alpha \vert{}b\rangle \langle b\vert{}
+\end{align}
+To zadošča relacijam $[H_S, A_\alpha(\omega)] = -\omega A_\alpha(\omega), \quad [H_S, A_\alpha^\dagger(\omega)] = \omega A_\alpha^\dagger(\omega)$ in \\ $e^{i H_S t} A_\alpha(\omega) e^{-i H_S t} = e^{-i \omega t} A_\alpha(\omega), \quad e^{i H_S t} A_\alpha^\dagger(\omega) e^{-i H_S t} = e^{i \omega t} A_\alpha^\dagger(\omega)$. V interakcijski sliki potem velja
+\begin{align}
+  H_I(t) = \sum_{\alpha, \omega} e^{-i \omega t} A_\alpha(\omega) \otimes B_\alpha(t) = e^{i H_B t} B_\alpha e^{-i H_B t} 
+\end{align}
+evolucija sledi kot
+\begin{align}
+  \dot{\rho}_{S} = \sum_{\omega, \omega'} \sum_{\alpha, \beta} e^{i(\omega' - \omega)t} \Gamma_{\alpha\beta}(\omega) \left( A_{\alpha}(\omega) \rho_{S}(t) A_{\beta}^{\dagger}(\omega') - A_{\beta}^{\dagger}(\omega') A_{\alpha}(\omega) \rho_{S}(t) \right) + \text{h.c.}
+\end{align}
+kjer so prehodne matrike med stanji
+\begin{align}
+  \Gamma_{\alpha\beta}(\omega) = \int_{0}^{\infty} ds \, e^{i\omega s} \, \text{Tr}_{B}\left( B_{\alpha}^{\dagger}(t) B_{\beta}(t-s) \rho_{B} \right) = \frac{1}{2}\gamma_{\alpha\beta}(\omega) + i S_{\alpha\beta}(\omega)
+\end{align}
+Evolucija pa ima strukturo
+\begin{align}
+  \frac{d\rho_{S}}{dt} = -i [H_{LS}, \rho_{S}(t)] + \mathcal{D}(\rho_{S}(t))
+\end{align}
+z disipatorjem
+\begin{align}
+  \mathcal{D}(\rho_{S}) = \sum_{\omega} \sum_{\alpha,\beta} \gamma_{\alpha\beta}(\omega) \left( A_{\beta}(\omega) \rho_{S} A_{\alpha}^{\dagger}(\omega) - \frac{1}{2} \{ A_{\alpha}^{\dagger}(\omega) A_{\beta}(\omega), \rho_{S} \} \right)
+\end{align}
+oz. v splošnem
+\begin{align}
+  \mathcal{D}(\rho_{S}) = \sum_{k} \gamma_{k} \left( L_{k} \rho_{S} L_{k}^{\dagger} - \frac{1}{2} \{ L_{k}^{\dagger} L_{k}, \rho_{S} \} \right)
+\end{align}
+V stacionarnem stanju velja
+\begin{align}
+  \mathcal{L}\rho_{\text{ness}} = 0\,.
+\end{align}
+Notes za vektorizacijo in superoperatorje: 
+\begin{align}
+\mathcal{L} u_{\mu}^R = \lambda_{\mu} u_{\mu}^R
+\end{align}  
+\begin{align}
+  \text{vec}(ABC) = (A \otimes C^T) \text{vec}(B)
+\end{align}
+\begin{align}
+  \text{Tr}(A^{\dagger} B) = \text{vec}(A)^{\dagger} \text{vec}(B)
+\end{align}
+\begin{align}
+  \frac{d}{dt}\vert{}\rho\rangle = \left( -i H \otimes \mathbb{I} + i \mathbb{I} \otimes H^T + \sum_{k} L_{k} \otimes L_{k}^* - \frac{1}{2} \sum_{k} (L_{k}^{\dagger} L_{k} \otimes \mathbb{I} + \mathbb{I} \otimes L_{k}^T L_{k}^*) \right) \vert{}\rho\rangle
+\end{align}
+\begin{align}
+  \langle \hat{O} \rangle(t) = \langle \mathbb{I} \vert{} \hat{O} \otimes \mathbb{I} \vert{} \rho(t) \rangle
+\end{align}
+Šibke sklopitve in perturbacijski pristopi
+\begin{align}
+  \mathcal{L} = -i [H, \cdot] + \epsilon \mathcal{D}[\cdot], \quad  \quad \rho = \rho_{0} + \epsilon \rho_{1} + \epsilon^2 \rho_{2} + \dots
+\end{align}
+napišemo gostotno matriko sistema v lastni bazi, siagonalno, s klasičnimi populacijami
+\begin{align}
+  \rho_{0} = \sum_{n} p_{n} \vert{}n\rangle \langle n\vert{}, \quad H\vert{}n\rangle = E_{n} \vert{}n\rangle
+\end{align}
+kjer velja v ničtem redu (by construction)
+\begin{align}
+  \mathcal{L}\rho_0 = -i [H, \rho_0] = 0
+\end{align}
+V prvem redu so enačbe za NESS
+\begin{align}
+  -i [H, \rho_1] + \mathcal{D}(\rho_0) = 0
+\end{align}
+kjer je $\mathcal{D}(\rho_0) = \sum_\mu \left( L_\mu \rho_0 L_\mu^\dagger - \frac{1}{2} \{L_\mu^\dagger L_\mu, \rho_0\} \right)$ in od tod enačba za prehode med populacijami
+\begin{align}
+  \langle n \vert{} \mathcal{D}(\rho_0) \vert{} n \rangle = \sum_\mu \sum_m p_m \vert{}\langle n \vert{} L_\mu \vert{} m \rangle\vert{}^2 - \sum_\mu \sum_m p_n \vert{}\langle m \vert{} L_\mu \vert{} n \rangle\vert{}^2 
+\end{align}
+kot klasična populacijska dinamika z $R_{nm} = \sum_\mu \vert{}\langle n \vert{} L_\mu \vert{} m \rangle\vert{}^2$
+\begin{align}
+  \dot{p}_n = \epsilon \sum_m \left( R_{nm} p_m - R_{mn} p_n \right)
+\end{align}
+Izvendiagonali elementi se razvijejo hitro na $\mathcal{O}(1)$, medtem ko se populacije razvijajo počasi na GGE manifoldu z $\mathcal{O}(\epsilon^{-1})$. Za ohranitev normalizacije mora veljati $\sum_n \dot{p}_n = 0$.
+
+Integrabilni sistemi imajo makrsoskopsko število ohranjenih nabojev $[H_0, C_i]=0$, pod unitarno časovno evolucijo se razvijejo v netermično stanje
+\begin{align}
+  \rho_{GGE} = \frac{1}{Z} e^{-\sum_{i} \lambda_{i} C_{i}}
+\end{align}
+\begin{align}
+  \langle \psi_0 \vert{} C_i \vert{} \psi_0 \rangle = \text{Tr}(C_i \rho_{\text{GGE}})
+\end{align}
+fiksira $\lambda_i$. UNitarna dinamika prijcira na GGE manifold, šibka sklopitev premika po GGE manifoldu: 
+\begin{align}
+  \rho_0(t) = \rho_{\boldsymbol{\lambda}(t)} = \frac{1}{Z(t)} \exp\left( -\sum_i \lambda_i(t) C_i \right)
+\end{align} 
+EOM za ohranjene naboje je  
+\begin{align}
+  \langle \dot{C}_{i} \rangle_{\lambda(\infty)} = \text{Tr}[C_{i} \mathcal{D}\rho] \simeq \epsilon \, \text{Tr}[C_{i} \mathcal{D} \rho_{0}] = 0\,\quad \forall \lambda_i 
+\end{align} 
+Definiramo projektor na GGE manifold:
+\begin{align}
+  P X = -\sum_{ij} \frac{\partial \rho}{\partial \lambda_{i}} (\chi^{-1})_{ij} \text{Tr}[C_{j} X]
+\end{align}   
+ki da dinamiko vzdolž manifolda: 
+\begin{align}
+  \frac{\partial \rho_{\boldsymbol{\lambda}}}{\partial t} = \sum_i \frac{\partial \rho_{\boldsymbol{\lambda}}}{\partial \lambda_i} \dot{\lambda}_i = \epsilon P \mathcal{D}(\rho_{\boldsymbol{\lambda}}) = -\epsilon \sum_{ij} \frac{\partial \rho_{\boldsymbol{\lambda}}}{\partial \lambda_i} (\chi^{-1})_{ij} \text{Tr}\left[ C_j \mathcal{D}(\rho_{\boldsymbol{\lambda}}) \right]
+\end{align}
+od koder sledi evolucija za koeficiente/potenciale $\lambda_i$:
+\begin{align}
+  \dot{\lambda}_{i} = -\epsilon \sum_{j} (\chi^{-1})_{ij} \text{Tr}[C_{j} \mathcal{D} \rho_{\lambda(t)}]
+\end{align}
+s susceptibilnostmi
+$\chi_{ij} = \langle C_{i} C_{j} \rangle - \langle C_{i} \rangle \langle C_{j} \rangle = -\text{Tr}\left[ C_{i} \frac{\partial \rho}{\partial \lambda_{j}} \right]$. 
+
+
+\section{Ekscitonski izolatorji in sklopitev s kopelmi}
+\subsection{Osnovni model}
+\subsection{Limita neskončne temperature}
+\subsection{Fononske sklopitve}
+\subsection{Fotonske sklopitve v resonatorju}
+
 \[
 \begin{aligned}
 \dot{n}_{\alpha k} = \sum_{p} \bigg( & \Gamma_{\alpha p \to \alpha k} \, n_{\alpha p} (1 - n_{\alpha k}) - \Gamma_{\alpha k \to \alpha p} \, n_{\alpha k} (1 - n_{\alpha p}) + \\
@@ -187,6 +472,126 @@ S tem dobimo diagonalen Hamiltonijan
 \end{equation}
 z znano disperzijo za model tesne vezi $\mathcal{E}(k) = -2t \cos(ka)$. V primeru, ko imamo po en elektron na mesto, so v osnovnem stanju zasedeni vsi valovni vektorji do $k_F = \pi /a$. Na to mrežo lahko gledamo tudi kot na mrežo z osnovno celico dolžine $2a$ z dvema ionoma. V tem primeru je disperzija enaka, prva Brillouinova cona pa se zmanjša za polovico iz $k \in [-\pi/a, \pi/a]$ v $k \in [-\pi/(2a), \pi/(2a)]$, disperzija pa se preslika nazaj. Na to lahko gledamo kot na \textbf{dva energijska pasova brez reže}, torej je energija enaka $\mathcal{E}(k)_\pm = \pm 2t \cos(ka)$.  
 
+
+Ko dodamo poljubno majhno modulacijo mreže, se disperzija spremeni z dodatno energijsko režo. V novem Hamiltonijanu upoštevamo, da se \textbf{s premiki poveča elastična energija med ioni}, ki jo opišemo klasično, z vzmetmi s koeficientom $K$, hkrati pa upoštevamo, da se \textbf{verjetnosti za tuneliranje elektronov med mesti mreže spremenijo}, zaradi manjšega oziroma večjega prekrivanja orbital.
+\begin{equation}
+  H = -\sum_{j=1}^N t(u_{j+1}-u_j) \left[c^\dagger_{j}c^{\vphantom{\dagger}}_{j+1} + c^\dagger_{j+1}c^{\vphantom{\dagger}}_{j}\right] + \frac{K}{2}\sum_{j=1}^{N}(u_{j+1}-u_j)^2\,,
+\end{equation}
+kjer smo upoštevali, da so prekrivalni integrali zdaj funkcije razlik sosednjih odmikov $t(u_{j+1}-u_j)$. Te razvijemo za majhne odmike do prvega reda \cite{PhysRevLett.42.1698}: 
+\begin{equation}
+  t(u_{j+1}-u_j) \approx t - \lambda (u_{j+1}-u_j)\,,
+\end{equation} 
+kjer je $t$ vrednost prekrivalnega integrala iz prvega, ko velja $u_j=0$, $\lambda > 0$ pa koeficient razvoja. 
+
+Zdaj si izberemo modulacijo mest ionov. Recimo, da se vsak drugi ion premakne v levo za $-u$ (da upravičimo razvoj prekrivalnega integrala mora veljati $u \ll a$). Nova osnovna celica ima dolžino $2a$ in vsebuje po dva atoma. Prvega označimo z indeksom $A$, drugega, zamaknjenega pa z $B$. Posebej gledamo skakanje elektronov med ioni znotraj celice in med sosednjima celicama. Ker velja $u_{j, A} =0$ in $u_{j, B} =-u$ (gl. sliko \ref{pic1}), sledi, da za razlike odmikov znotraj, oziroma zunaj celic dobimo 
+\begin{eqnarray*}
+  u_{j, B}-u_{j, A} = -u \,,\\
+  u_{j+1, A}-u_{j, B} = +u\,.
+\end{eqnarray*}
+Kinetični člen za elektrone razpade na dve vsoti, v elastičnem delu pa sta oba prispevka enaka, ker kvadriramo razlike odmikov, dobimo konstanten prispevek k energiji: 
+\begin{equation}
+  H = -(t + \lambda u) \sum_{j=1}^{N/2} \left[c^\dagger_{j, B}c^{\vphantom{\dagger}}_{j, A} + \text{h.c.}\right]
+-(t - \lambda u) \sum_{j=1}^{N/2} \left[c^\dagger_{j, B}c^{\vphantom{\dagger}}_{j+1, A} + \text{h.c.}\right] +\frac{K}{2} N u^2\,.
+\end{equation}
+Vidimo, da je \emph{verjetnost za tuneliranje med celicama, kjer je razmik večji padla za} $\Delta t = \lambda u$, \emph{znotraj celice pa se je povečala} \cite{PhysRevLett.42.1698}. Nov Hamiltonijan lahko zapišemo kot kvadratno formo s prilagojeno Fourierovo transformacijo, kjer upoštevamo, da z večjo osnovno celico vzamemo $a \to 2a$ v faznem faktorju in novo normalizacijo, da ohranimo ortonormiranost:
+\begin{eqnarray*}
+  c_{j, A} &=& \sqrt{\frac{2}{L}}\sum_{k=1}^{N/2} e^{ijk(2a)} d_{k, A}\,,\\
+  c_{j, B} &=& \sqrt{\frac{2}{L}}\sum_{k=1}^{N/2} e^{i(j+1/2)k(2a)} d_{k, B}\,.
+\end{eqnarray*}
+Po nekaj računanja se prebijemo do : 
+\begin{gather*}
+H = \frac{K}{2} N u^2 - \sum_{k=1}^{N} 
+  \begin{pmatrix} d^\dagger_{k, A} & d^\dagger_{k, B} \end{pmatrix} 
+  \mathcal{H}(k) 
+  \begin{pmatrix} d_{k, A} \\ d_{k, B} \end{pmatrix}\,; \\[10pt]
+  \mathcal{H}(k) = 
+  \begin{pmatrix}
+    0 & (t + \lambda u)e^{ika} + (t - \lambda u)e^{-ika} \\
+    (t + \lambda u)e^{-ika} + (t - \lambda u)e^{ika} & 0
+  \end{pmatrix}\,.
+\end{gather*} 
+S pomočjo kanonične transformacije oziroma prek ničel karakterističnega polinoma $\det(\mathcal{H}(k) - \epsilon \mathds{1})=0$ lahko najdemo lastni energiji $\epsilon_\pm$. Končna disperzija vsebuje še konstantni člen zaradi potencialne energije: 
+\begin{tcolorbox}[colback=green!10!white, colframe=green!75!black] \label{dispeq}
+\[  
+\mathcal{E}_\pm(k) = \frac{K}{2} N u^2 \pm 2\sqrt{t^2 \cos^2\left(ka\right) + \lambda^2 u^2\sin^2\left(ka\right)}\,.
+\]
+\end{tcolorbox} \noindent
+Ta se za $u=0$ poenostavi v disperzijo nemodulirane mreže z dvema atomoma v osnovni celici. Odpre se tudi energijska reža, $\Delta$, podana z razliko energij na robu Brillouinove cone ($k=\pi/2a$): 
+\begin{equation} \label{reza}
+  \Delta = (\mathcal{E}_+-\mathcal{E}_-)|_{k=\pi/2a}=4\lambda u = 4\Delta t\,.
+\end{equation}
+Ta je sorazmerna z velikostjo odmika ionov.
+
+\section{Energija dimerizirane verige}
+
+Z novo disperzijo moramo pokazati še, da je \textbf{deformirana/dimerizirana postavitev ionov z} $u\neq 0$ \textbf{energijsko bolj ugodna od prvotne verige}. V primeru enega elektrona na ion je pas $\mathcal{E}_-(k)$ zapolnjen do konca. Skupna energija elektronov, $E_\text{el.}$, v pasu je tako integral po prvi Brillouinovi coni\footnote{Vsoto prepišemo v integral: $1/L \sum_{k<k_F}f(k) = 1/(2\pi) \int_\text{1.B.C.} f(k)\, \dd{k}$} (predfaktor 2 vstopi zaradi spina): 
+\begin{align} \label{el energija}
+  E_\text{el} = 2 \cdot \frac{N a}{2\pi} \int_{-\pi/2a}^{\pi/2a} -2\sqrt{t^2 \cos^2(ka) + (\Delta t)^2 \sin^2(ka)}\, \dd{k}\,,
+\end{align} 
+V končni fazi nas zanima le razlika energij v obeh verigah, $\delta E_\text{el.} = E_\text{el.}(\Delta t) - E_\text{el.}(0)$. V tem največ prispevajo $k$ v okolici Brillouinove cone (gl. sliko disperzije). Ker je integrand simetričen, lahko pišemo shematsko: 
+\begin{equation} \label{integrali}
+   \int_{-\pi/2a}^{\pi/2a} \to 2 \int_{0}^{\pi/2a} =  \int_{0}^{\pi/2a -\Lambda} +  \int_{\pi/2a - \Lambda}^{\pi/2a}\,,
+\end{equation}   
+kjer je $\Lambda$ mejna frekvenca, ki jo uporabimo za regularizacijo integrala (kot v teoriji polja) na robu območja integracije. V razliki $\delta E_\text{el.}$ bo prvi integral v zadnji vsoti prispeval red manj kot integral na robu (gl. sliko \ref{pic2}), zato ga zanemarimo, drugi integrand v \eqref{el energija} pa razvijemo okoli roba 1. B. C. (gl. \ref{pic2}), torej $k = -q + \pi/(2a)$. V tem območju velja $\sin(ka)\approx 1$ in $\cos(ka)\approx qa$. Tako velja
+\begin{gather*}
+  \delta E_\text{el.} \approx -\frac{4Na}{\pi} \int_{\pi/2a - \Lambda}^{\pi/2a} \left(\sqrt{t^2 \cos^2(ka) + (\Delta t)^2 \sin^2(ka)} - t\cos(ka)\right)\, \dd{k} \approx \\
+  \approx -\frac{4Na}{\pi} \int_{0}^{\Lambda} \left(\sqrt{q^2t^2 a^2 + (\Delta t)^2} - qta\right) \dd{q}\,,
+\end{gather*}
+Integral izvrednotimo
+\begin{equation}
+ \delta E_\text{el.} =
+-\frac{4Na}{\pi}\left[
+\frac{\Lambda}{2}\sqrt{(ta)^2\Lambda^2+(\Delta t)^2}
++\frac{(\Delta t)^2}{2ta}
+\log\!\left(\frac{ta\Lambda+\sqrt{(ta)^2\Lambda^2+(\Delta t)^2}}{\Delta t}\right)
+-\frac{ta\Lambda^2}{2}
+\right]
+\end{equation} 
+in ga poenostavimo za majhne $\Delta t$, tako ostane samo logaritemski člen (prvi in zadnji v prvem redu ne prispevata in se krajšata). Končni razlika prispevka elektronov k energiji je 
+\begin{tcolorbox}[colback=green!10!white, colframe=green!75!black]
+\begin{equation}
+  \delta E_\text{el.}  \simeq
+-\frac{2N}{\pi t}(\Delta t)^2
+\log\!\left(\frac{1}{\Delta t}\right) + \text{konst.} \propto -u^2 \log(\frac{1}{u})\,.
+\end{equation} 
+\end{tcolorbox} \noindent
+Na koncu smo upoštevali, da je $\Delta t =\lambda u$. Pomembno je, v primeru deformirane verige \textbf{razlika energij elektronov vsebuje divergentni faktor} $\log(1/u)$, ko gre $u \to 0$, kar nam že nakazuje, da bo ta prispevek k energiji za majhne odmike po velikosti večji od prispevka dodane vložene potencialne energije zaradi premikov ionov. 
+
+Za celotno energijo moramo dodati še elastično energijo $E_\text{pot.}= \frac{K}{2} N u^2$, kot kaže slika \ref{pic3}. Za energijsko najbolj ugoden odmik $u$ iščemo \textbf{minimum celotne energije}: 
+\begin{equation}
+  \dv{(E_\text{pot.} +  \delta E_\text{el.})}{u} = 0\,,
+\end{equation}
+od koder dobimo enačbo za $u_\text{min.}$:
+\begin{equation}
+  KNu - \frac{2N\lambda^2}{\pi t}\left(2u \log\!\left(\frac{1}{u}\right) -  u\right) =0\,,
+\end{equation} 
+iz tu pa sledi, da je energijsko optimalen odmik neničeln
+\begin{tcolorbox}[colback=green!10!white, colframe=green!75!black]
+\[
+u_\text{min.} \propto e^{-\frac{\pi K t}{4 \lambda^2}} > 0
+\]
+\end{tcolorbox} \noindent
+ravnovesni odmik se zmanjšuje z večjimi sklopitvami med ioni $K$, in elektroni $t$, in narašča, z večjim faktorjem $\lambda$. Funkcija ni analitična za $\lambda \to 0$, torej perturbativni pristopi tu ne delujejo.
+
+\section{Peierlsova nestabilnost v grafenu}
+V prejšnjih poglavjih smo videli, da je enodimenzionalna veriga vedno nestabilna na dimerizacijo. V dveh dimenzijah, specifično v grafenu, se pojavi podoben pojav, vendar z nekaj razlikami v stabilnosti.
+
+Grafen ima v osnovi trikotno mrežo z dvema atomoma v osnovni celici ($\Gamma_2$). Pri analizi nestabilnosti osnovno celico razširimo, podobno kot pri enodimenzionalni dimerizaciji. Energijsko najugodnejša konfiguracija ima tri-števno simetrijo, nova celica ($\Gamma_6$) pa vsebuje šest atomov na celico.
+
+Postopek je podoben kot v enodimenzionalnem primeru s primerno več računanja, na koncu dobimo podoben Hamiltonijan, s prekrivalnimi integrali $t, u$ in $v$, tokrat velikosti $6\times 6$ \cite{gontier2025peierlsinstabilityhexagonallattices}:
+\begin{gather*}
+\mathcal{H}(k) = \begin{pmatrix} 0 & A(\vec{k}) \\ A(\vec{k})^* & 0 \end{pmatrix} \,;\\
+A(\vec{k}) = \begin{pmatrix} 
+t & v e^{-i\vec{k}\cdot \vec{b}_1} & u \\ 
+u & t & v e^{i(\vec{k}\cdot \vec{b}_1 + \vec{k}\cdot \vec{b}_2)} \\ 
+v e^{-i\vec{k}\cdot \vec{b}_2} & u  & t 
+\end{pmatrix}\,.
+\end{gather*}
+Energijsko režo, pri $k=0$ (v točki $\Gamma$), dobimo spet z računom $\det(\mathcal{H}(k=0) - \epsilon \mathds{1})=0$: 
+\begin{equation}
+  \Delta \propto \sqrt{(t-E)^2 + (u-E)^2 + (v-E)^2}\,,\quad E=(t+u+v)/3\,.
+\end{equation}
+Pomembna razlika v dvodimenzionalnem primeru grafena je v tem, da se fazni prehod v nižje simetrijsko stanje ne zgodi za poljubne vrednosti sklopitve med ioni $K$. Za vrednosti nad $K_c$, je energijsko bolj ugodno, da grafen ostane v trikotni mreži, za $0<K<K_c$ pa je bolj ugodna mreža z nižjo simetrijo, prikazana na sliki \ref{mreza}. V tem primeru se odpre reža in grafen ne prevaja več, kot je prikazano na sliki 
 \nocite{*}
 \printbibliography
 \end{document} 

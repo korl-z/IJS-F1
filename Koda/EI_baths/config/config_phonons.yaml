@@ -1,7 +1,7 @@
 model:
   nk:
     scan: 20
-    reference: 20
+    reference: 50
 
   band:
     name: tb_2d
@@ -11,7 +11,7 @@ model:
       tb: -1.0
 
   mean_field:
-    v: 4.4
+    v: 7.784
     n: 1.0
     uh: null
 
@@ -39,7 +39,7 @@ equilibrium:
 
 scan:
   temperature:
-    nt: 30
+    nt: 10
     min_ratio: 0.01
     max_ratio: 2.0
 
@@ -51,22 +51,22 @@ open_system:
   bath:
     rate: PhononBath
     pars:
-      cs: 100.
-      ktf: 0.001
-      eta: 1.0
+      cs: 1.
+      ktf: 0.01
+      eta: 0.05
       amp: 1.0
       ca: 1.0
       cb: 1.0
-      qd: 3.14159
-      nang: 128
+      qd: 4.44288
+      nang: 64
 
   solve:
-    dt: 1.0
-    td: 50.
-    tm: 50.
-    tol: 1.0e-4
+    dt: 0.1
+    td: 100.
+    tm: 100.
+    tol: 1.0e-6
     nmax: 20000
-    chk: 100
+    chk: 10
     prog: false
     mode: dense
     block: 128
