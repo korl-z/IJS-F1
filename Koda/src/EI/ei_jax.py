@@ -18,7 +18,6 @@ F32 = jnp.float64
 I32 = jnp.int64
 RateFn = Callable[[Any, Any, Any, Any, Any], Any]
 
-
 class JState(NamedTuple):
     """state vektor za MF, jax verzija"""
     d: Any
@@ -130,31 +129,8 @@ def _pars(bd: eu.Bands, p: eu.MFPars) -> tuple[Any, ...]:
     return ea, eb, w, pv, pn, ph
 
 
-# def _baths(bs: Iterable[Bath]) -> tuple[tuple[Any, ...], tuple[RateFn, ...]]:
-#     bs = tuple(bs)
-
-#     oc = {None: 0, "a": 1, "b": 2}
-#     bt = jnp.asarray([b.t for b in bs], dtype=F32)
-#     bk = jnp.asarray(np.stack([_kap_mat(b.kap) for b in bs]), dtype=F32)
-#     bw = jnp.asarray([b.wc for b in bs], dtype=F32)
-#     bo = jnp.asarray([oc[b.orb] for b in bs], dtype=I32)
-#     bm = jnp.asarray([b.mu for b in bs], dtype=F32)
-#     rf = tuple(b.rate for b in bs)
-
-#     if any(isinstance(b, pb.PhononBath) for b in bs):
-#         if not all(isinstance(b, pb.PhononBath) for b in bs):
-#             raise TypeError("use phonon baths together, without placeholder baths")
-#         return pb.pack(bs), ()
-    
-#     return (bt, bk, bw, bo, bm), rf
-
-def _baths(bs):
+def _baths(bs: Iterable[Bath]) -> tuple[tuple[Any, ...], tuple[RateFn, ...]]:
     bs = tuple(bs)
-
-    if any(isinstance(b, pb.PhononBath) for b in bs):
-        if not all(isinstance(b, pb.PhononBath) for b in bs):
-            raise TypeError("use phonon baths together, without placeholder baths")
-        return pb.pack(bs), ()
 
     oc = {None: 0, "a": 1, "b": 2}
     bt = jnp.asarray([b.t for b in bs], dtype=F32)
@@ -164,6 +140,7 @@ def _baths(bs):
     bm = jnp.asarray([b.mu for b in bs], dtype=F32)
     rf = tuple(b.rate for b in bs)
     return (bt, bk, bw, bo, bm), rf
+
 
 # def _mf(ea: Any, eb: Any, pn: Any, ph: Any,
 #         d: Any, m: Any) -> JState:
@@ -199,8 +176,15 @@ def _mf(ea: Any, eb: Any, pn: Any, ph: Any,
 
     u = jnp.where(ek > F32(0.0), u, F32(1.0))
     v = jnp.where(ek > F32(0.0), v, F32(0.0))
-    e = jnp.stack((av + ek, av - ek))
+    e = jnp.stack((av + ek, av - ek))  
     return JState(d, m, na, nb, eah, ebh, e, u, v)
+
+@jax.jit
+def _mf_jit(ea: Any, eb: Any, pn: Any, ph: Any,
+            d: Any, m: Any) -> JState:
+    return _mf(ea, eb, pn, ph, d, m)
+
+
 
 @jax.jit
 def _mf_jit(ea: Any, eb: Any, pn: Any, ph: Any,
@@ -272,9 +256,6 @@ def _af(qa: Any, qb: Any, o: Any) -> Any:
 
 def _rates(st: JState, bp: tuple[Any, ...],
            rf: tuple[RateFn, ...]) -> Any:
-    if isinstance(bp, pb.Pack):
-        return pb.rates(st, bp)
-    
     bt, bk, bw, bo, bm = bp
 
     e = st.e.reshape(-1)
@@ -317,31 +298,8 @@ def _cur_dense(st: JState, n: Any, w: Any,
     return (ga - lo).reshape(n.shape)
 
 
-def _ab_mat(n: Any, w: Any, r: Any) -> tuple[Any, Any]:
-    y = n.reshape(-1)
-    ww = jnp.tile(w, 2)
-
-    a = r @ (ww * y)
-    b = r.T @ (ww * (F32(1.0) - y))
-
-    return a.reshape(n.shape), b.reshape(n.shape)
-
-
-def _ab_dense(
-    st: Any,
-    n: Any,
-    w: Any,
-    bp: tuple[Any, ...],
-    rf: tuple[RateFn, ...],
-) -> tuple[Any, Any]:
-    return _ab_mat(n, w, _rates(st, bp, rf))
-
 def _cur_block(st: JState, n: Any, w: Any, bp: tuple[Any, ...],
                rf: tuple[RateFn, ...], block: int) -> Any:
-    
-    if isinstance(bp, pb.Pack):
-        return pb.cur_block(st, n, w, bp, block)
-    
     bt, bk, bw, bo, bm = bp
     y = n.reshape(-1)
     e = st.e.reshape(-1)
@@ -411,9 +369,7 @@ def _cur_pair(
     n: Any,
     bp: tuple[Any, ...],
     rf: tuple[RateFn, ...],
-    ) -> Any:
-    if isinstance(bp, pb.Pack):
-        raise ValueError("phonon baths require mode='dense' or mode='block'")
+) -> Any:
     bt, bk, bw, bo, bm = bp
 
     ea = st.e[0]
@@ -519,30 +475,29 @@ def blocked_current(
     return total_current(bd, st, n, bs, mode="block", block=block)
 
 
-def _lim(n: Any, dn: Any, dt: Any, fac: Any = F32(0.8), eps: Any = F32(1.0e-6)) -> Any:
+def _lim(n: Any, dn: Any, dt: Any, fac: Any = F32(0.8)) -> Any:
     jp = dn > 0.0
     jm = dn < 0.0
     dp = jnp.where(jp, dn, F32(1.0))
     dm = jnp.where(jm, dn, F32(-1.0))
-    hp = jnp.min(jnp.where(jp, (F32(1.0) + eps - n) / dp, jnp.inf))
-    hm = jnp.min(jnp.where(jm, (-eps - n) / dm, jnp.inf))
+    hp = jnp.min(jnp.where(jp, (F32(1.0) - n) / dp, jnp.inf))
+    hm = jnp.min(jnp.where(jm, -n / dm, jnp.inf))
     hb = fac * jnp.maximum(F32(0.0), jnp.minimum(hp, hm))
     return jnp.minimum(dt, hb)
 
 
 @jax.jit
-def _lim_jit(n: Any, dn: Any, dt: Any, fac: Any, eps: Any) -> Any:
-    return _lim(n, dn, dt, fac, eps)
+def _lim_jit(n: Any, dn: Any, dt: Any, fac: Any) -> Any:
+    return _lim(n, dn, dt, fac)
 
 
-def lim_step(n: Any, dn: Any, dt: float, fac: float = 0.8, eps: float = 1.0e-6,) -> Any:
+def lim_step(n: Any, dn: Any, dt: float, fac: float = 0.8) -> Any:
     """Return the device-side bounded Euler step."""
     return _lim_jit(
         jnp.asarray(n, dtype=F32),
         jnp.asarray(dn, dtype=F32),
         F32(dt),
         F32(fac),
-        F32(eps),
     )
 
 
@@ -555,32 +510,20 @@ def _step(
     pv: Any,
     pn: Any,
     ph: Any,
-    r: Any,
+    bp: tuple[Any, ...],
+    rf: tuple[RateFn, ...],
     dt: Any,
     td: Any,
     tm: Any,
+    mode: str,
+    block: int,
 ) -> tuple[tuple[Any, ...], None]:
-    
     n, d, m, tt = ca
     st = _mf(ea, eb, pn, ph, d, m)
-    # dn = _cur(st, n, w, bp, rf, mode, block) #using EULER STEP
-    # h = _lim(n, dn, dt)
-    # n = jnp.clip(n + h * dn, 0.0, 1.0)
-    # n = _fix_fill(n, w, pn)
-#novo - kinda boljse??
-    a, b = _ab_mat(n, w, r)
-    q = a + b
-    ne = jnp.where(
-        q > F32(0.0),
-        a / jnp.maximum(q, F32(1.0e-30)),
-        n,
-    )
-
-    h = dt
-    z = -jnp.expm1(-h * q)
-    n = jnp.clip(n + z * (ne - n), F32(0.0), F32(1.0))
+    dn = _cur(st, n, w, bp, rf, mode, block)
+    h = _lim(n, dn, dt)
+    n = jnp.clip(n + h * dn, 0.0, 1.0)
     n = _fix_fill(n, w, pn)
-#novo
     tg = _targets(st, n, w, pv)
     zd = -jnp.expm1(-h / td)
     zm = -jnp.expm1(-h / tm)
@@ -589,44 +532,7 @@ def _step(
     return (n, d, m, tt + h), None
 
 
-def _fixed_step(
-    ca: tuple[Any, ...],
-    _: Any,
-    ea: Any,
-    eb: Any,
-    w: Any,
-    pv: Any,
-    pn: Any,
-    ph: Any,
-    r: Any,
-    xn: Any,
-    xd: Any,
-    xm: Any,
-) -> tuple[tuple[Any, ...], None]:
-    n, d, m = ca
-
-    st = _mf(ea, eb, pn, ph, d, m)
-    a, b = _ab_mat(n, w, r)
-    q = a + b
-
-    qcut = F32(1.0e-12) * jnp.max(q)
-    active = q > qcut
-
-    nt = jnp.where(active, a / jnp.where(active, q, F32(1.0)), n)
-    # nt = _fix_fill(nt, w, pn)
-
-    n = n + xn * (nt - n)
-    n = _fix_fill(n, w, pn)
-
-    tg = _targets(st, n, w, pv)
-
-    d = d + xd * (tg.d - d)
-    m = m + xm * (tg.m - m)
-
-    return (n, d, m), None
-
-
-@partial(jax.jit, static_argnames=("ns",))
+@partial(jax.jit, static_argnames=("rf", "ns", "mode", "block"))
 def _chunk(
     ea: Any,
     eb: Any,
@@ -634,7 +540,8 @@ def _chunk(
     pv: Any,
     pn: Any,
     ph: Any,
-    r: Any,
+    bp: tuple[Any, ...],
+    rf: tuple[RateFn, ...],
     n: Any,
     d: Any,
     m: Any,
@@ -643,6 +550,8 @@ def _chunk(
     td: Any,
     tm: Any,
     ns: int,
+    mode: str,
+    block: int,
 ) -> tuple[Any, ...]:
     fn = partial(
         _step,
@@ -652,131 +561,19 @@ def _chunk(
         pv=pv,
         pn=pn,
         ph=ph,
-        r=r,
+        bp=bp,
+        rf=rf,
         dt=dt,
         td=td,
         tm=tm,
+        mode=mode,
+        block=block,
     )
-
-    ca, _ = jax.lax.scan(
-        fn,
-        (n, d, m, tt),
-        xs=None,
-        length=ns,
-    )
-
-    return ca
-
-# @partial(jax.jit, static_argnames=("rf", "ns", "mode", "block"))
-# def _chunk(
-#     ea: Any,
-#     eb: Any,
-#     w: Any,
-#     pv: Any,
-#     pn: Any,
-#     ph: Any,
-#     bp: tuple[Any, ...],
-#     rf: tuple[RateFn, ...],
-#     n: Any,
-#     d: Any,
-#     m: Any,
-#     tt: Any,
-#     dt: Any,
-#     td: Any,
-#     tm: Any,
-#     ns: int,
-#     mode: str,
-#     block: int,
-# ) -> tuple[Any, ...]:
-#     fn = partial(
-#         _step,
-#         ea=ea,
-#         eb=eb,
-#         w=w,
-#         pv=pv,
-#         pn=pn,
-#         ph=ph,
-#         bp=bp,
-#         rf=rf,
-#         dt=dt,
-#         td=td,
-#         tm=tm,
-#         mode=mode,
-#         block=block,
-#     )
-#     ca, _ = jax.lax.scan(fn, (n, d, m, tt), xs=None, length=ns)
-#     return ca
-
-
-@partial(jax.jit, static_argnames=("ns",))
-def _fixed_chunk(
-    ea: Any,
-    eb: Any,
-    w: Any,
-    pv: Any,
-    pn: Any,
-    ph: Any,
-    r: Any,
-    n: Any,
-    d: Any,
-    m: Any,
-    xn: Any,
-    xd: Any,
-    xm: Any,
-    ns: int,
-) -> tuple[Any, ...]:
-    fn = partial(
-        _fixed_step,
-        ea=ea,
-        eb=eb,
-        w=w,
-        pv=pv,
-        pn=pn,
-        ph=ph,
-        r=r,
-        xn=xn,
-        xd=xd,
-        xm=xm,
-    )
-
-    ca, _ = jax.lax.scan(
-        fn,
-        (n, d, m),
-        xs=None,
-        length=ns,
-    )
-
+    ca, _ = jax.lax.scan(fn, (n, d, m, tt), xs=None, length=ns)
     return ca
 
 
-# @partial(jax.jit, static_argnames=("rf", "mode", "block"))
-# def _diag(
-#     ea: Any,
-#     eb: Any,
-#     w: Any,
-#     pv: Any,
-#     pn: Any,
-#     ph: Any,
-#     bp: tuple[Any, ...],
-#     rf: tuple[RateFn, ...],
-#     n: Any,
-#     d: Any,
-#     m: Any,
-#     mode: str,
-#     block: int,
-# ) -> tuple[Any, ...]:
-#     st = _mf(ea, eb, pn, ph, d, m)
-#     dn = _cur(st, n, w, bp, rf, mode, block)
-#     tg = _targets(st, n, w, pv)
-#     ec = jnp.max(jnp.abs(dn))
-#     ed = jnp.abs(tg.d - d)
-#     em = jnp.abs(tg.m - m)
-#     en = jnp.abs(tg.n - pn)
-#     er = jnp.maximum(jnp.maximum(ec, ed), jnp.maximum(em, en))
-#     # er = jnp.maximum(ed, jnp.maximum(em, en)) #mogoce ce excludam max(dot(n)) iz errorja bo boljse? -ne
-#     return dn, er, ec, ed, em, tg.n
-
-@jax.jit
+@partial(jax.jit, static_argnames=("rf", "mode", "block"))
 def _diag(
     ea: Any,
     eb: Any,
@@ -784,25 +581,24 @@ def _diag(
     pv: Any,
     pn: Any,
     ph: Any,
-    r: Any,
+    bp: tuple[Any, ...],
+    rf: tuple[RateFn, ...],
     n: Any,
     d: Any,
     m: Any,
+    mode: str,
+    block: int,
 ) -> tuple[Any, ...]:
     st = _mf(ea, eb, pn, ph, d, m)
-
-    a, b = _ab_mat(n, w, r)
-    dn = (F32(1.0) - n) * a - n * b
-
+    dn = _cur(st, n, w, bp, rf, mode, block)
     tg = _targets(st, n, w, pv)
-
     ec = jnp.max(jnp.abs(dn))
     ed = jnp.abs(tg.d - d)
     em = jnp.abs(tg.m - m)
     en = jnp.abs(tg.n - pn)
     er = jnp.maximum(jnp.maximum(ec, ed), jnp.maximum(em, en))
-
     return dn, er, ec, ed, em, tg.n
+
 
 def number_rate(dn: Any, bd: eu.Bands) -> float:
     """Return the weighted particle-number rate."""
@@ -870,7 +666,7 @@ def solve_open(
     if dt <= 0.0 or td <= 0.0 or tm <= 0.0 or tol <= 0.0:
         raise ValueError("dt, td, tm, and tol must be positive")
 
-    na = np.asarray(n, dtype=np.float64)
+    na = np.asarray(n, dtype=np.float32)
     if na.shape != (2, bd.size):
         raise ValueError("n must have shape (2, N)")
     if np.any(~np.isfinite(na)) or np.any(na < 0.0) or np.any(na > 1.0):
@@ -895,68 +691,46 @@ def solve_open(
     ok = False
     it = 0
     er = np.inf
-    erp = None
     tp = -np.inf
-
-    st = _mf(ea, eb, pn, ph, d, m)
-    r = _rates_jit(st, bp, rf)
-
     bar = tqdm(range(0, nmax, chk), desc="Open EI JAX", disable=not prog)
 
     for i0 in bar:
         ns = min(chk, nmax - i0)
-        # n, d, m, tt = _chunk(
-        #     ea,
-        #     eb,
-        #     w,
-        #     pv,
-        #     pn,
-        #     ph,
-        #     bp,
-        #     rf,
-        #     n,
-        #     d,
-        #     m,
-        #     tt,
-        #     dh,
-        #     thd,
-        #     thm,
-        #     ns=ns,
-        #     mode=mode,
-        #     block=block,
-        # )
-        # dn, erj, ec, ed, em, n0 = _diag(
-        #     ea,
-        #     eb,
-        #     w,
-        #     pv,
-        #     pn,
-        #     ph,
-        #     bp,
-        #     rf,
-        #     n,
-        #     d,
-        #     m,
-        #     mode=mode,
-        #     block=block,
-        # )
-
         n, d, m, tt = _chunk(
-            ea, eb, w, pv, pn, ph,
-            r, n, d, m, tt,
-            dh, thd, thm,
+            ea,
+            eb,
+            w,
+            pv,
+            pn,
+            ph,
+            bp,
+            rf,
+            n,
+            d,
+            m,
+            tt,
+            dh,
+            thd,
+            thm,
             ns=ns,
+            mode=mode,
+            block=block,
         )
-
-        # Update the rates at the checkpoint.
-        st = _mf(ea, eb, pn, ph, d, m)
-        r = _rates_jit(st, bp, rf)
-
         dn, erj, ec, ed, em, n0 = _diag(
-            ea, eb, w, pv, pn, ph,
-            r, n, d, m,
+            ea,
+            eb,
+            w,
+            pv,
+            pn,
+            ph,
+            bp,
+            rf,
+            n,
+            d,
+            m,
+            mode=mode,
+            block=block,
         )
-
         er, ec0, ed0, em0, n00, d0, m0, t0 = map(
             float,
             jax.device_get((erj, ec, ed, em, n0, d, m, tt)),
@@ -971,51 +745,38 @@ def solve_open(
         hs["d"].append(d0)
         hs["m"].append(m0)
         hs["n0"].append(n00)
-
         if prog:
             bar.set_postfix(err=f"{er:.2e}", d=f"{d0:.5f}", m=f"{m0:.5f}")
-
-        falling = erp is not None and er < erp
-
-        if er < tol and falling:
+        if er < tol:
             ok = True
             break
-        
-        erp = er
-
         if t0 <= tp:
             raise RuntimeError("occupation step collapsed to zero")
         tp = t0
 
-    # dn, erj, _, _, _, _ = _diag(
-    #     ea,
-    #     eb,
-    #     w,
-    #     pv,
-    #     pn,
-    #     ph,
-    #     bp,
-    #     rf,
-    #     n,
-    #     d,
-    #     m,
-    #     mode=mode,
-    #     block=block,
-    # )
-
     dn, erj, _, _, _, _ = _diag(
-        ea, eb, w, pv, pn, ph,
-        r, n, d, m,
+        ea,
+        eb,
+        w,
+        pv,
+        pn,
+        ph,
+        bp,
+        rf,
+        n,
+        d,
+        m,
+        mode=mode,
+        block=block,
     )
-    
     n0, dn0, d0, m0, t0, er = jax.device_get((n, dn, d, m, tt, erj))
-    n0 = np.asarray(n0, dtype=np.float64)
-    dn0 = np.asarray(dn0, dtype=np.float64)
+    n0 = np.asarray(n0, dtype=np.float32)
+    dn0 = np.asarray(dn0, dtype=np.float32)
     d0 = float(d0)
     m0 = float(m0)
     t0 = float(t0)
     er = float(er)
-    ep = np.finfo(np.float64).eps
+    ep = np.finfo(np.float32).eps
     nc = np.clip(n0, ep, 1.0 - ep)
     eta = np.log((1.0 - nc) / nc)
     st0 = eu.mf_state(bd, p, d0, m0)
@@ -1030,141 +791,10 @@ def solve_open(
         er,
         it,
         t0,
-        # ok or er < tol,
-        ok,
+        ok or er < tol,
         hh,
     )
 
-def solve_fixed(
-    bd: eu.Bands,
-    p: eu.MFPars,
-    n: Any,
-    bs: Iterable[Bath],
-    d: float = 0.2,
-    m: float = 0.0,
-    mix: tuple[float, float, float] = (0.2, 0.2, 0.2),
-    tol: float = 1.0e-6,
-    nmax: int = 5000,
-    chk: int = 10,
-    prog: bool = True,
-) -> eu.OpenSol:
-    
-    na = np.asarray(n, dtype=np.float64)
-    nf = float(np.sum(bd.w * np.sum(na, axis=0)))
-
-    ea, eb, w, pv, pn, ph = _pars(bd, p)
-    bp, rf = _baths(bs)
-
-    n = jnp.asarray(na, dtype=F32)
-    d = jnp.asarray(d, dtype=F32)
-    m = jnp.asarray(m, dtype=F32)
-
-    xn = jnp.asarray(mix[0], dtype=F32)
-    xd = jnp.asarray(mix[1], dtype=F32)
-    xm = jnp.asarray(mix[2], dtype=F32)
-
-    st = _mf(ea, eb, pn, ph, d, m)
-    r = _rates_jit(st, bp, rf)
-
-    hs = {q: [] for q in (
-        "it", "t", "err", "cur", "ed", "em", "d", "m", "n0"
-    )}
-
-    ok = False
-    it = 0
-    er = np.inf
-    erp = None
-
-
-    bar = tqdm(range(0, nmax, chk), desc="Fixed EI JAX", disable=not prog,)
-
-    for i0 in bar:
-        ns = min(chk, nmax - i0)
-
-        n, d, m = _fixed_chunk(
-            ea, eb, w, pv, pn, ph,
-            r, n, d, m,
-            xn, xd, xm,
-            ns=ns,
-        )
-
-        # Refresh rates at the new mean-field state.
-        st = _mf(ea, eb, pn, ph, d, m)
-        r = _rates_jit(st, bp, rf)
-
-        # Uses the cached-matrix version of _diag.
-        dn, erj, ec, ed, em, n0 = _diag(
-            ea, eb, w, pv, pn, ph,
-            r, n, d, m,
-        )
-
-        er, ec0, ed0, em0, n00, d0, m0 = map(
-            float,
-            jax.device_get((erj, ec, ed, em, n0, d, m)),
-        )
-
-        it = i0 + ns
-
-        hs["it"].append(it)
-        hs["t"].append(float(it))
-        hs["err"].append(er)
-        hs["cur"].append(ec0)
-        hs["ed"].append(ed0)
-        hs["em"].append(em0)
-        hs["d"].append(d0)
-        hs["m"].append(m0)
-        hs["n0"].append(n00)
-
-        if prog:
-            bar.set_postfix(
-                err=f"{er:.2e}",
-                d=f"{d0:.5f}",
-                m=f"{m0:.5f}",
-            )
-
-        falling = erp is not None and er < erp
-
-        if er < tol and falling:
-            ok = True
-            break
-        
-        erp = er
-
-    dn, erj, _, _, _, _ = _diag(
-        ea, eb, w, pv, pn, ph,
-        r, n, d, m,
-    )
-    
-    n0, dn0, d0, m0, er = jax.device_get(
-        (n, dn, d, m, erj)
-    )
-    
-    n0 = np.asarray(n0, dtype=np.float64)
-    dn0 = np.asarray(dn0, dtype=np.float64)
-    d0 = float(d0)
-    m0 = float(m0)
-    er = float(er)
-    
-    ep = np.finfo(np.float64).eps
-    nc = np.clip(n0, ep, 1.0 - ep)
-    eta = np.log((1.0 - nc) / nc)
-    
-    st0 = eu.mf_state(bd, p, d0, m0)
-    hh = {q: np.asarray(z) for q, z in hs.items()}
-    
-    return eu.OpenSol(
-        d0,
-        m0,
-        n0,
-        eta,
-        st0,
-        dn0,
-        er,
-        it,
-        float(it),
-        ok,
-        hh,
-    )
 
 __all__ = [
     "Bath",
@@ -1185,6 +815,4 @@ __all__ = [
     "check_db",
     "lim_step",
     "solve_open",
-    "solve_fixed",
 ]
-

@@ -15,7 +15,7 @@ from utils.cosmetics import apply_plt_style
 from utils.logger import logger, tqdm_bar
 from utils.plotting_utils import Plotter, plot_cmap
 
-import EI.ei_jax as ej
+import EI.ei_jax_2 as ej
 import EI.ei_unified as eu
 from EI.ei_utils import gap_info
 

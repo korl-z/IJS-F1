@@ -420,178 +420,52 @@ od koder sledi evolucija za koeficiente/potenciale $\lambda_i$:
 \end{align}
 s susceptibilnostmi
 $\chi_{ij} = \langle C_{i} C_{j} \rangle - \langle C_{i} \rangle \langle C_{j} \rangle = -\text{Tr}\left[ C_{i} \frac{\partial \rho}{\partial \lambda_{j}} \right]$. 
-
-
 \section{Ekscitonski izolatorji in sklopitev s kopelmi}
-\subsection{Osnovni model}
+
+\begin{align} 
+  \text{Tr}\left[ f\frac{1}{2} \{ \rho, A \} \right] &= \text{Tr}\left[ \frac{1}{2} f \rho A + \frac{1}{2} f A \rho \right] = \frac{1}{2} \text{Tr}\left[ A f \rho + f A \rho \right] \\ &= \frac{1}{2} \text{Tr}\left[ (A f + f A) \rho \right] = \frac{1}{2} \langle A f + f A \rangle 
+\end{align}
+
+\begin{align} 
+  \dot{n}_k = \langle \dot{n}_k \rangle &= \text{Tr}[n_k(t) \rho(t)] = -i \text{Tr}(n_k(t) [H(t), \rho(t)]) + \gamma_0 \text{Tr}[n_k(t) \mathcal{D} \rho] = 0
+ \end{align}
+
+\begin{align}
+\cdot \quad 2. \quad L_{qp}^{\lambda \lambda'} &= \sqrt{\gamma_{qp}^{\lambda \lambda'}} \, d_{\lambda q}^\dagger d_{\lambda' p} \quad \text{for } (\lambda, \lambda') \in \{(\alpha\alpha), (\beta\beta), (\alpha\beta), (\beta\alpha)\} \\
+\Rightarrow \quad \dot{n}_{\alpha k} &= \text{Tr}\left[ n_{\alpha k} \mathcal{D}(\rho) \right] = \sum_{\substack{q,p \\ \lambda, \lambda'}} \text{Tr}\left[ n_{\alpha k} \left( L_{qp}^{\lambda \lambda'} \rho(t) L_{qp}^{\lambda \lambda'\dagger} - \frac{1}{2} \left\{ L_{qp}^{\lambda \lambda'\dagger} L_{qp}^{\lambda \lambda'}, \rho \right\} \right) \right] \\
+&= \sum_{\substack{q,p \\ \lambda, \lambda'}} \langle [L^\dagger, [n, L]] \rangle = ? \\
+&\quad [n_{\alpha k}, d_{\lambda q}^\dagger d_{\lambda' p}] = d_{\lambda q}^\dagger [n_{\alpha k}, d_{\lambda' p}] + [n_{\alpha k}, d_{\lambda q}^\dagger] d_{\lambda' p} \\
+&\quad \text{where } d_{\lambda q}^\dagger \{d_{\alpha k}^\dagger, d_{\lambda' p}\} - \{d_{\alpha k}^\dagger, d_{\lambda q}^\dagger\} d_{\lambda' p} = -\delta_{\alpha\lambda'} \delta_{kp} \, d_{\lambda' p} \\
+&\quad = -d_{\lambda q}^\dagger d_{\lambda' p} \, \delta_{\alpha\lambda'} \delta_{kp} + d_{\lambda q}^\dagger d_{\lambda' p} \, \delta_{\alpha\lambda} \delta_{kq} \\
+&= \sum_{\substack{q,p \\ \lambda, \lambda' \\ T_1, T_2}} \left[ \langle d_{\lambda' p}^\dagger d_{\lambda q} (-d_{\lambda q}^\dagger d_{\lambda' p}) \rangle \gamma_{qp}^{\lambda \lambda'} \, \delta_{\alpha\lambda'} \delta_{kp} + \langle d_{\lambda' p}^\dagger d_{\lambda q} d_{\lambda q}^\dagger d_{\lambda' p} \rangle \delta_{\alpha\lambda} \delta_{kq} \, \gamma_{qp}^{\lambda \lambda'} \right] \\
+&= \sum_{p, \lambda'} \Gamma_{kp}^{\alpha \lambda'} n_{\lambda' p} (1 - n_{\alpha k}) - \sum_{q, \lambda} \Gamma_{qk}^{\lambda \alpha} n_{\alpha k} (1 - n_{\lambda q}) \\
+\dot{n}_{\alpha k} &= \sum_{\substack{p, \lambda \\ \lambda \in \{\alpha, \beta\}}} \left[ \Gamma_{kp}^{\alpha \lambda} n_{\lambda p} (1 - n_{\alpha k}) - \Gamma_{pk}^{\lambda \alpha} n_{\alpha k} (1 - n_{\lambda p}) \right]
+\end{align}
+
+\subsection{Osnovni modeli kopeli}
+
 \subsection{Limita neskončne temperature}
 \subsection{Fononske sklopitve}
-\subsection{Fotonske sklopitve v resonatorju}
 
-\[
-\begin{aligned}
+\begin{align}
 \dot{n}_{\alpha k} = \sum_{p} \bigg( & \Gamma_{\alpha p \to \alpha k} \, n_{\alpha p} (1 - n_{\alpha k}) - \Gamma_{\alpha k \to \alpha p} \, n_{\alpha k} (1 - n_{\alpha p}) + \\
 & + \Gamma_{\beta p \to \alpha k} \, n_{\beta p} (1 - n_{\alpha k}) - \Gamma_{\alpha k \to \beta p} \, n_{\alpha k} (1 - n_{\beta p}) \bigg)
-\end{aligned}
-\]
+\end{align}
 
-\vspace{1cm}
-
-\[
+\begin{align}
 \Gamma_{\mu p \to \nu k} = \frac{2\pi}{V} \sum_{\lambda} \left| G_{\mu \nu}^{\lambda} (k, q) \right|^2 \left\{ (1 + N_{q}) \delta (E_{\nu k} - E_{\mu p} + \omega_{q \lambda}) + N_{-q} \delta (E_{\nu k} - E_{\mu p} - \omega_{-q \lambda}) \right\}
-\]
+\end{align}
 
-\vspace{1cm}
-
-\[
+\begin{align}
 \Gamma_{\nu k \to \mu p} = \frac{2\pi}{V} \sum_{\lambda} \left| G_{\mu \nu}^{\lambda} (k, q) \right|^2 \left\{ (1 + N_{-q}) \delta (E_{\mu p} - E_{\nu k} + \omega_{-q \lambda}) + N_{q} \delta (E_{\mu p} - E_{\nu k} - \omega_{q \lambda}) \right\}
-\]
+\end{align}
 
-
-\begin{align*}
+\begin{align}
 G^\lambda(\vec{k}, \vec{q}) &= \begin{pmatrix} u_{k+q} & -v_{k+q} \\ v_{k+q} & u_{k+q} \end{pmatrix} \begin{pmatrix} g_{a\lambda}(\vec{q}) & 0 \\ 0 & g_{b\lambda}(\vec{q}) \end{pmatrix} \begin{pmatrix} u_k & v_k \\ -v_k & u_k \end{pmatrix} \\[1.5em]
 g_{\substack{a\\b}\lambda}(\vec{q}) &= -i\ \frac{4\pi e^2}{\sqrt{2M\Omega\omega_{\vec{q}\lambda}}} \cdot \frac{1}{|\vec{q}|^2 + \Lambda^2} \left( \vec{q} \cdot \vec{\varepsilon}_{\vec{q}\lambda}^* \right)
-\end{align*}
-
-\section{Periodična veriga}
-Najprej ponovimo izračun disperzije na periodični mreži, saj je postopek reševanja za deformirano mrežo podoben. Predpostavimo, da ima veriga $N$ ionov z mrežno razdaljo $a$, vsak z enim elektronom, ki so šibko sklopljeni s prekrivalnim integralom $t$ med najbližjimi sosedi. Sistem popiše Hamiltonijan za model tesne vezi
-\begin{equation}
-  H = -t \sum_{j=1}^N c^\dagger_{j}c^{\vphantom{\dagger}}_{j+1} + c^\dagger_{j+1}c^{\vphantom{\dagger}}_{j}\,,
-\end{equation} 
-kjer so $c_j$ kreacijski oziroma anihilacijski operatorji za elektrone na mestu $j$ v verigi. Hamiltonijan lahko diagonaliziramo s pomočjo Fourierove transformacije
-\begin{equation}
-  c_j = \frac{1}{\sqrt{L}}\sum_{k=1}^N e^{ijka} d_k\,,
-\end{equation}
-kjer upoštevamo ortonormiranost
-\begin{equation}
-  \frac{1}{L} \sum_j e^{ij(k-l)} = \delta_{k,l}\,.
-\end{equation}
-S tem dobimo diagonalen Hamiltonijan
-\begin{equation} \label{disp1}
-  H = \sum_{k=1}^N -2t \cos(ka) d_k^\dagger d_k\,,
-\end{equation}
-z znano disperzijo za model tesne vezi $\mathcal{E}(k) = -2t \cos(ka)$. V primeru, ko imamo po en elektron na mesto, so v osnovnem stanju zasedeni vsi valovni vektorji do $k_F = \pi /a$. Na to mrežo lahko gledamo tudi kot na mrežo z osnovno celico dolžine $2a$ z dvema ionoma. V tem primeru je disperzija enaka, prva Brillouinova cona pa se zmanjša za polovico iz $k \in [-\pi/a, \pi/a]$ v $k \in [-\pi/(2a), \pi/(2a)]$, disperzija pa se preslika nazaj. Na to lahko gledamo kot na \textbf{dva energijska pasova brez reže}, torej je energija enaka $\mathcal{E}(k)_\pm = \pm 2t \cos(ka)$.  
-
-
-Ko dodamo poljubno majhno modulacijo mreže, se disperzija spremeni z dodatno energijsko režo. V novem Hamiltonijanu upoštevamo, da se \textbf{s premiki poveča elastična energija med ioni}, ki jo opišemo klasično, z vzmetmi s koeficientom $K$, hkrati pa upoštevamo, da se \textbf{verjetnosti za tuneliranje elektronov med mesti mreže spremenijo}, zaradi manjšega oziroma večjega prekrivanja orbital.
-\begin{equation}
-  H = -\sum_{j=1}^N t(u_{j+1}-u_j) \left[c^\dagger_{j}c^{\vphantom{\dagger}}_{j+1} + c^\dagger_{j+1}c^{\vphantom{\dagger}}_{j}\right] + \frac{K}{2}\sum_{j=1}^{N}(u_{j+1}-u_j)^2\,,
-\end{equation}
-kjer smo upoštevali, da so prekrivalni integrali zdaj funkcije razlik sosednjih odmikov $t(u_{j+1}-u_j)$. Te razvijemo za majhne odmike do prvega reda \cite{PhysRevLett.42.1698}: 
-\begin{equation}
-  t(u_{j+1}-u_j) \approx t - \lambda (u_{j+1}-u_j)\,,
-\end{equation} 
-kjer je $t$ vrednost prekrivalnega integrala iz prvega, ko velja $u_j=0$, $\lambda > 0$ pa koeficient razvoja. 
-
-Zdaj si izberemo modulacijo mest ionov. Recimo, da se vsak drugi ion premakne v levo za $-u$ (da upravičimo razvoj prekrivalnega integrala mora veljati $u \ll a$). Nova osnovna celica ima dolžino $2a$ in vsebuje po dva atoma. Prvega označimo z indeksom $A$, drugega, zamaknjenega pa z $B$. Posebej gledamo skakanje elektronov med ioni znotraj celice in med sosednjima celicama. Ker velja $u_{j, A} =0$ in $u_{j, B} =-u$ (gl. sliko \ref{pic1}), sledi, da za razlike odmikov znotraj, oziroma zunaj celic dobimo 
-\begin{eqnarray*}
-  u_{j, B}-u_{j, A} = -u \,,\\
-  u_{j+1, A}-u_{j, B} = +u\,.
-\end{eqnarray*}
-Kinetični člen za elektrone razpade na dve vsoti, v elastičnem delu pa sta oba prispevka enaka, ker kvadriramo razlike odmikov, dobimo konstanten prispevek k energiji: 
-\begin{equation}
-  H = -(t + \lambda u) \sum_{j=1}^{N/2} \left[c^\dagger_{j, B}c^{\vphantom{\dagger}}_{j, A} + \text{h.c.}\right]
--(t - \lambda u) \sum_{j=1}^{N/2} \left[c^\dagger_{j, B}c^{\vphantom{\dagger}}_{j+1, A} + \text{h.c.}\right] +\frac{K}{2} N u^2\,.
-\end{equation}
-Vidimo, da je \emph{verjetnost za tuneliranje med celicama, kjer je razmik večji padla za} $\Delta t = \lambda u$, \emph{znotraj celice pa se je povečala} \cite{PhysRevLett.42.1698}. Nov Hamiltonijan lahko zapišemo kot kvadratno formo s prilagojeno Fourierovo transformacijo, kjer upoštevamo, da z večjo osnovno celico vzamemo $a \to 2a$ v faznem faktorju in novo normalizacijo, da ohranimo ortonormiranost:
-\begin{eqnarray*}
-  c_{j, A} &=& \sqrt{\frac{2}{L}}\sum_{k=1}^{N/2} e^{ijk(2a)} d_{k, A}\,,\\
-  c_{j, B} &=& \sqrt{\frac{2}{L}}\sum_{k=1}^{N/2} e^{i(j+1/2)k(2a)} d_{k, B}\,.
-\end{eqnarray*}
-Po nekaj računanja se prebijemo do : 
-\begin{gather*}
-H = \frac{K}{2} N u^2 - \sum_{k=1}^{N} 
-  \begin{pmatrix} d^\dagger_{k, A} & d^\dagger_{k, B} \end{pmatrix} 
-  \mathcal{H}(k) 
-  \begin{pmatrix} d_{k, A} \\ d_{k, B} \end{pmatrix}\,; \\[10pt]
-  \mathcal{H}(k) = 
-  \begin{pmatrix}
-    0 & (t + \lambda u)e^{ika} + (t - \lambda u)e^{-ika} \\
-    (t + \lambda u)e^{-ika} + (t - \lambda u)e^{ika} & 0
-  \end{pmatrix}\,.
-\end{gather*} 
-S pomočjo kanonične transformacije oziroma prek ničel karakterističnega polinoma $\det(\mathcal{H}(k) - \epsilon \mathds{1})=0$ lahko najdemo lastni energiji $\epsilon_\pm$. Končna disperzija vsebuje še konstantni člen zaradi potencialne energije: 
-\begin{tcolorbox}[colback=green!10!white, colframe=green!75!black] \label{dispeq}
-\[  
-\mathcal{E}_\pm(k) = \frac{K}{2} N u^2 \pm 2\sqrt{t^2 \cos^2\left(ka\right) + \lambda^2 u^2\sin^2\left(ka\right)}\,.
-\]
-\end{tcolorbox} \noindent
-Ta se za $u=0$ poenostavi v disperzijo nemodulirane mreže z dvema atomoma v osnovni celici. Odpre se tudi energijska reža, $\Delta$, podana z razliko energij na robu Brillouinove cone ($k=\pi/2a$): 
-\begin{equation} \label{reza}
-  \Delta = (\mathcal{E}_+-\mathcal{E}_-)|_{k=\pi/2a}=4\lambda u = 4\Delta t\,.
-\end{equation}
-Ta je sorazmerna z velikostjo odmika ionov.
-
-\section{Energija dimerizirane verige}
-
-Z novo disperzijo moramo pokazati še, da je \textbf{deformirana/dimerizirana postavitev ionov z} $u\neq 0$ \textbf{energijsko bolj ugodna od prvotne verige}. V primeru enega elektrona na ion je pas $\mathcal{E}_-(k)$ zapolnjen do konca. Skupna energija elektronov, $E_\text{el.}$, v pasu je tako integral po prvi Brillouinovi coni\footnote{Vsoto prepišemo v integral: $1/L \sum_{k<k_F}f(k) = 1/(2\pi) \int_\text{1.B.C.} f(k)\, \dd{k}$} (predfaktor 2 vstopi zaradi spina): 
-\begin{align} \label{el energija}
-  E_\text{el} = 2 \cdot \frac{N a}{2\pi} \int_{-\pi/2a}^{\pi/2a} -2\sqrt{t^2 \cos^2(ka) + (\Delta t)^2 \sin^2(ka)}\, \dd{k}\,,
-\end{align} 
-V končni fazi nas zanima le razlika energij v obeh verigah, $\delta E_\text{el.} = E_\text{el.}(\Delta t) - E_\text{el.}(0)$. V tem največ prispevajo $k$ v okolici Brillouinove cone (gl. sliko disperzije). Ker je integrand simetričen, lahko pišemo shematsko: 
-\begin{equation} \label{integrali}
-   \int_{-\pi/2a}^{\pi/2a} \to 2 \int_{0}^{\pi/2a} =  \int_{0}^{\pi/2a -\Lambda} +  \int_{\pi/2a - \Lambda}^{\pi/2a}\,,
-\end{equation}   
-kjer je $\Lambda$ mejna frekvenca, ki jo uporabimo za regularizacijo integrala (kot v teoriji polja) na robu območja integracije. V razliki $\delta E_\text{el.}$ bo prvi integral v zadnji vsoti prispeval red manj kot integral na robu (gl. sliko \ref{pic2}), zato ga zanemarimo, drugi integrand v \eqref{el energija} pa razvijemo okoli roba 1. B. C. (gl. \ref{pic2}), torej $k = -q + \pi/(2a)$. V tem območju velja $\sin(ka)\approx 1$ in $\cos(ka)\approx qa$. Tako velja
-\begin{gather*}
-  \delta E_\text{el.} \approx -\frac{4Na}{\pi} \int_{\pi/2a - \Lambda}^{\pi/2a} \left(\sqrt{t^2 \cos^2(ka) + (\Delta t)^2 \sin^2(ka)} - t\cos(ka)\right)\, \dd{k} \approx \\
-  \approx -\frac{4Na}{\pi} \int_{0}^{\Lambda} \left(\sqrt{q^2t^2 a^2 + (\Delta t)^2} - qta\right) \dd{q}\,,
-\end{gather*}
-Integral izvrednotimo
-\begin{equation}
- \delta E_\text{el.} =
--\frac{4Na}{\pi}\left[
-\frac{\Lambda}{2}\sqrt{(ta)^2\Lambda^2+(\Delta t)^2}
-+\frac{(\Delta t)^2}{2ta}
-\log\!\left(\frac{ta\Lambda+\sqrt{(ta)^2\Lambda^2+(\Delta t)^2}}{\Delta t}\right)
--\frac{ta\Lambda^2}{2}
-\right]
-\end{equation} 
-in ga poenostavimo za majhne $\Delta t$, tako ostane samo logaritemski člen (prvi in zadnji v prvem redu ne prispevata in se krajšata). Končni razlika prispevka elektronov k energiji je 
-\begin{tcolorbox}[colback=green!10!white, colframe=green!75!black]
-\begin{equation}
-  \delta E_\text{el.}  \simeq
--\frac{2N}{\pi t}(\Delta t)^2
-\log\!\left(\frac{1}{\Delta t}\right) + \text{konst.} \propto -u^2 \log(\frac{1}{u})\,.
-\end{equation} 
-\end{tcolorbox} \noindent
-Na koncu smo upoštevali, da je $\Delta t =\lambda u$. Pomembno je, v primeru deformirane verige \textbf{razlika energij elektronov vsebuje divergentni faktor} $\log(1/u)$, ko gre $u \to 0$, kar nam že nakazuje, da bo ta prispevek k energiji za majhne odmike po velikosti večji od prispevka dodane vložene potencialne energije zaradi premikov ionov. 
-
-Za celotno energijo moramo dodati še elastično energijo $E_\text{pot.}= \frac{K}{2} N u^2$, kot kaže slika \ref{pic3}. Za energijsko najbolj ugoden odmik $u$ iščemo \textbf{minimum celotne energije}: 
-\begin{equation}
-  \dv{(E_\text{pot.} +  \delta E_\text{el.})}{u} = 0\,,
-\end{equation}
-od koder dobimo enačbo za $u_\text{min.}$:
-\begin{equation}
-  KNu - \frac{2N\lambda^2}{\pi t}\left(2u \log\!\left(\frac{1}{u}\right) -  u\right) =0\,,
-\end{equation} 
-iz tu pa sledi, da je energijsko optimalen odmik neničeln
-\begin{tcolorbox}[colback=green!10!white, colframe=green!75!black]
-\[
-u_\text{min.} \propto e^{-\frac{\pi K t}{4 \lambda^2}} > 0
-\]
-\end{tcolorbox} \noindent
-ravnovesni odmik se zmanjšuje z večjimi sklopitvami med ioni $K$, in elektroni $t$, in narašča, z večjim faktorjem $\lambda$. Funkcija ni analitična za $\lambda \to 0$, torej perturbativni pristopi tu ne delujejo.
-
-\section{Peierlsova nestabilnost v grafenu}
-V prejšnjih poglavjih smo videli, da je enodimenzionalna veriga vedno nestabilna na dimerizacijo. V dveh dimenzijah, specifično v grafenu, se pojavi podoben pojav, vendar z nekaj razlikami v stabilnosti.
-
-Grafen ima v osnovi trikotno mrežo z dvema atomoma v osnovni celici ($\Gamma_2$). Pri analizi nestabilnosti osnovno celico razširimo, podobno kot pri enodimenzionalni dimerizaciji. Energijsko najugodnejša konfiguracija ima tri-števno simetrijo, nova celica ($\Gamma_6$) pa vsebuje šest atomov na celico.
-
-Postopek je podoben kot v enodimenzionalnem primeru s primerno več računanja, na koncu dobimo podoben Hamiltonijan, s prekrivalnimi integrali $t, u$ in $v$, tokrat velikosti $6\times 6$ \cite{gontier2025peierlsinstabilityhexagonallattices}:
-\begin{gather*}
-\mathcal{H}(k) = \begin{pmatrix} 0 & A(\vec{k}) \\ A(\vec{k})^* & 0 \end{pmatrix} \,;\\
-A(\vec{k}) = \begin{pmatrix} 
-t & v e^{-i\vec{k}\cdot \vec{b}_1} & u \\ 
-u & t & v e^{i(\vec{k}\cdot \vec{b}_1 + \vec{k}\cdot \vec{b}_2)} \\ 
-v e^{-i\vec{k}\cdot \vec{b}_2} & u  & t 
-\end{pmatrix}\,.
-\end{gather*}
-Energijsko režo, pri $k=0$ (v točki $\Gamma$), dobimo spet z računom $\det(\mathcal{H}(k=0) - \epsilon \mathds{1})=0$: 
-\begin{equation}
-  \Delta \propto \sqrt{(t-E)^2 + (u-E)^2 + (v-E)^2}\,,\quad E=(t+u+v)/3\,.
-\end{equation}
-Pomembna razlika v dvodimenzionalnem primeru grafena je v tem, da se fazni prehod v nižje simetrijsko stanje ne zgodi za poljubne vrednosti sklopitve med ioni $K$. Za vrednosti nad $K_c$, je energijsko bolj ugodno, da grafen ostane v trikotni mreži, za $0<K<K_c$ pa je bolj ugodna mreža z nižjo simetrijo, prikazana na sliki \ref{mreza}. V tem primeru se odpre reža in grafen ne prevaja več, kot je prikazano na sliki 
+\end{align}
+\subsection{Fotonske sklopitve v resonatorju}
+ 
 \nocite{*}
 \printbibliography
 \end{document} 

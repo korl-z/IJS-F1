@@ -1,7 +1,7 @@
 model:
   nk:
     scan: 20
-    reference: 50
+    reference: 20
 
   band:
     name: tb_2d
@@ -53,15 +53,15 @@ open_system:
     pars:
       wc: inf
       kap: [0.1, 0.2, 0.1]
-      mu: 2.2 #dodatno nastavljeno v kodi na V/2, ko ta=-tb
+      mu: 0.0 #dodatno nastavljeno v kodi na V/2, ko ta=-tb
 
   solve:
-    dt: 5.0
+    dt: 0.05
     td: 0.3
     tm: 0.3
     tol: 1.0e-4
     nmax: 30000
-    chk: 200
+    chk: 20
     prog: false
 
 ratio_sweep:

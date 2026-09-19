@@ -318,7 +318,6 @@ def _pair(x, y, bp):
         ts = jnp.maximum(t, F(1.0e-12))
         nb = _bose(w0, t)
         z0 = F(1.0) + F(2.0) * nb
-        # z0 = 1. #tail test
 
         c1t = fc * sp * z0 * jax.nn.sigmoid(-de / ts)
         c2t = fc * sp * z0 * jax.nn.sigmoid(de / ts)
