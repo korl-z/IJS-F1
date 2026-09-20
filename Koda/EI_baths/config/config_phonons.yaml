@@ -1,6 +1,6 @@
 model:
   nk:
-    scan: 20
+    scan: 70
     reference: 50
 
   band:
@@ -61,11 +61,11 @@ open_system:
       nang: 128
 
   solve:
-    dt: 0.05
+    dt: 0.03 
     td: 100.
     tm: 100.
     tol: 1.0e-6
-    nmax: 20000
+    nmax: 10000
     chk: 100
     prog: false
     mode: dense

@@ -477,20 +477,91 @@ def _ab2(n, dn, dnp, hp, first, dt):
     return y, h, first | (~good)
 
 
-def _open_step(ca, _, ea, eb, w, pv, pn, ph, bp, rf, dt, td, tm, mode: str, block: int):
-    n, d, m, tt, dnp, hp, first = ca
-    st = _mf(ea, eb, pn, ph, d, m)
-    dn = _cur(st, n, w, bp, rf, mode, block)
-    n, h, _ = _ab2(n, dn, dnp, hp, first, dt)
+# def _open_step(ca, _, ea, eb, w, pv, pn, ph, bp, rf, dt, td, tm, mode: str, block: int):
+#     n, d, m, tt, dnp, hp, first = ca
+#     st = _mf(ea, eb, pn, ph, d, m)
+#     dn = _cur(st, n, w, bp, rf, mode, block)
+#     n, h, _ = _ab2(n, dn, dnp, hp, first, dt)
 
-    # Keep the original mean-field relaxation law.
-    tg = _targets(st, n, w, pv)
-    zd = -jnp.expm1(-h / td)
-    zm = -jnp.expm1(-h / tm)
-    d = d + zd * (tg.d - d)
-    m = m + zm * (tg.m - m)
-    return (n, d, m, tt + h, dn, h, jnp.asarray(False)), None
+#     # Keep the original mean-field relaxation law.
+#     tg = _targets(st, n, w, pv)
+#     zd = -jnp.expm1(-h / td)
+#     zm = -jnp.expm1(-h / tm)
+#     d = d + zd * (tg.d - d)
+#     m = m + zm * (tg.m - m)
+#     return (n, d, m, tt + h, dn, h, jnp.asarray(False)), None
+def _open_step(ca, _, ea, eb, w, pv, pn, ph, bp, rf,
+               dt, td, tm, mode: str, block: int):
+    n, d, m, tt, _, hp, first = ca
 
+    def rhs(n0, d0, m0):
+        st = _mf(ea, eb, pn, ph, d0, m0)
+        dn = _cur(st, n0, w, bp, rf, mode, block)
+        tg = _targets(st, n0, w, pv)
+        return dn, (tg.d - d0) / td, (tg.m - m0) / tm
+
+    def bounded(x):
+        return (
+            jnp.all(jnp.isfinite(x))
+            & jnp.all(x >= 0.0)
+            & jnp.all(x <= 1.0)
+        )
+
+    fn, fd, fm = rhs(n, d, m)
+
+    # Limit growth and the explicit mean-field relaxation intervals
+    hc = jnp.where(first, dt, jnp.minimum(dt, F32(1.5) * hp))
+    hc = jnp.minimum(hc, F32(0.8) * jnp.minimum(td, tm))
+    h = _lim(n, fn, hc, eps=F32(0.0))
+
+    def trial(h):
+        # First Euler stage
+        n1, d1, m1 = n + h * fn, d + h * fd, m + h * fm
+        gn, gd, gm = rhs(n1, d1, m1)
+
+        # Second Euler stage, before averaging
+        n2 = n1 + h * gn
+        d2 = d1 + h * gd
+        m2 = m1 + h * gm
+
+        good = (
+            bounded(n1) & bounded(n2)
+            & jnp.all(jnp.isfinite(jnp.stack((d1, m1, d2, m2))))
+            & jnp.isfinite(h) & (h > 0.0) & (tt + h > tt)
+        )
+
+        return (
+            good,
+            F32(0.5) * (n + n2),
+            F32(0.5) * (d + d2),
+            F32(0.5) * (m + m2),
+        )
+
+    good, nn, dd, mm = trial(h)
+
+    def cond(z):
+        j, h, good, nn, dd, mm = z
+        return (~good) & (j < 32) & (h > 0.0)
+
+    def shrink(z):
+        j, h, _, _, _, _ = z
+        h = F32(0.5) * h
+        good, nn, dd, mm = trial(h)
+        return j + 1, h, good, nn, dd, mm
+
+    _, h, good, nn, dd, mm = jax.lax.while_loop(
+        cond, shrink,
+        (jnp.asarray(0, dtype=I32), h, good, nn, dd, mm),
+    )
+
+    # Trigger solve_open's existing failure check if no step was accepted
+    hh = jnp.where(good, h, F32(jnp.nan))
+    nn = jnp.where(good, nn, n)
+    dd = jnp.where(good, dd, d)
+    mm = jnp.where(good, mm, m)
+
+    # Retain the existing carry layout; the previous current is unused
+    return (nn, dd, mm, tt + hh, fn, hh, jnp.asarray(False)), None
 
 @partial(jax.jit, static_argnames=("rf", "ns", "mode", "block"))
 def _open_chunk(

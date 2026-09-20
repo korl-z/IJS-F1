@@ -194,7 +194,7 @@ def g_mat(st, b, k, p, q):
     sg = jnp.where(q[0] != 0, jnp.sign(q[0]), jnp.sign(q[1]))
 
     den = qm**2 + b.ktf**2
-    g = (-1j * sg * jnp.sqrt(b.amp) * qm / jnp.sqrt(jnp.maximum(om, F(1.0e-30))) / den)
+    g = (sg * jnp.sqrt(b.amp) * qm / jnp.sqrt(jnp.maximum(om, F(1.0e-30))) / den) ##removed imaginary unit
 
     g = jnp.where((qm > 0.0) & (qm <= b.qd), g, 0.0)
 
