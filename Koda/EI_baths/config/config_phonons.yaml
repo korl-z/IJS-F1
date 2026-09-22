@@ -1,6 +1,6 @@
 model:
   nk:
-    scan: 70
+    scan: 30
     reference: 50
 
   band:
@@ -11,7 +11,7 @@ model:
       tb: -1.0
 
   mean_field:
-    v: 4.4
+    v: 7.8
     n: 1.0
     uh: null
 
@@ -41,7 +41,7 @@ scan:
   temperature:
     nt: 15
     min_ratio: 0.01
-    max_ratio: 1.3
+    max_ratio: 2.0
 
   continuation:
     d_floor_frac: 0.1
@@ -51,14 +51,16 @@ open_system:
   bath:
     rate: PhononBath
     pars:
-      cs: 10.
+      cs: 1.
       ktf: 0.01
       eta: 0.025
       amp: 1.0
       ca: 1.0
       cb: 1.0
-      qd: 4.44288
+      qd: 0.1 #4.44288
       nang: 128
+      em: 17.6
+      eh: 0.3
 
   solve:
     dt: 0.03 

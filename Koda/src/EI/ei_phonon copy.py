@@ -186,9 +186,6 @@ def pack(bs, nq=512):
 
     fb = []
 
-    ne = int(np.ceil(b.em / b.eh))
-    eg = b.eh * np.arange(ne + 1, dtype=float)
-
     for q, z in zip(bs, tb):
         qr = np.linspace(0.0, q.qd, nq)
 
@@ -201,19 +198,8 @@ def pack(bs, nq=512):
 
         fb.append(v)
 
-    return Pack(
-        jnp.asarray(b.k, dtype=F),
-        jnp.asarray(pa, dtype=F),
-        F(per),
-        jnp.asarray(np.stack(tb), dtype=F),
-        jnp.asarray(np.stack(fb), dtype=F),
-        jnp.asarray(eg, dtype=F),
-        F(b.eh),
-        F(eg[-1]),
-    )
+    return Pack(jnp.asarray(b.k, dtype=F), jnp.asarray(pa, dtype=F), F(per), jnp.asarray(np.stack(tb), dtype=F), jnp.asarray(np.stack(fb), dtype=F))
 
-def _wrap_q(q, per):
-    return jnp.mod(q + 0.5 * per, per) - 0.5 * per
 
 def g_mat(st, b, k, p, q):
     """G[nu, mu] for one phonon momentum."""
@@ -277,110 +263,20 @@ def _bose(w, t):
 def _delta_e(x, ew):
     return ew / (jnp.pi * (x * x + ew * ew))
 
-
 def _spec_e(w, w0, ew):
-    d1 = (w - w0)**2 + ew**2
-    d2 = (w + w0)**2 + ew**2
+    lp = _delta_e(w - w0, ew)
+    lm = _delta_e(w + w0, ew)
 
     zn = 2.0 * jnp.arctan(w0 / ew) / jnp.pi
     zn = jnp.maximum(zn, F(1.0e-30))
 
-    sp = (
-        4.0 * ew * w * w0
-        / (jnp.pi * d1 * d2 * zn)
-    )
+    return (lp - lm) / zn
 
-    return jnp.where(w0 > 0.0, sp, F(0.0))
-
-
-def _spec_s(w0, ew):
-    zn = 2.0 * jnp.arctan(w0 / ew) / jnp.pi
-    zn = jnp.maximum(zn, F(1.0e-30))
-
-    sl = (
-        4.0 * ew * w0
-        / (
-            jnp.pi
-            * (w0 * w0 + ew * ew)**2
-            * zn
-        )
-    )
-
-    return jnp.where(w0 > 0.0, sl, F(0.0))
-
-
-def _hat(x, h):
-    return jnp.maximum(
-        F(1.0) - jnp.abs(x) / h,
-        F(0.0),
-    ) / h
-
-
-def _disc_e(w, w0, h):
-    r = jnp.minimum(w0 / h, F(1.0))
-    zn = jnp.where(
-        w0 < h,
-        r * (F(2.0) - r),
-        F(1.0),
-    )
-    zn = jnp.maximum(zn, F(1.0e-30))
-
-    sp = (
-        _hat(w - w0, h)
-        - _hat(w + w0, h)
-    ) / zn
-
-    return jnp.where(
-        w0 > 0.0,
-        jnp.maximum(sp, F(0.0)),
-        F(0.0),
-    )
-
-
-def _disc_s(w0, h):
-    z = F(1.0e-6) * h
-    return _disc_e(z, w0, h) / z
-
-
-def _line(w, w0, ew, bp):
-    ep = jnp.where(ew > 0.0, ew, bp.eh)
-
-    sb = _spec_e(w, w0, ep)
-    lb = _spec_s(w0, ep)
-
-    sd = _disc_e(w, w0, bp.eh)
-    ld = _disc_s(w0, bp.eh)
-
-    sp = jnp.where(ew > 0.0, sb, sd)
-    sl = jnp.where(ew > 0.0, lb, ld)
-
-    ok = w <= bp.em
-    sp = jnp.where(ok, sp, jnp.nan)
-    sl = jnp.where(ok, sl, jnp.nan)
-
-    return sp, sl
-
-
-def _therm(sp, sl, w, t):
+def _fermi(w, t):
     ts = jnp.where(t > 0.0, t, F(1.0))
-    x = w / ts
-
-    dn = jnp.where(
-        x > 0.0,
-        -jnp.expm1(-x),
-        F(1.0),
-    )
-
-    ab0 = sp * jnp.exp(-x) / dn
-
-    ab = jnp.where(
-        t > 0.0,
-        jnp.where(w > 0.0, ab0, sl * t),
-        F(0.0),
-    )
-
-    em = ab + sp
-    return ab, em
+    ff = jax.nn.sigmoid(-w / ts)
+    f0 = jnp.where(w > 0.0, F(0.0), F(0.5))
+    return jnp.where(t > 0.0, ff, f0)
 
 def _bose2(w, t):
     """w**2 * N(w), including the exact zero-energy and T=0 limits."""
@@ -400,77 +296,74 @@ def _data(st, bp):
 
 
 def _pair(x, y, bp):
+    """Forward and reverse rates for all pairs of rows in x and y."""
     de = x[:, 0, None] - y[None, :, 0]
     w = jnp.abs(de)
-
-    qx = _wrap_q(
-        x[:, 3, None] - y[None, :, 3],
-        bp.per,
-    )
-    qy = _wrap_q(
-        x[:, 4, None] - y[None, :, 4],
-        bp.per,
-    )
-    qm = jnp.hypot(qx, qy)
-
+    dx = x[:, 3, None] - y[None, :, 3]
+    dy = x[:, 4, None] - y[None, :, 4]
     aa = x[:, 1, None] * y[None, :, 1]
     bb = x[:, 2, None] * y[None, :, 2]
 
     def body(i, rr):
-        (
-            t, cs, ktf, eta,
-            amp, ca, cb, qd,
-            kind, w0, ll, ew,
-        ) = bp.b[i]
-
-        wg = F(2.0) * jnp.pi / ll
-
-        om = jnp.where(
-            kind == 0,
-            w0,
-            jnp.where(
-                kind == 1,
-                cs * qm,
-                jnp.hypot(wg, cs * qm),
-            ),
-        )
+        t, cs, ktf, eta, amp, ca, cb, qd, kind, w0, ll, ew = bp.b[i]
 
         af = (ca * aa + cb * bb)**2
-        den = (qm * qm + ktf * ktf)**2
+        den0 = F(1.0e-30)
 
-        g2 = (
-            amp
-            * af
-            * qm * qm
+        # Acoustic and gapped branches.
+        wg = 2.0 * jnp.pi / ll
+        gap = jnp.where(kind == 2, wg, 0.0)
+
+        q = jnp.sqrt(jnp.maximum(w * w - gap * gap, 0.0)) / cs
+        den = (q * q + ktf * ktf)**2
+        sh = _shell(dx, dy, q, i, bp)
+
+        fa = amp * af * sh / (cs**4 * den)
+
+        fg = (
+            amp * af * sh * q * q
             / (
-                jnp.maximum(om, F(1.0e-30))
+                cs * cs
+                * jnp.maximum(w * w, den0)
                 * den
             )
         )
 
-        ok = (qm > 0.0) & (qm <= qd)
-        gm = F(2.0) * jnp.pi * jnp.where(
-            ok,
-            g2,
-            F(0.0),
+        fd = jnp.where(kind == 2, fg, fa)
+        vd = (kind != 0) & (w >= gap) & (q <= qd)
+        fd = jnp.where(vd, fd, 0.0)
+
+        bn = _bose2(w, t)
+
+        d1 = fd * (
+            bn + jnp.where(de < 0.0, w * w, 0.0)
+        )
+        d2 = fd * (
+            bn + jnp.where(de > 0.0, w * w, 0.0)
         )
 
-        sp, sl = _line(w, om, ew, bp)
-        ab, em = _therm(sp, sl, w, t)
+        # Constant branch.
+        fc = amp * af * _flat_shell(dx, dy, i, bp)
+        
+        sp = _spec_e(w, w0, ew)
+        nb = _bose(w, t)
 
-        r1 = gm * jnp.where(de < 0.0, em, ab)
-        r2 = gm * jnp.where(de > 0.0, em, ab)
+        c1 = fc * sp * (nb + jnp.where(de < 0.0, F(1.0), F(0.0)))
+        c2 = fc * sp * (nb + jnp.where(de > 0.0, F(1.0), F(0.0)))
+
+        # fc = amp * af * _flat_shell(dx, dy, i, bp) #FERMI TEST
+        # sp = _spec_e(w, w0, ew) #FERMI TEST
+        # ff = _fermi(w, t) #FERMI TEST
+        # c1 = fc * sp * jnp.where(de < 0.0, 1.0 - ff, ff,) #FERMI TEST
+        # c2 = fc * sp * jnp.where(de > 0.0, 1.0 - ff, ff,) #FERMI TEST
+
+        r1 = jnp.where(kind == 0, c1, d1)
+        r2 = jnp.where(kind == 0, c2, d2)
 
         return rr[0] + r1, rr[1] + r2
 
     z = jnp.zeros_like(de)
-
-    return jax.lax.fori_loop(
-        0,
-        bp.b.shape[0],
-        body,
-        (z, z),
-    )
+    return jax.lax.fori_loop(0, bp.b.shape[0], body, (z, z))
 
 
 def rates(st, bp, j=None):
