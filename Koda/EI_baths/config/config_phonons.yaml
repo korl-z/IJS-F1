@@ -11,7 +11,7 @@ model:
       tb: -1.0
 
   mean_field:
-    v: 7.8
+    v: 4.4
     n: 1.0
     uh: null
 
@@ -55,9 +55,13 @@ open_system:
       ktf: 0.01
       eta: 0.025
       amp: 1.0
-      ca: 1.0
-      cb: 1.0
-      qd: 0.1 #4.44288
+
+      caa: 1.0
+      cab: 2.0
+      cba: 2.0
+      cbb: 1.0
+
+      qd: 4.44288
       nang: 128
       em: 17.6
       eh: 0.3

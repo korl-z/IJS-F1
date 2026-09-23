@@ -20,8 +20,10 @@ class PhononBath:
     ktf: float
     eta: float
     amp: float = 1.0
-    ca: float = 1.0
-    cb: float = 1.0
+    caa: float = 1.0
+    cab: float = 0.0
+    cba: float = 0.0
+    cbb: float = 1.0
     qd: float = np.pi
     a0: float = 1.0
     nang: int = 128
@@ -39,7 +41,7 @@ class PhononBath:
         k = np.array(self.k, dtype=float, copy=True)
         z = np.asarray((
             self.t, self.cs, self.ktf, self.eta,
-            self.amp, self.ca, self.cb, self.qd,
+            self.amp, self.caa, self.cab, self.cba, self.cbb, self.qd,
             self.a0, self.w0, self.length,
             self.ew, self.eh, self.em,
         ))
@@ -170,7 +172,7 @@ def pack(bs, nq=512):
     pa = [
         (
             q.t, q.cs, q.ktf, q.eta,
-            q.amp, q.ca, q.cb, q.qd,
+            q.amp, q.caa, q.cab, q.cba, q.cbb, q.qd,
             dc[q.disp], q.w0, q.length, q.ew,
         )
         for q in bs
@@ -241,7 +243,7 @@ def g_mat(st, b, k, p, q):
         [-st.v[p], st.u[p]],
     ])
 
-    c = jnp.diag(jnp.array([b.ca, b.cb]))
+    c = jnp.array([[b.caa, b.cab], [b.cba, b.cbb],], dtype=F,)
     return g * (uk.T @ c @ up)
 
 
@@ -251,7 +253,7 @@ def _shell(dx, dy, q, i, bp):
     ix = jnp.rint(dx * nx / bp.per).astype(jnp.int32) % nx
     iy = jnp.rint(dy * ny / bp.per).astype(jnp.int32) % ny
 
-    z = jnp.clip(q * (nq - 1) / bp.b[i, 7], 0.0, nq - 1)
+    z = jnp.clip(q * (nq - 1) / bp.b[i, 9], 0.0, nq - 1)
     iz = jnp.minimum(z.astype(jnp.int32), nq - 2)
     f = z - iz
 
@@ -414,12 +416,14 @@ def _pair(x, y, bp):
     qm = jnp.hypot(qx, qy)
 
     aa = x[:, 1, None] * y[None, :, 1]
+    ax = x[:, 1, None] * y[None, :, 2]
+    xa = x[:, 2, None] * y[None, :, 1]
     bb = x[:, 2, None] * y[None, :, 2]
 
     def body(i, rr):
         (
             t, cs, ktf, eta,
-            amp, ca, cb, qd,
+            amp, caa, cab, cba, cbb, qd,
             kind, w0, ll, ew,
         ) = bp.b[i]
 
@@ -435,7 +439,13 @@ def _pair(x, y, bp):
             ),
         )
 
-        af = (ca * aa + cb * bb)**2
+        gv = (
+            caa * aa
+            + cab * ax
+            + cba * xa
+            + cbb * bb
+        )
+        af = jnp.square(gv)
         den = (qm * qm + ktf * ktf)**2
 
         g2 = (

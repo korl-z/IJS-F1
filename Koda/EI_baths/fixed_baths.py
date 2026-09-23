@@ -81,14 +81,6 @@ def make_baths(t1, t2, bp):
     b2 = ej.gam_db(t=t2, name="bath 2", **bp)
     return b1, b2
 
-
-# def make_baths(t1, t2, bp):
-#     """Create the two phonon baths."""
-#     return (
-#         pb.PhononBath(t=t1, name="bath 1", **bp),
-#         pb.PhononBath(t=t2, name="bath 2", **bp),
-#     )
-
 def k_edges(x):
     """"""
     x = np.asarray(x)
@@ -144,24 +136,6 @@ def color_line(ax, x, y, c, w, cmap, norm, ls="-", label=None):
     return lc
 
 
-# def solve_state(bd, p, eq, op, r1, r2, tc, d0, m0, nc=1):
-#     """Solve one temperature pair."""
-#     t1, t2 = r1 * tc, r2 * tc
-#     bp = {**op["bath"]["pars"], "k": bd.k}
-#     es = {**eq["solve"], "prog": False}
-
-#     se = eu.solve_eq(bd, p, t=t2, d=max(d0, 1.e-8), m=m0, **es)
-#     if not se.ok:
-#         raise RuntimeError(f"Initial equilibrium did not converge: {se.err:.3e}")
-
-#     bs = make_baths(t1, t2, bp)
-#     st = ej.solve_open(
-#         bd, p, se.n.copy(), bs,
-#         d=se.d, m=se.m, **op["solve"],
-#     )
-
-#     ec = 0.5 * p.h * p.n
-#     return st, bs, t1, t2, ec
 def solve_state(bd, p, eq, op, r1, r2, tc, d0, m0, nc):
     """main funckija, resi za stanje pri fixed T1, T2"""
     t1, t2 = r1 * tc, r2 * tc
