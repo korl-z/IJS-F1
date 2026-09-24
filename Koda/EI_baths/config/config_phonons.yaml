@@ -39,9 +39,11 @@ equilibrium:
 
 scan:
   temperature:
-    nt: 15
+    nt: 10
     min_ratio: 0.01
-    max_ratio: 2.0
+    max_ratio: 6.0
+  t1: {min_ratio: 0.05, max_ratio: 1.5, nt: 12}
+  t2: {min_ratio: 0.05, max_ratio: 7.0, nt: 16}
 
   continuation:
     d_floor_frac: 0.1
@@ -51,18 +53,24 @@ open_system:
   bath:
     rate: PhononBath
     pars:
-      cs: 1.
-      ktf: 0.01
+      cs: 2.
+      ktf: 0.2
       eta: 0.025
       amp: 1.0
 
       caa: 1.0
-      cab: 2.0
-      cba: 2.0
+      cab: 0.5
+      cba: 0.5
       cbb: 1.0
 
-      qd: 4.44288
+      disp: "constant"
+      w0: 0.5
+      length: 6.0
+      ew: 0.3
+
+      qd: 4.4428829381583662470158809900606936986146216893756902230853956069
       nang: 128
+
       em: 17.6
       eh: 0.3
 

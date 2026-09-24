@@ -18,6 +18,7 @@ from utils.plotting_utils import Plotter, plot_cmap
 import EI.ei_jax_2 as ej
 import EI.ei_unified as eu
 from EI.ei_utils import gap_info
+import EI.ei_phonon as pb
 
 
 CFG = Path("/home/kzeleznikar/IJS-F1/Koda/EI_baths/config/config_test.yaml")
@@ -117,8 +118,8 @@ def plot_maps(pt, tn, z, d0):
          r"$G^{\mathrm{diag}}(\Gamma)/\Delta_0$", cmaps.batlow),
         ("indirect_gap_map", z["indirect"] / (2.0 * d0),
          r"$G_{\mathrm{ind}}^{\mathrm{diag}}/(2\Delta_0)$", cmaps.amethyst),
-        ("imbalance_map", z["m"] / (2.0 * d0),
-         r"$(n_a-n_b)/(2\Delta_0)$", cmaps.gem),
+        ("imbalance_map", z["m"],
+         r"$(n_a-n_b)$", cmaps.gem),
     )
 
     for name, val, label, cmap in tqdm_bar(maps, desc="Saving maps"):
@@ -133,6 +134,155 @@ def save_data(run, tn, z, d0, tc):
         run.add_artifact(str(fn), name=fn.name)
 
 
+GAPS = {
+    "hartree": "hartree_g",
+    "diag": "diag_g",
+    "indirect": "diag_ind",
+    "diag_min": "diag_min",
+    "hartree_ind": "hartree_ind",
+}
+
+
+def put_one(a, i, j, x):
+    """Row = T2 index j, column = T1 index i (matches plot_cmap axes)."""
+    a[j, i] = x
+
+
+def make_ph_baths(t1, t2, k, bc, ov=({}, {})):
+    """Two phonon baths: shared yaml pars, per-bath overrides in ov."""
+    fn = getattr(pb, bc["rate"])
+    return tuple(
+        fn(t, k, name=f"bath_{i + 1}", **{**bc["pars"], **o})
+        for i, (t, o) in enumerate(zip((t1, t2), ov))
+    )
+
+
+def scan_maps_ph(bd, p, eq, op, ta, d0, m0, sk, ov=({}, {}),
+                 solve=ej.solve_fixed):
+    """Two-bath phase maps for phonon baths, z[q][j, i] at T1=ta[i], T2=ta[j]."""
+    nt = ta.size
+    sh = (nt, nt)
+    z = {q: np.full(sh, np.nan) for q in ("delta", "m", "error", *GAPS)}
+    z["iterations"] = np.zeros(sh, dtype=int)
+    z["converged"] = np.zeros(sh, dtype=bool)
+
+    sym = ov[0] == ov[1]                   # identical baths: map is symmetric
+    put = put_sym if sym else put_one
+    k = np.asarray(bd.k, dtype=float)
+    es = {**eq["solve"], "prog": False}
+    ds = 0.2 * max(d0, 1.0)
+    de, me = d0, m0
+
+    for j in tqdm_bar(range(nt), desc="T2"):
+        t2 = ta[j]
+        se = eu.solve_eq(bd, p, t=t2, d=max(abs(de), 1.0e-8), m=me, **es)
+        up = range(j, nt)
+        dw = range(0) if sym else range(j - 1, -1, -1)
+
+        for sw in (up, dw):
+            n, d, m = se.n.copy(), se.d, se.m      # each sweep starts at T1 = T2
+            for i in tqdm_bar(sw, desc="T1", leave=False):
+                bs = make_ph_baths(ta[i], t2, k, op["bath"], ov)
+                try:
+                    st = solve(bd, p, n, bs, d=d, m=m, **sk)
+                except RuntimeError as ex:
+                    logger.warning("T1=%.4g, T2=%.4g failed: %s", ta[i], t2, ex)
+                    n, d, m = se.n.copy(), max(abs(se.d), ds), se.m
+                    continue
+
+                gp = gap_info(bd, st.st)
+                vs = {
+                    "delta": abs(st.d), "m": st.m, "error": st.err,
+                    "iterations": st.it, "converged": st.ok,
+                    **{q: gp[g] for q, g in GAPS.items()},
+                }
+                for q, x in vs.items():
+                    put(z[q], i, j, x)
+
+                if st.ok:
+                    n, d, m = st.n.copy(), max(abs(st.d), ds), st.m
+                else:
+                    n, d, m = se.n.copy(), max(abs(se.d), ds), se.m
+
+        de, me = se.d, se.m
+
+    return z
+
+
+def scan_rect_ph(bd, p, eq, op, t1a, t2a, d0, m0, sk, ov=({}, {}),
+                 solve=ej.solve_fixed):
+    """Phonon maps on an independent grid, z[q][j, i] at T1=t1a[i], T2=t2a[j]."""
+    n1, n2 = t1a.size, t2a.size
+    sh = (n2, n1)
+    z = {q: np.full(sh, np.nan) for q in ("delta", "m", "error", *GAPS)}
+    z["iterations"] = np.zeros(sh, dtype=int)
+    z["converged"] = np.zeros(sh, dtype=bool)
+
+    k = np.asarray(bd.k, dtype=float)
+    es = {**eq["solve"], "prog": False}
+    ds = 0.2 * max(d0, 1.0)
+    de, me = d0, m0
+
+    for j in tqdm_bar(range(n2), desc="T2"):
+        t2 = t2a[j]
+        se = eu.solve_eq(bd, p, t=t2, d=max(abs(de), 1.0e-8), m=me, **es)
+        i0 = int(np.argmin(np.abs(t1a - t2)))     # T1 closest to T2
+        ex = bool(np.isclose(t1a[i0], t2))        # on the diagonal, eq is exact
+
+        for sw in (range(i0, n1), range(i0 - 1, -1, -1)):
+            n, d, m = se.n.copy(), se.d, se.m     # each sweep starts from eq(T2)
+            for i in tqdm_bar(sw, desc="T1", leave=False):
+                if not (ex and i == i0):
+                    d = max(abs(d), ds)           # never seed off-diagonal at Delta = 0
+                bs = make_ph_baths(t1a[i], t2, k, op["bath"], ov)
+                try:
+                    st = solve(bd, p, n, bs, d=d, m=m, **sk)
+                except RuntimeError as er:
+                    logger.warning("T1=%.4g, T2=%.4g failed: %s", t1a[i], t2, er)
+                    n, d, m = se.n.copy(), se.d, se.m
+                    continue
+
+                gp = gap_info(bd, st.st)
+                vs = {
+                    "delta": abs(st.d), "m": st.m, "error": st.err,
+                    "iterations": st.it, "converged": st.ok,
+                    **{q: gp[g] for q, g in GAPS.items()},
+                }
+                for q, x in vs.items():
+                    put_one(z[q], i, j, x)
+
+                if st.ok:
+                    n, d, m = st.n.copy(), st.d, st.m
+                else:
+                    n, d, m = se.n.copy(), se.d, se.m
+
+        de, me = se.d, se.m
+
+    return z
+
+
+def plot_maps_rect(pt, r1, r2, z, d0):
+    """plot_maps for independent T1, T2 axes; nonconverged points masked."""
+    maps = (
+        ("gap_map", z["delta"] / d0, r"$\Delta/\Delta_0$", cmaps.lipari),
+        ("hartree_gap_map", z["hartree"] / d0,
+         r"$G^{\mathrm{H}}(\Gamma)/\Delta_0$", cmaps.bubblegum),
+        ("diagonal_gap_map", z["diag"] / d0,
+         r"$G^{\mathrm{diag}}(\Gamma)/\Delta_0$", cmaps.batlow),
+        ("min_direct_gap_map", z["diag_min"] / d0,
+         r"$G^{\mathrm{diag}}_{\min}/\Delta_0$", cmaps.batlow),
+        ("indirect_gap_map", z["indirect"] / (2.0 * d0),
+         r"$G_{\mathrm{ind}}^{\mathrm{diag}}/(2\Delta_0)$", cmaps.amethyst),
+        ("hartree_indirect_map", z["hartree_ind"] / d0,
+         r"$G^{\mathrm{H}}_{\mathrm{ind}}/\Delta_0$", cmaps.bubblegum),
+        ("imbalance_map", z["m"] / (2.0 * d0),
+         r"$(n_a-n_b)/(2\Delta_0)$", cmaps.gem),
+    )
+    for name, val, label, cmap in tqdm_bar(maps, desc="Maps"):
+        val = np.where(z["converged"], val, np.nan)
+        plot_cmap(r1, r2, val, label, cmap=cmap, pt=pt, name=name)
+
+        
 @ex.automain
 def main(_run, model, equilibrium, scan, open_system, phase_maps):
     """map loop run"""

@@ -163,28 +163,11 @@ def pack(bs, nq=512):
             "cached kernels require a uniform Cartesian BZ grid"
         )
 
-    dc = {
-        "constant": 0,
-        "acoustic": 1,
-        "gapped": 2,
-    }
+    dc = {"constant": 0, "acoustic": 1, "gapped": 2}
 
-    pa = [
-        (
-            q.t, q.cs, q.ktf, q.eta,
-            q.amp, q.caa, q.cab, q.cba, q.cbb, q.qd,
-            dc[q.disp], q.w0, q.length, q.ew,
-        )
-        for q in bs
-    ]
+    pa = [(q.t, q.cs, q.ktf, q.eta, q.amp, q.caa, q.cab, q.cba, q.cbb, q.qd, dc[q.disp], q.w0, q.length, q.ew) for q in bs]
 
-    tb = [
-        _tab(
-            nx, ny, int(q.nang), float(q.eta),
-            float(q.qd), float(per), nq,
-        )
-        for q in bs
-    ]
+    tb = [_tab(nx, ny, int(q.nang), float(q.eta), float(q.qd), float(per), nq) for q in bs]
 
     fb = []
 
@@ -203,16 +186,7 @@ def pack(bs, nq=512):
 
         fb.append(v)
 
-    return Pack(
-        jnp.asarray(b.k, dtype=F),
-        jnp.asarray(pa, dtype=F),
-        F(per),
-        jnp.asarray(np.stack(tb), dtype=F),
-        jnp.asarray(np.stack(fb), dtype=F),
-        jnp.asarray(eg, dtype=F),
-        F(b.eh),
-        F(eg[-1]),
-    )
+    return Pack(jnp.asarray(b.k, dtype=F), jnp.asarray(pa, dtype=F), F(per), jnp.asarray(np.stack(tb), dtype=F), jnp.asarray(np.stack(fb), dtype=F), jnp.asarray(eg, dtype=F), F(b.eh), F(eg[-1]))
 
 def _wrap_q(q, per):
     return jnp.mod(q + 0.5 * per, per) - 0.5 * per
@@ -287,10 +261,7 @@ def _spec_e(w, w0, ew):
     zn = 2.0 * jnp.arctan(w0 / ew) / jnp.pi
     zn = jnp.maximum(zn, F(1.0e-30))
 
-    sp = (
-        4.0 * ew * w * w0
-        / (jnp.pi * d1 * d2 * zn)
-    )
+    sp = (4.0 * ew * w * w0 / (jnp.pi * d1 * d2 * zn))
 
     return jnp.where(w0 > 0.0, sp, F(0.0))
 
@@ -299,44 +270,23 @@ def _spec_s(w0, ew):
     zn = 2.0 * jnp.arctan(w0 / ew) / jnp.pi
     zn = jnp.maximum(zn, F(1.0e-30))
 
-    sl = (
-        4.0 * ew * w0
-        / (
-            jnp.pi
-            * (w0 * w0 + ew * ew)**2
-            * zn
-        )
-    )
+    sl = (4.0 * ew * w0 / (jnp.pi * (w0 * w0 + ew * ew)**2 * zn))
 
     return jnp.where(w0 > 0.0, sl, F(0.0))
 
 
 def _hat(x, h):
-    return jnp.maximum(
-        F(1.0) - jnp.abs(x) / h,
-        F(0.0),
-    ) / h
+    return jnp.maximum(F(1.0) - jnp.abs(x) / h, F(0.0)) / h
 
 
 def _disc_e(w, w0, h):
     r = jnp.minimum(w0 / h, F(1.0))
-    zn = jnp.where(
-        w0 < h,
-        r * (F(2.0) - r),
-        F(1.0),
-    )
+    zn = jnp.where(w0 < h, r * (F(2.0) - r), F(1.0))
     zn = jnp.maximum(zn, F(1.0e-30))
 
-    sp = (
-        _hat(w - w0, h)
-        - _hat(w + w0, h)
-    ) / zn
+    sp = (_hat(w - w0, h) - _hat(w + w0, h)) / zn
 
-    return jnp.where(
-        w0 > 0.0,
-        jnp.maximum(sp, F(0.0)),
-        F(0.0),
-    )
+    return jnp.where(w0 > 0.0, jnp.maximum(sp, F(0.0)), F(0.0))
 
 
 def _disc_s(w0, h):
@@ -367,19 +317,11 @@ def _therm(sp, sl, w, t):
     ts = jnp.where(t > 0.0, t, F(1.0))
     x = w / ts
 
-    dn = jnp.where(
-        x > 0.0,
-        -jnp.expm1(-x),
-        F(1.0),
-    )
+    dn = jnp.where(x > 0.0, -jnp.expm1(-x), F(1.0))
 
     ab0 = sp * jnp.exp(-x) / dn
 
-    ab = jnp.where(
-        t > 0.0,
-        jnp.where(w > 0.0, ab0, sl * t),
-        F(0.0),
-    )
+    ab = jnp.where(t > 0.0, jnp.where(w > 0.0, ab0, sl * t), F(0.0))
 
     em = ab + sp
     return ab, em
@@ -405,14 +347,8 @@ def _pair(x, y, bp):
     de = x[:, 0, None] - y[None, :, 0]
     w = jnp.abs(de)
 
-    qx = _wrap_q(
-        x[:, 3, None] - y[None, :, 3],
-        bp.per,
-    )
-    qy = _wrap_q(
-        x[:, 4, None] - y[None, :, 4],
-        bp.per,
-    )
+    qx = _wrap_q(x[:, 3, None] - y[None, :, 3], bp.per)
+    qy = _wrap_q(x[:, 4, None] - y[None, :, 4], bp.per)
     qm = jnp.hypot(qx, qy)
 
     aa = x[:, 1, None] * y[None, :, 1]
@@ -421,49 +357,20 @@ def _pair(x, y, bp):
     bb = x[:, 2, None] * y[None, :, 2]
 
     def body(i, rr):
-        (
-            t, cs, ktf, eta,
-            amp, caa, cab, cba, cbb, qd,
-            kind, w0, ll, ew,
-        ) = bp.b[i]
+        (t, cs, ktf, eta,amp, caa, cab, cba, cbb, qd, kind, w0, ll, ew) = bp.b[i]
 
         wg = F(2.0) * jnp.pi / ll
 
-        om = jnp.where(
-            kind == 0,
-            w0,
-            jnp.where(
-                kind == 1,
-                cs * qm,
-                jnp.hypot(wg, cs * qm),
-            ),
-        )
+        om = jnp.where(kind == 0, w0, jnp.where(kind == 1, cs * qm, jnp.hypot(wg, cs * qm)))
 
-        gv = (
-            caa * aa
-            + cab * ax
-            + cba * xa
-            + cbb * bb
-        )
+        gv = (caa * aa + cab * ax + cba * xa + cbb * bb)
         af = jnp.square(gv)
         den = (qm * qm + ktf * ktf)**2
 
-        g2 = (
-            amp
-            * af
-            * qm * qm
-            / (
-                jnp.maximum(om, F(1.0e-30))
-                * den
-            )
-        )
+        g2 = (amp * af * qm * qm / (jnp.maximum(om, F(1.0e-30)) * den))
 
         ok = (qm > 0.0) & (qm <= qd)
-        gm = F(2.0) * jnp.pi * jnp.where(
-            ok,
-            g2,
-            F(0.0),
-        )
+        gm = F(2.0) * jnp.pi * jnp.where(ok, g2, F(0.0))
 
         sp, sl = _line(w, om, ew, bp)
         ab, em = _therm(sp, sl, w, t)
@@ -475,11 +382,7 @@ def _pair(x, y, bp):
 
     z = jnp.zeros_like(de)
 
-    return jax.lax.fori_loop(
-        0,
-        bp.b.shape[0],
-        body,
-        (z, z),
+    return jax.lax.fori_loop( 0, bp.b.shape[0], body,(z, z),
     )
 
 
