@@ -54,13 +54,13 @@ open_system:
     rate: PhononBath
     pars:
       cs: 2.
-      ktf: 0.2
+      ktf: 0.002
       eta: 0.025
       amp: 1.0
 
       caa: 1.0
-      cab: 0.5
-      cba: 0.5
+      cab: 0.0
+      cba: 0.0
       cbb: 1.0
 
       disp: "constant"
@@ -72,7 +72,7 @@ open_system:
       nang: 128
 
       em: 17.6
-      eh: 0.3
+      eh: 0.1
 
   solve:
     dt: 0.03 
