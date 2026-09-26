@@ -275,8 +275,8 @@ def plot_maps_rect(pt, r1, r2, z, d0):
          r"$G_{\mathrm{ind}}^{\mathrm{diag}}/(2\Delta_0)$", cmaps.amethyst),
         ("hartree_indirect_map", z["hartree_ind"] / d0,
          r"$G^{\mathrm{H}}_{\mathrm{ind}}/\Delta_0$", cmaps.bubblegum),
-        ("imbalance_map", z["m"] / (2.0 * d0),
-         r"$(n_a-n_b)/(2\Delta_0)$", cmaps.gem),
+        ("imbalance_map", z["m"],
+         r"$(n_a-n_b)$", cmaps.gem),
     )
     for name, val, label, cmap in tqdm_bar(maps, desc="Maps"):
         val = np.where(z["converged"], val, np.nan)

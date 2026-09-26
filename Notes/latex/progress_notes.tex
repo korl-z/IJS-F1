@@ -61,6 +61,12 @@
 \usepackage{fontspec}
 \usepackage[version=4]{mhchem}
 \usepackage{cuted} 
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+% ---------------------------------------------------------------
+\algnewcommand\algorithmicreturnx{\textbf{return}}
+\algnewcommand\Ret{\State \algorithmicreturnx{} }
+ 
 
 %tikz
 \usepackage{tikz}
@@ -464,8 +470,139 @@ $\chi_{ij} = \langle C_{i} C_{j} \rangle - \langle C_{i} \rangle \langle C_{j} \
 G^\lambda(\vec{k}, \vec{q}) &= \begin{pmatrix} u_{k+q} & -v_{k+q} \\ v_{k+q} & u_{k+q} \end{pmatrix} \begin{pmatrix} g_{a\lambda}(\vec{q}) & 0 \\ 0 & g_{b\lambda}(\vec{q}) \end{pmatrix} \begin{pmatrix} u_k & v_k \\ -v_k & u_k \end{pmatrix} \\[1.5em]
 g_{\substack{a\\b}\lambda}(\vec{q}) &= -i\ \frac{4\pi e^2}{\sqrt{2M\Omega\omega_{\vec{q}\lambda}}} \cdot \frac{1}{|\vec{q}|^2 + \Lambda^2} \left( \vec{q} \cdot \vec{\varepsilon}_{\vec{q}\lambda}^* \right)
 \end{align}
-\subsection{Fotonske sklopitve v resonatorju}
+
+Psevdokoda: 
+
+
+\begin{algorithm}[htbp]
+\caption{\texttt{pack}: static bath data shared by all rate evaluations}
+\label{alg:pack}
+\begin{algorithmic}[1]
+\Require baths $\mathcal B=\{b\}$ with common $\{\mathbf k\}$, $a_0$, $n_{\mathrm{ang}}$, $h$ (\texttt{eh}), $E_{\max}$ (\texttt{em}); $n_q=512$
+\State $p \gets 2\pi/a_0$ \Comment{reciprocal period, \texttt{per}}
+\State check $n_x n_y=N$, $\Delta k_x=p/n_x$, $\Delta k_y=p/n_y$ \Comment{uniform Cartesian BZ grid}
+\For{$b\in\mathcal B$}
+  \State $\mathrm{kind}_b \gets 0,1,2$ for \texttt{constant}, \texttt{acoustic}, \texttt{gapped}
+  \State $\mathrm{row}_b \gets (T,\,c_s,\,k_{\mathrm{TF}},\,\eta,\,\mathrm{amp},\,c_{aa},\,c_{ab},\,c_{ba},\,c_{bb},\,q_D,\,\mathrm{kind},\,\omega_0,\,L,\,\epsilon_w)_b$
+  \State $\mathrm{tab}_b,\ \mathrm{flat}_b \gets$ angular kernel tables \Comment{built, not used by the rates}
+\EndFor
+\State $n_E \gets \lceil E_{\max}/h\rceil$, \quad $e_m \gets m\,h$ for $m=0,\dots,n_E$
+\State $\tilde E_{\max} \gets e_{n_E}=n_E\,h$ \Comment{stored as \texttt{Pack.em}}
+\Ret $P=(\{\mathbf k\},\ \{\mathrm{row}_b\},\ p,\ \mathrm{tab},\ \mathrm{flat},\ \{e_m\},\ h,\ \tilde E_{\max})$
+\end{algorithmic}
+\end{algorithm}
  
+\begin{algorithm}[htbp]
+\caption{Spectral and thermal factors (elementwise)}
+\label{alg:line}
+\begin{algorithmic}[1]
+\Function{SpecE}{$w,\omega,\epsilon$} \Comment{\texttt{\_spec\_e}}
+  \State $z_n \gets \max\!\big(\tfrac{2}{\pi}\arctan(\omega/\epsilon),\,10^{-30}\big)$
+  \If{$\omega>0$}
+    \Ret $\dfrac{4\,\epsilon\,w\,\omega}{\pi\,\big[(w-\omega)^2+\epsilon^2\big]\big[(w+\omega)^2+\epsilon^2\big]\,z_n}$
+  \Else\ \Ret $0$
+  \EndIf
+\EndFunction
+\Function{SpecS}{$\omega,\epsilon$} \Comment{\texttt{\_spec\_s}: $\lim_{w\to0}$ \Call{SpecE}{}$/w$}
+  \State $z_n \gets \max\!\big(\tfrac{2}{\pi}\arctan(\omega/\epsilon),\,10^{-30}\big)$
+  \If{$\omega>0$} \Ret $\dfrac{4\,\epsilon\,\omega}{\pi\,(\omega^2+\epsilon^2)^2\,z_n}$ \Else\ \Ret $0$ \EndIf
+\EndFunction
+\Function{Hat}{$x,h$} \Ret $\max(1-|x|/h,\,0)/h$ \EndFunction
+\Function{DiscE}{$w,\omega,h$} \Comment{\texttt{\_disc\_e}, used only if $\epsilon_w=0$}
+  \State $\rho \gets \min(\omega/h,1)$; \quad $z_n \gets \rho(2-\rho)$ if $\omega<h$ else $1$; \quad $z_n\gets\max(z_n,10^{-30})$
+  \If{$\omega>0$} \Ret $\max\!\big([\Call{Hat}{w-\omega,h}-\Call{Hat}{w+\omega,h}]/z_n,\,0\big)$ \Else\ \Ret $0$ \EndIf
+\EndFunction
+\Function{DiscS}{$\omega,h$} \Comment{\texttt{\_disc\_s}}
+  \State $z \gets 10^{-6}h$; \quad \Ret \Call{DiscE}{$z,\omega,h$}$/z$
+\EndFunction
+\Function{Line}{$w,\omega,\epsilon_w,P$} \Comment{\texttt{\_line}}
+  \State $\epsilon_p \gets \epsilon_w$ if $\epsilon_w>0$ else $h$
+  \If{$\epsilon_w>0$}
+    \State $A \gets$ \Call{SpecE}{$w,\omega,\epsilon_p$}; \quad $A_0 \gets$ \Call{SpecS}{$\omega,\epsilon_p$}
+  \Else
+    \State $A \gets$ \Call{DiscE}{$w,\omega,h$}; \quad $A_0 \gets$ \Call{DiscS}{$\omega,h$}
+  \EndIf
+  \If{$w>\tilde E_{\max}$} $A,A_0 \gets \mathrm{NaN}$ \EndIf
+  \Ret $(A,A_0)$
+\EndFunction
+\Function{Therm}{$A,A_0,w,T$} \Comment{\texttt{\_therm}}
+  \If{$T>0$}
+    \State $x \gets w/T$; \quad $d \gets 1-e^{-x}$ if $x>0$ else $1$
+    \State $F_{\mathrm{abs}} \gets A\,e^{-x}/d = A\,N(w)$ if $w>0$ else $A_0\,T$
+  \Else
+    \State $F_{\mathrm{abs}} \gets 0$
+  \EndIf
+  \State $F_{\mathrm{em}} \gets F_{\mathrm{abs}} + A = A\,[1+N(w)]$
+  \Ret $(F_{\mathrm{abs}},F_{\mathrm{em}})$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+ 
+\begin{algorithm}[htbp]
+\caption{\texttt{\_data} and \texttt{\_pair}: pair rates between destinations $i$ and sources $j$}
+\label{alg:pair}
+\begin{algorithmic}[1]
+\Function{Data}{$\mathrm{st},P$} \Comment{flattened states $s=\lambda N+k$, $\lambda\in\{\alpha,\beta\}$}
+  \For{$s=(\lambda,\mathbf k)$}
+    \State $(a_s,b_s) \gets (u_{\mathbf k},-v_{\mathbf k})$ if $\lambda=\alpha$; \quad $(v_{\mathbf k},u_{\mathbf k})$ if $\lambda=\beta$
+    \State $x_s \gets (E_{\lambda\mathbf k},\,a_s,\,b_s,\,k_x,\,k_y)$
+  \EndFor
+  \Ret $X=\{x_s\}$
+\EndFunction
+\Function{Pair}{$X_i,\,X_j,\,P$} \Comment{rows $i$: destinations, columns $j$: sources}
+  \State $\Delta E_{ij} \gets E_i-E_j$; \quad $w_{ij}\gets|\Delta E_{ij}|$
+  \State $\mathbf q_{ij} \gets \mathrm{wrap}(\mathbf k_i-\mathbf k_j)$, \quad $\mathrm{wrap}(x)=\big[(x+p/2)\bmod p\big]-p/2$ per component
+  \State $q_{ij} \gets |\mathbf q_{ij}|$
+  \State $O^{aa}_{ij}\gets a_ia_j$, \ $O^{ab}_{ij}\gets a_ib_j$, \ $O^{ba}_{ij}\gets b_ia_j$, \ $O^{bb}_{ij}\gets b_ib_j$
+  \State $R^{(1)}\gets 0$, \quad $R^{(2)}\gets 0$
+  \For{$b\in\mathcal B$} \Comment{\texttt{fori\_loop} over rows of $P$}
+    \State $(T,c_s,k_{\mathrm{TF}},\eta,\mathrm{amp},c_{aa},c_{ab},c_{ba},c_{bb},q_D,\mathrm{kind},\omega_0,L,\epsilon_w)\gets\mathrm{row}_b$
+    \State $\omega_g \gets 2\pi/L$
+    \State $\Omega_{ij} \gets \begin{cases}\omega_0 & \mathrm{kind}=0\\ c_s\,q_{ij} & \mathrm{kind}=1\\ \sqrt{\omega_g^2+c_s^2q_{ij}^2} & \mathrm{kind}=2\end{cases}$
+    \State $\gamma_{ij} \gets c_{aa}O^{aa}_{ij}+c_{ab}O^{ab}_{ij}+c_{ba}O^{ba}_{ij}+c_{bb}O^{bb}_{ij}$ \Comment{$G_{\mu\nu}/g$}
+    \State $g^2_{ij} \gets \dfrac{\mathrm{amp}\;\gamma_{ij}^2\;q_{ij}^2}{\max(\Omega_{ij},10^{-30})\,\big(q_{ij}^2+k_{\mathrm{TF}}^2\big)^2}$
+    \State $M_{ij} \gets 2\pi\,g^2_{ij}$ if $0<q_{ij}\le q_D$ else $0$
+    \State $(A,A_0) \gets$ \Call{Line}{$w_{ij},\Omega_{ij},\epsilon_w,P$}
+    \State $(F_{\mathrm{abs}},F_{\mathrm{em}}) \gets$ \Call{Therm}{$A,A_0,w_{ij},T$}
+    \State $R^{(1)}_{ij} \mathrel{+}= M_{ij}\cdot\big(F_{\mathrm{em}}$ if $\Delta E_{ij}<0$ else $F_{\mathrm{abs}}\big)$ \Comment{rate $j\to i$}
+    \State $R^{(2)}_{ij} \mathrel{+}= M_{ij}\cdot\big(F_{\mathrm{em}}$ if $\Delta E_{ij}>0$ else $F_{\mathrm{abs}}\big)$ \Comment{rate $i\to j$}
+  \EndFor
+  \Ret $(R^{(1)},R^{(2)})$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+ 
+\begin{algorithm}[htbp]
+\caption{\texttt{rates}, \texttt{source\_rates} and \texttt{cur\_block}}
+\label{alg:rates}
+\begin{algorithmic}[1]
+\Function{Rates}{$\mathrm{st},P,J$} \Comment{$J$: source columns, default all}
+  \State $X \gets$ \Call{Data}{$\mathrm{st},P$}
+  \State $(R^{(1)},\,\cdot\,) \gets$ \Call{Pair}{$X,\,X_J,\,P$}
+  \State $R_{ij} \gets R^{(1)}_{ij}$ if $i\neq j$ else $0$ \Comment{$R[\text{dest},\text{src}]=\Gamma_{j\to i}$}
+  \Ret $R$
+\EndFunction
+\Function{SourceRates}{$\mathrm{st},\mathcal B,\mu,p_0$}
+  \State $P \gets$ \Call{Pack}{$\mathcal B$}
+  \Ret \Call{Rates}{$\mathrm{st},P,\{\mu N+p_0\}$} reshaped to $(2,N)$ \Comment{$\Gamma_{\mu\mathbf p_0\to\nu\mathbf k}$}
+\EndFunction
+\Function{CurBlock}{$\mathrm{st},n,w,P,B$} \Comment{$w_{\mathbf k}$: $k$-point weights, $B$: block size}
+  \State $X\gets$ \Call{Data}{$\mathrm{st},P$}; \quad $y_s \gets n_s$; \quad $\bar w_s \gets w_{\mathbf k(s)}$ \Comment{weights tiled over both bands}
+  \State $\mathrm{gain}\gets0$, \quad $\mathrm{loss}\gets0$
+  \For{each block $\mathcal J$ of $B$ source indices (zero-padded)}
+    \State $(R^{(1)},R^{(2)}) \gets$ \Call{Pair}{$X,\,X_{\mathcal J},\,P$}
+    \State set $R^{(1)}_{ij}=R^{(2)}_{ij}=0$ for $i=j$ and for padded $j$
+    \State $\mathrm{gain}_i \mathrel{+}= \sum_{j\in\mathcal J} R^{(1)}_{ij}\,\bar w_j\,y_j$
+    \State $\mathrm{loss}_i \mathrel{+}= \sum_{j\in\mathcal J} R^{(2)}_{ij}\,\bar w_j\,(1-y_j)$
+  \EndFor
+  \State $\dot n_i \gets (1-y_i)\,\mathrm{gain}_i - y_i\,\mathrm{loss}_i$
+  \Ret $\dot n$ reshaped to $(2,N)$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Fotonske sklopitve v resonatorju}
+
 \nocite{*}
 \printbibliography
 \end{document} 

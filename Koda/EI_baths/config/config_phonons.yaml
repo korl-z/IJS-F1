@@ -1,6 +1,6 @@
 model:
   nk:
-    scan: 30
+    scan: 50
     reference: 50
 
   band:
@@ -41,7 +41,7 @@ scan:
   temperature:
     nt: 10
     min_ratio: 0.01
-    max_ratio: 6.0
+    max_ratio: 2.0
   t1: {min_ratio: 0.05, max_ratio: 1.5, nt: 12}
   t2: {min_ratio: 0.05, max_ratio: 7.0, nt: 16}
 
@@ -53,20 +53,20 @@ open_system:
   bath:
     rate: PhononBath
     pars:
-      cs: 2.
-      ktf: 0.002
+      ktf: 0.001
       eta: 0.025
-      amp: 1.0
+      amp: 0.5
 
       caa: 1.0
       cab: 0.0
       cba: 0.0
       cbb: 1.0
 
-      disp: "constant"
-      w0: 0.5
-      length: 6.0
-      ew: 0.3
+      disp: "acoustic"
+      cs: 1.5
+      w0: 2.5
+      length: 2.5
+      ew: 0.1
 
       qd: 4.4428829381583662470158809900606936986146216893756902230853956069
       nang: 128
@@ -79,7 +79,7 @@ open_system:
     td: 100.
     tm: 100.
     tol: 1.0e-6
-    nmax: 10000
+    nmax: 20000
     chk: 100
     prog: false
     mode: dense
