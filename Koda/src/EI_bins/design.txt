@@ -1,0 +1,45 @@
+# EI_bins: steady-state solver on an energy shell grid
+
+## Grid
+- Cells are equally spaced in the shell variable s = cos kx + cos ky, i.e. in the bare energies. They never move with (d, m).
+- The DOS weights come from the exact CDF of s, so there is no k-counting noise.
+- Each cell has 4 sub-nodes for within-cell averages.
+- ns is odd and chosen automatically: a cell spans at most min(d0, Tc, w0)/4 in quasiparticle energy.
+
+## Pair kernel
+- A_IJ = sum over k in I, p in J of w_k w_p phi(k - p), with phi(q) = q^2 / (q^2 + lam^2)^2 for |q| <= qd.
+- It is computed by FFT on an L x L grid (L of about 250 to 1000) and cached.
+- It is shared by all baths, temperatures, d and m.
+
+## Rates
+- Downhill: 2 pi |C|^2 (amp / w0) A [(1 + N) L(x - w0) + N L(x + w0)].
+  - C is the coherence factor U_I^T c U_J, averaged over the cell pair.
+  - L is the cell-pair overlap kernel: box * box * box, C1, with smoothing width at least the largest cell width.
+- Uphill: downhill times exp(-x / T). Detailed balance is exact on the grid, so T1 = T2 reproduces the shell equilibrium exactly.
+- Spectral-function extension: replace the bracket by the integral over w of L(x - w) B(w) (1 + N(w)).
+
+## Unknowns and equations
+- Unknowns: the GGE multipliers mu per (branch, cell), with n = 1 / (1 + e^mu), plus d, m and one slack kap per block.
+- Balance: mu + log(in) - log(out) + kap = 0.
+- Mean field: divided gap equation and the m equation, evaluated at sub-nodes. mu is interpolated linearly in E inside each cell, which is exact for thermal states and fixes the near-Tc error.
+- Block populations: fixed in log form, as particles or holes, whichever is smaller.
+
+## Solver
+1. Inner Newton at fixed alpha/beta block populations.
+   - Analytic mu Jacobian; central differences (h = 1e-7) for the d and m columns.
+   - Merit weighted by sqrt(n (1 - n)).
+   - Cells with |mu| > 50 are excluded from the convergence test.
+2. Outer Newton on the block logits, driving 0.5 log(interband flux in / out) to zero.
+   - Needed because interband rates can be 1e-8 of intraband ones.
+3. Temperature homotopy from the exact T1 = T2 equilibrium, with a secant predictor.
+   - If the ordered branch is lost, the normal branch is solved instead.
+4. Stability from the Schur complement over (d, m) with instantaneous mean field. It also gives the slowest relaxation rate.
+
+## Validation
+- T1 = T2 steady state equals the equilibrium to 1e-11 to 1e-16.
+- Particle number is conserved to 5e-17.
+- The shell equilibrium converges to an independent k-grid equilibrium at O(h^2).
+- Tc = 0.535236 (notebook: 0.53523542).
+
+## Caveat
+- For w0 < 2 d there is no interband channel. The alpha and beta populations are then separately conserved, and the steady state depends on the initial state. A finite phonon linewidth or another process is needed to fix them.

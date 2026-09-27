@@ -227,7 +227,7 @@ def plot_energy(pt, st, sf, t1, t2, mu, d0):
     en = (np.asarray(st.st.e) - mu) / d0
     ef = (np.asarray(sf.st.e) - mu) / d0
     nn = np.asarray(st.n)
-    x = np.linspace(min(en.min(), ef.min()), max(en.max(), ef.max()), 600)
+    x = np.linspace(0.5 * min(en.min(), ef.min()), 0.5 * max(en.max(), ef.max()), 600)
 
     with pt.figure(name="occupations_energy", h=0.68) as q:
         a = q.ax

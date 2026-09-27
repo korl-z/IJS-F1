@@ -1,6 +1,6 @@
 model:
   nk:
-    scan: 50
+    scan: 30
     reference: 50
 
   band:
@@ -53,20 +53,20 @@ open_system:
   bath:
     rate: PhononBath
     pars:
-      ktf: 0.001
+      ktf: 0.1
       eta: 0.025
-      amp: 0.5
+      amp: 1.0
 
       caa: 1.0
       cab: 0.0
       cba: 0.0
       cbb: 1.0
 
-      disp: "acoustic"
+      disp: "constant"
       cs: 1.5
       w0: 2.5
-      length: 2.5
-      ew: 0.1
+      length: 3.14
+      ew: 0.3
 
       qd: 4.4428829381583662470158809900606936986146216893756902230853956069
       nang: 128
