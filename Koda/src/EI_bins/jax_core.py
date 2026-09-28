@@ -6,6 +6,8 @@ import jax.numpy as jnp
 from jax import lax
 from jax.nn import sigmoid
 
+from .kernel import delta_brk, delta_geo, spec_brk, spec_geo
+
 jax.config.update("jax_enable_x64", True)
 
 TINY = 1e-300
@@ -17,10 +19,14 @@ def make_core(pb):
     ws = jnp.asarray(sh.ws)
     w = jnp.asarray(sh.w)
     wt = jnp.asarray(pb.wt)
-    at = jnp.tile(jnp.asarray(pb.A), (2, 2))
     cs = tuple(jnp.asarray(b.cm) for b in pb.baths)
-    amps = tuple(2.0 * np.pi * b.amp / b.w0 for b in pb.baths)
-    w0s = tuple(b.w0 for b in pb.baths)
+    amps = tuple(2.0 * np.pi * b.amp for b in pb.baths)
+    # baths with the same kernel and line width share the geometric part
+    kg = {}
+    for i, (b, kn) in enumerate(zip(pb.baths, pb.A)):
+        kg.setdefault((id(kn), b.gam), (kn, b.gam, []))[2].append(i)
+    bdat = tuple((jnp.tile(jnp.asarray(kn.A), (1, 2, 2)), jnp.asarray(kn.om),
+                  float(kn.dw), float(g), tuple(ix)) for kn, g, ix in kg.values())
     N, nc, nth = pb.wt.size, pb.nc, pb.nth
     normal = pb.normal
     eye = jnp.eye(N)
@@ -55,38 +61,40 @@ def make_core(pb):
         ie = jnp.where(ok, 0.5 / ep, 0.0)
         return e, hw, ma, mb, es, uv, xr, ie
 
-    def left(y, a, b):
-        lo, hi = jnp.minimum(a, b), jnp.maximum(a, b)
-        t = jnp.clip(y + 0.5 * (lo + hi), 0.0, 0.5 * (lo + hi))
-        return jnp.where(t < lo, t * t / (2.0 * lo * hi),
-                         0.5 * lo / hi + (t - lo) / hi)
-
-    def cdf(y, a, b):
-        return jnp.where(y <= 0.0, left(y, a, b), 1.0 - left(-y, a, b))
-
-    def line(y, a, b, cmin):
-        c = jnp.maximum(0.5 * (a + b), cmin)
-        v = (cdf(y + 0.5 * c, a, b) - cdf(y - 0.5 * c, a, b)) / c
-        return jnp.where(jnp.abs(y) < 0.5 * (a + b + c), v, 0.0)
-
     def rate(cl, ts):
         e, hw, ma, mb = cl[:4]
         e, hw = e.reshape(-1), hw.reshape(-1)
         x = e[None, :] - e[:, None]
         ha, hb = hw[:, None], hw[None, :]
+        cf = jnp.max(hw)
         mats = (ma, mb)
+        # frequency bin sums of A_m times the line bracket, one per bath
+        pp = [None] * len(amps)
+        for A3, om, dw, gam, ix in bdat:
+            cmin = jnp.maximum(cf, dw)
+
+            def body(k, acc, A3=A3, om=om, gam=gam, ix=ix, cmin=cmin):
+                if gam > 0.0:
+                    geo = spec_geo(jnp, x, ha, hb, cmin, om[k], gam)
+                    brs = [spec_brk(jnp, geo, ts[i]) for i in ix]
+                else:
+                    le = delta_geo(jnp, x, ha, hb, cmin, om[k])
+                    brs = [delta_brk(jnp, le, om[k], ts[i]) for i in ix]
+                return tuple(a + A3[k] * br for a, br in zip(acc, brs))
+
+            acc = lax.fori_loop(0, om.shape[0], body,
+                                tuple(jnp.zeros_like(x) for _ in ix))
+            for i, a in zip(ix, acc):
+                pp[i] = a
         K = jnp.zeros_like(x)
-        for i, (cm, amp, w0) in enumerate(zip(cs, amps, w0s)):
+        for i, (cm, amp) in enumerate(zip(cs, amps)):
             blocks = []
             for mi in mats:
                 a = jnp.einsum('ab,iac,cd->ibd', cm, mi, cm)
                 blocks.append(jnp.concatenate(
                     [jnp.einsum('ibd,jbd->ij', a, mj) for mj in mats], axis=1))
-            g = amp * at * jnp.concatenate(blocks, axis=0)
-            le = line(x - w0, ha, hb, jnp.max(hw))
+            p = amp * jnp.concatenate(blocks, axis=0) * pp[i]
             t = ts[i]
-            nb = jnp.where(t > 0.0, 1.0 / jnp.expm1(w0 / jnp.maximum(t, 1e-300)), 0.0)
-            p = g * ((1.0 + nb) * le + nb * le.T)
             up = jnp.where(t > 0.0, p.T * jnp.exp(jnp.minimum(x, 0.0) /
                                                   jnp.maximum(t, 1e-300)), 0.0)
             K = K + jnp.where(x >= 0.0, p, up)

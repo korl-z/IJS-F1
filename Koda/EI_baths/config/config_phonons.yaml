@@ -1,6 +1,6 @@
 model:
   nk:
-    scan: 30
+    scan: 50
     reference: 50
 
   band:
@@ -39,7 +39,7 @@ equilibrium:
 
 scan:
   temperature:
-    nt: 10
+    nt: 21
     min_ratio: 0.01
     max_ratio: 2.0
   t1: {min_ratio: 0.05, max_ratio: 1.5, nt: 12}
@@ -53,7 +53,7 @@ open_system:
   bath:
     rate: PhononBath
     pars:
-      ktf: 0.1
+      ktf: 0.002
       eta: 0.025
       amp: 1.0
 
@@ -63,10 +63,11 @@ open_system:
       cbb: 1.0
 
       disp: "constant"
-      cs: 1.5
-      w0: 2.5
+      cs: 1.6
+      w0: 0.3
       length: 3.14
       ew: 0.3
+      # gam: 0.0
 
       qd: 4.4428829381583662470158809900606936986146216893756902230853956069
       nang: 128

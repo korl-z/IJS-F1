@@ -8,6 +8,9 @@ W_i dn_i/dt = (1 - n_i) sum_j K[i, j] n_j - n_i sum_j K[j, i] (1 - n_j).
 from typing import NamedTuple
 
 import numpy as np
+from numpy.polynomial.legendre import leggauss
+
+from .geom import Kern
 
 
 class Cells(NamedTuple):
@@ -153,35 +156,182 @@ def bose(w, t):
     return 1.0 / np.expm1(w / t) if t > 0 else 0.0
 
 
-def rates(cl, baths, A):
+# Backend generic pieces (xp = numpy or jax.numpy), shared with jax_core.
+
+PI = np.pi
+T3, W3 = leggauss(3)
+T24, W24 = leggauss(24)
+
+
+def cdf_xp(xp, y, a, b):
+    """trap_cdf for any array backend."""
+    lo, hi = xp.minimum(a, b), xp.maximum(a, b)
+
+    def left(y):
+        t = xp.clip(y + 0.5 * (lo + hi), 0.0, 0.5 * (lo + hi))
+        return xp.where(t < lo, t * t / (2.0 * lo * hi), 0.5 * lo / hi + (t - lo) / hi)
+
+    return xp.where(y <= 0.0, left(y), 1.0 - left(-y))
+
+
+def line_xp(xp, y, a, b, cmin):
+    """line for any array backend (numpy uses the masked version)."""
+    if xp is np:
+        return line(y, a, b, cmin)
+    c = xp.maximum(0.5 * (a + b), cmin)
+    v = (cdf_xp(xp, y + 0.5 * c, a, b) - cdf_xp(xp, y - 0.5 * c, a, b)) / c
+    return xp.where(xp.abs(y) < 0.5 * (a + b + c), v, 0.0)
+
+
+def bose_xp(xp, w, t):
+    """Bose factor N(w) for w > 0, zero for t = 0."""
+    if xp is np and np.ndim(t) == 0 and t <= 0:
+        return np.zeros_like(w)
+    return xp.where(t > 0.0, 1.0 / xp.expm1(w / xp.maximum(t, 1e-300)), 0.0)
+
+
+def delta_geo(xp, x, ha, hb, cmin, om):
+    """Geometric part of a sharp line at om: the overlap kernel at x - om."""
+    return line_xp(xp, x - om, ha, hb, cmin)
+
+
+def delta_brk(xp, le, om, t):
+    """Sharp line bracket (1 + N) L(x - om) + N L(x + om)."""
+    n = bose_xp(xp, om, t)
+    return (1.0 + n) * le + n * le.T
+
+
+def spec_line(xp, e, om, gam):
+    """Damped oscillator line of width gam at om, normalized on e > 0."""
+    z = 2.0 * xp.arctan(om / gam) / PI
+    d1 = (e - om) ** 2 + gam**2
+    d2 = (e + om) ** 2 + gam**2
+    return xp.where(e > 0.0, 4.0 * gam * e * om / (PI * d1 * d2 * z), 0.0)
+
+
+def _spec_nodes(xp, x, ha, hb, cmin, om, gam):
+    """Nodes e and weights (times B L) for pairs of equal shaped x, ha, hb."""
+    sh = x.shape + (24,)
+    c = xp.maximum(0.5 * (ha + hb), cmin)
+    s = 0.5 * (ha + hb + c)
+    lo = xp.maximum(x - s, 0.0)
+    hi = xp.maximum(x + s, 0.0)
+
+    def F(e):
+        return 0.5 + xp.arctan((e - om) / gam) / PI
+
+    pts = [x - 0.5 * (p * ha + q * hb + r * c)
+           for p in (1, -1) for q in (1, -1) for r in (1, -1)]
+    pts.append(om + 0.0 * x)
+    P = xp.sort(xp.clip(xp.stack(pts, -1), lo[..., None], hi[..., None]), axis=-1)
+    U = F(P)
+    u0, du = U[..., :-1], U[..., 1:] - U[..., :-1]
+    ub = (u0[..., None] + du[..., None] * (0.5 * (T3 + 1.0))).reshape(sh)
+    wb = (du[..., None] * (0.5 * W3)).reshape(sh)
+    ul, uh = F(lo), F(hi)
+    un = ul[..., None] + (uh - ul)[..., None] * (0.5 * (T24 + 1.0))
+    wn = (uh - ul)[..., None] * (0.5 * W24)
+    broad = (gam >= s / 8.0)[..., None]
+    u = xp.where(broad, ub, un)
+    wq = xp.where(broad, wb, wn)
+    e = om + gam * xp.tan(PI * (u - 0.5))
+    z = 2.0 * xp.arctan(om / gam) / PI
+    br = 4.0 * e * om / (z * ((e + om) ** 2 + gam**2))  # B / Cauchy density
+    L = line_xp(xp, x[..., None] - e, ha[..., None], hb[..., None], cmin)
+    return e, wq * br * L
+
+
+def spec_geo(xp, x, ha, hb, cmin, om, gam, tmin=np.inf):
+    """Quadrature nodes e and weights (times B L) of the spectral bracket.
+
+    B is the damped oscillator line of width gam centred at om, normalized
+    on e > 0. The integral over e of B(e) L(x - e) uses Gauss-Legendre in
+    the Cauchy mapped variable u = 1/2 + arctan((e - om) / gam) / pi, which
+    concentrates nodes on the line. Broad lines (gam >= s / 8, s the kernel
+    half support) split the support at the 8 kernel breakpoints and om
+    (8 pieces x 3 nodes, exact for the piecewise quadratic kernel); narrow
+    lines use one 24 point rule. Only e > 0 contributes.
+    The numpy path treats pairs far from the line (|x - om| > 5 (s + gam))
+    with a 3 point rule matching the kernel moments up to fourth order, if
+    their energy spread is also small against tmin, the lowest temperature
+    of the baths using these nodes (the Bose factor must be smooth).
+    """
+    x = x + 0.0 * ha + 0.0 * hb
+    ha = ha + 0.0 * x
+    hb = hb + 0.0 * x
+    if xp is not np:
+        return _spec_nodes(xp, x, ha, hb, cmin, om, gam)
+    c = np.maximum(0.5 * (ha + hb), cmin)
+    s = 0.5 * (ha + hb + c)
+    # far: nodes x, x +- h with h^2 = 3 var, var = (a^2 + b^2 + c^2) / 12
+    h = np.sqrt(0.25 * (ha**2 + hb**2 + c**2))
+    far = (np.abs(x - om) > 5.0 * (s + gam)) & (x - s > 0.0) & (h < 0.1 * tmin)
+    near = ~far & (x + s > 0.0)
+    e = np.ones(x.shape + (24,))
+    wl = np.zeros(x.shape + (24,))
+    for k, (dx, wk) in enumerate(((0.0, 2.0 / 3.0), (-1.0, 1.0 / 6.0), (1.0, 1.0 / 6.0))):
+        ek = x + dx * h
+        e[..., k] = np.where(far, ek, 1.0)
+        wl[..., k] = np.where(far, wk * spec_line(np, ek, om, gam), 0.0)
+    if near.any():
+        en, wn = _spec_nodes(np, x[near], ha[near], hb[near], cmin, om, gam)
+        e[near] = en
+        wl[near] = wn
+    return e, wl
+
+
+def spec_brk(xp, geo, t):
+    """Spectral bracket: int B (1 + N) L(x - e) + [int B N L(x - e)]^T."""
+    e, wl = geo
+    # B N stays finite as e -> 0; zero length pieces put nodes at e = 0
+    n = bose_xp(xp, xp.maximum(e, 1e-200), t)
+    return xp.sum(wl * (1.0 + n), axis=-1) + xp.sum(wl * n, axis=-1).T
+
+
+def rates(cl, baths, kerns):
     """Pair flux coefficients K (2 ns, 2 ns) summed over baths.
 
-    The downhill direction (source above destination) uses the physical
-    emission and absorption factors. The uphill direction follows from grid
-    detailed balance, K[j, i] = K[i, j] exp(-(E_j - E_i) / T), so T1 = T2
-    gives exactly Fermi-Dirac occupations on the cell centers.
+    kerns: one Kern per bath (geom.kernels), or the original constant
+    dispersion pair kernel array. For every frequency bin m the downhill
+    direction (source above destination) uses 2 pi amp |C|^2 A_m times the
+    sharp line bracket (gam = 0) or the spectral bracket (gam > 0). The
+    uphill direction follows from grid detailed balance,
+    K[j, i] = K[i, j] exp(-(E_j - E_i) / T), so T1 = T2 gives exactly
+    Fermi-Dirac occupations on the cell centers.
     """
+    if isinstance(kerns, np.ndarray):
+        kerns = tuple(Kern(kerns[None] / b.w0, np.array([b.w0]), 0.0) for b in baths)
     e = cl.e.reshape(-1)
     hw = cl.hw.reshape(-1)
     x = e[None, :] - e[:, None]
     ha, hb = hw[:, None], hw[None, :]
     cf = hw.max()
     m2 = (cl.ma, cl.mb)
-    at = np.tile(A, (2, 2))
     K = np.zeros_like(x)
-    lines, cohs = {}, {}
-    for bt in baths:
+    geo, cohs, tiles = {}, {}, {}
+    tmin = {}
+    for bt, kn in zip(baths, kerns):
+        t = bt.t if bt.t > 0 else np.inf
+        tmin[(id(kn), bt.gam)] = min(tmin.get((id(kn), bt.gam), np.inf), t)
+    for bt, kn in zip(baths, kerns):
         if bt.c not in cohs:
             cm = bt.cm
             cohs[bt.c] = np.block([[coh2(m2[i], m2[j], cm) for j in range(2)]
-                                   for i in range(2)]) * at
-        g = (2.0 * np.pi * bt.amp / bt.w0) * cohs[bt.c]
-        if bt.w0 not in lines:
-            # emission kernel; absorption is its transpose since line is even
-            lines[bt.w0] = line(x - bt.w0, ha, hb, cf)
-        le = lines[bt.w0]
-        nb = bose(bt.w0, bt.t)
-        p = g * ((1.0 + nb) * le + nb * le.T)
+                                   for i in range(2)])
+        cmin = max(cf, kn.dw)
+        p = np.zeros_like(x)
+        for m in range(kn.om.size):
+            key = (id(kn), m, bt.gam)
+            if key not in geo:
+                # shared by all baths with the same kernel and line width
+                geo[key] = (spec_geo(np, x, ha, hb, cmin, kn.om[m], bt.gam,
+                                     tmin[(id(kn), bt.gam)])
+                            if bt.gam > 0 else delta_geo(np, x, ha, hb, cmin, kn.om[m]))
+                tiles[key] = np.tile(kn.A[m], (2, 2))
+            br = (spec_brk(np, geo[key], bt.t) if bt.gam > 0
+                  else delta_brk(np, geo[key], kn.om[m], bt.t))
+            p += tiles[key] * br
+        p *= 2.0 * np.pi * bt.amp * cohs[bt.c]
         if bt.t > 0:
             up = p.T * np.exp(np.minimum(x, 0.0) / bt.t)
         else:

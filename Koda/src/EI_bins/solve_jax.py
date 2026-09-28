@@ -22,10 +22,11 @@ from scipy.sparse.csgraph import connected_components
 from scipy.special import expit
 
 from .eq import solve_eq
-from .geom import pair_kernel
+from .geom import kernels
 from .grid import auto_ns, make_shells
 from .kernel import cells, gge_coef, mf_terms, rates, sub_grad, sub_mu
 from .jax_core import make_core
+from .solve import pair_chi
 import jax.numpy as jnp
 
 _CORE_CACHE = {}
@@ -314,12 +315,12 @@ def _path(baths, ts, lam):
     return tuple(replace(b, t=float(t + lam * (b.t - t))) for b, t in zip(baths, ts))
 
 
-def _homotopy(pb, z, baths, ts, tol, nmax, hist, dmin):
+def _homotopy(pb, z, baths, ts, tol, nmax, hist, dmin, fold=1.0 / 32):
     """Move the baths from ts to their targets, z must solve the start point.
 
     Adaptive steps with a secant predictor for z and the block split.
-    Returns (z, status) with status 'ok', 'fold' (ordered branch lost) or
-    'fail'.
+    Returns (z, status) with status 'ok', 'fold' (ordered branch lost: the
+    step fell below fold) or 'fail'.
     """
     N = pb.wt.size
     lam, dl, st = 0.0, 1.0, "fail"
@@ -349,7 +350,7 @@ def _homotopy(pb, z, baths, ts, tol, nmax, hist, dmin):
             dl = min(1.0, 2.0 * dl)
             continue
         dl *= 0.5
-        if dl < 1.0 / 32 and not pb.normal:
+        if dl < fold and not pb.normal:
             hist["fold"] = lam
             return z, "fold"
         if dl < 1e-4:
@@ -426,10 +427,14 @@ def t_eff(baths):
     return float(np.sum(a * t) / np.sum(a))
 
 
-def _start(sh, band, mf, ts, d, m, normal):
-    """Shell equilibrium used as the exact lam = 0 point of the homotopy."""
+def _start(sh, band, mf, ts, d, m, normal, equal=False):
+    """Shell equilibrium used as the exact lam = 0 point of the homotopy.
+
+    equal: all baths are at ts, so the steady state is the equilibrium at ts
+    and ts is not lowered when the ordered equilibrium does not exist.
+    """
     if not normal:
-        for _ in range(12):
+        for _ in range(1 if equal else 12):
             eq = solve_eq(sh, band, mf, ts, d, m)
             if eq.ok:
                 return eq, ts, False
@@ -440,22 +445,24 @@ def _start(sh, band, mf, ts, d, m, normal):
 
 def solve_ness(sh, band, mf, baths, A=None, d=1.0, m=0.0, mu=None, t0=None,
                normal=False, tol=1e-11, nmax=25, stab=True, cache=None, dmin=1e-7,
-               t_from=None):
+               t_from=None, direct=False, fold=1.0 / 32):
     """Steady state of the bath driven EI on the shell grid.
 
+    A: None (kernels are built, cached in cache if given), one Kern per bath,
+    or the original constant dispersion pair_kernel array.
     mu given: Newton directly from (mu, d, m), e.g. for continuation. If that
     fails and t_from (bath temperatures at which (mu, d, m) is a solution)
     is given, the baths are moved from t_from to their targets. Otherwise a
     temperature homotopy from equilibrium is used: at T1 = T2 = t0 (default
     t_eff) the steady state is exactly the shell equilibrium. If the ordered
     branch is lost on the way, the normal branch (d = 0) is returned.
+    direct (with mu): no homotopy from equilibrium, ok = False if the Newton
+    from (mu, d, m) and the homotopy from t_from fail.
+    fold: smallest homotopy step before the ordered branch counts as lost.
     """
     baths = tuple(baths)
-    if A is None:
-        lq = {(b.lam, b.qd) for b in baths}
-        if len(lq) != 1:
-            raise ValueError("baths must share lam and qd, or pass A")
-        A = pair_kernel(sh, *lq.pop(), cache=cache)
+    # one binned pair kernel per bath (shared between equal geometries)
+    A = kernels(sh, band, baths, A, cache=cache)
     pb = _Prob(sh, band, mf, baths, A, bool(normal), np.tile(sh.w, 2))
     N = pb.wt.size
     hist = {"err": [], "step": [], "lam": []}
@@ -478,17 +485,20 @@ def solve_ness(sh, band, mf, baths, A=None, d=1.0, m=0.0, mu=None, t0=None,
             pb.normal = bool(normal)
             pb.baths = _path(baths, t_from, 0.0)
             _blocks(pb, _state(pb, mu, d, m)[1], expit(-mu), mu)
-            z, st = _homotopy(pb, zvec(mu, d, m), baths, t_from, tol, nmax, hist, dmin)
+            z, st = _homotopy(pb, zvec(mu, d, m), baths, t_from, tol, nmax, hist, dmin,
+                              fold)
             ok = st == "ok"
 
-    if not ok:
+    if not ok and not (direct and mu is not None):
         ts = t_eff(baths) if t0 is None else float(t0)
-        eq, ts, nrm = _start(sh, band, mf, ts, d, m, normal)
+        equal = all(b.t == ts for b in baths)
+        eq, ts, nrm = _start(sh, band, mf, ts, d, m, normal, equal)
         pb.normal = nrm
         pb.baths = _path(baths, ts, 0.0)
         mu0 = eq.mu.reshape(-1)
         _blocks(pb, _state(pb, mu0, eq.d, eq.m)[1], eq.n.reshape(-1), mu0)
-        z, st = _homotopy(pb, zvec(mu0, eq.d, eq.m), baths, ts, tol, nmax, hist, dmin)
+        z, st = _homotopy(pb, zvec(mu0, eq.d, eq.m), baths, ts, tol, nmax, hist, dmin,
+                          fold)
         if st == "fold":
             # ordered branch ends (collapse or fold): solve the d = 0 branch
             warnings.warn(f"ordered branch lost at lam = {hist['fold']:.4g}, "
@@ -557,21 +567,51 @@ def to_k(sol, sh, k):
     return sol.n[:, sh.cell(np.cos(k[:, 0]) + np.cos(k[:, 1]))]
 
 
-def sweep(sh, band, mf, baths_of, xs, A=None, d=1.0, m=0.0, normal=False, **kw):
+def sweep(sh, band, mf, baths_of, xs, A=None, d=1.0, m=0.0, normal=False,
+          prefer="ordered", nfold=12, lfold=0.25, **kw):
     """Continuation along a 1d parameter list, e.g. one row of a phase map.
 
     baths_of(x) returns the baths at parameter x. Each point starts from the
-    previous solution (direct Newton, usually 2 to 5 iterations); the
-    homotopy from equilibrium is used only when that fails. Run the list in
-    both directions to detect hysteresis between the two branches.
+    previous solution. After an ordered point: direct Newton (at most nfold
+    iterations); with prefer = 'ordered' also a homotopy from the previous
+    point (fold = lfold, so a lost branch is detected quickly). If that
+    fails, the normal branch is kept if it is stable against order
+    (pair_chi < 1), else the point is solved from equilibrium. After a
+    normal point: the normal branch is continued; if it turns unstable
+    (pair_chi > 1) the ordered branch is solved from equilibrium.
+    prefer = 'ordered' follows the ordered branch as long as it exists;
+    'normal' is faster but takes the normal state wherever it is stable,
+    also where a distant ordered state coexists (hysteresis). Run the list
+    in both directions to see hysteresis.
     """
-    out, prev = [], None
+    # kernels do not depend on temperature: build them once for the row
+    A = kernels(sh, band, baths_of(xs[0]), A, cache=kw.get("cache"))
+
+    def stable_normal(s):
+        return s.ok and s.branch == "normal" and pair_chi(sh, band, mf, s) < 1.0
+
+    out, prev, tp = [], None, None
     for x in xs:
         bs = baths_of(x)
-        if prev is not None and prev.ok:
+        s = None
+        if prev is not None and prev.ok and prev.branch == "ordered":
+            # direct Newton, for 'ordered' then the homotopy from the last point
+            tf = tp if prefer == "ordered" else None
             s = solve_ness(sh, band, mf, bs, A=A, mu=prev.mu, d=prev.d, m=prev.m,
-                           normal=prev.branch == "normal", t_from=tp, **kw)
-        else:
+                           t_from=tf, direct=True, **{**kw, "nmax": nfold, "fold": lfold})
+            if not s.ok or (s.branch == "normal" and not stable_normal(s)):
+                # ordered branch lost: stable normal state, else from equilibrium
+                sn = s if (s.ok and s.branch == "normal") else solve_ness(
+                    sh, band, mf, bs, A=A, mu=prev.mu, d=0.0, m=prev.m,
+                    normal=True, direct=True, **kw)
+                s = sn if stable_normal(sn) else solve_ness(
+                    sh, band, mf, bs, A=A, d=d, m=m, **kw)
+        elif prev is not None and prev.ok:
+            s = solve_ness(sh, band, mf, bs, A=A, mu=prev.mu, d=0.0, m=prev.m,
+                           normal=True, t_from=tp, **kw)
+            if s.ok and not normal and pair_chi(sh, band, mf, s) > 1.0:
+                s = solve_ness(sh, band, mf, bs, A=A, d=d, m=s.m, **kw)
+        if s is None:
             s = solve_ness(sh, band, mf, bs, A=A, d=d, m=m, normal=normal, **kw)
         out.append(s)
         prev, tp = s, [b.t for b in bs]
@@ -584,7 +624,7 @@ def _device(pb):
         key = (id(pb.sh), id(pb.band), id(pb.mf), id(pb.A),
                pb.normal, pb.nc, pb.blk.tobytes(),
                tuple(tuple(g) for g in pb.grp),
-               tuple((b.amp, b.w0, b.c) for b in pb.baths))
+               tuple((b.amp, b.w0, b.c, b.disp, b.cs, b.gam) for b in pb.baths))
         if key not in _CORE_CACHE:
             _CORE_CACHE[key] = (pb, make_core(pb))
             if len(_CORE_CACHE) > 8:
