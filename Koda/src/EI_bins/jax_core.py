@@ -24,9 +24,10 @@ def make_core(pb):
     # baths with the same kernel and line width share the geometric part
     kg = {}
     for i, (b, kn) in enumerate(zip(pb.baths, pb.A)):
-        kg.setdefault((id(kn), b.gam), (kn, b.gam, []))[2].append(i)
+        kg.setdefault((id(kn), b.gam, b.eta), (kn, b.gam, b.eta, []))[3].append(i)
     bdat = tuple((jnp.tile(jnp.asarray(kn.A), (1, 2, 2)), jnp.asarray(kn.om),
-                  float(kn.dw), float(g), tuple(ix)) for kn, g, ix in kg.values())
+                  max(float(kn.dw), float(et)), float(g), tuple(ix))
+                 for kn, g, et, ix in kg.values())
     N, nc, nth = pb.wt.size, pb.nc, pb.nth
     normal = pb.normal
     eye = jnp.eye(N)

@@ -336,10 +336,10 @@ def rates(cl, baths, kerns):
             cm = bt.cm
             cohs[bt.c] = np.block([[coh2(m2[i], m2[j], cm) for j in range(2)]
                                    for i in range(2)])
-        cmin = max(cf, kn.dw)
+        cmin = max(cf, kn.dw, bt.eta)  # line box width: cell, bin or eta
         p = np.zeros_like(xf)
         for m in range(kn.om.size):
-            key = (id(kn), m, bt.gam)
+            key = (id(kn), m, bt.gam, bt.eta)
             if key not in geo:
                 # shared by all baths with the same kernel and line width
                 geo[key] = (spec_geo(np, x, ha, hb, cmin, kn.om[m], bt.gam,

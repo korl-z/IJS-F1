@@ -23,7 +23,9 @@ class Phonon:
 
     w0 is the Einstein frequency ('constant') or the gap ('gapped'); it is not
     used for 'acoustic'. gam > 0 replaces the delta lines by damped
-    oscillator spectral functions of width gam.
+    oscillator spectral functions of width gam. eta > 0 is a fixed box
+    width of the line (energy units), used instead of the grid cell width
+    when larger, so that gam = 0 has a limit for ns -> infinity.
     """
 
     t: float
@@ -36,6 +38,7 @@ class Phonon:
     disp: str = "constant"  # 'constant', 'acoustic' or 'gapped'
     cs: float = 1.0  # sound velocity, acoustic and gapped
     gam: float = 0.0  # line width; 0 means delta lines
+    eta: float = 0.0  # fixed box width of the line, 0: one grid cell
 
     def __post_init__(self):
         c = np.asarray(self.c, dtype=float)
@@ -53,6 +56,8 @@ class Phonon:
             raise ValueError("cs must be positive for dispersive phonons")
         if self.gam < 0 or not np.isfinite(self.gam):
             raise ValueError("gam must be finite and nonnegative")
+        if self.eta < 0 or not np.isfinite(self.eta):
+            raise ValueError("eta must be finite and nonnegative")
         object.__setattr__(self, "c", tuple(map(tuple, c)))
 
     @property
@@ -68,7 +73,7 @@ def from_cfg(t, pars, name="phonon"):
                   lam=pars.get("ktf", pars.get("lam", 1.0)),
                   qd=pars.get("qd", np.pi * np.sqrt(2.0)), c=c, name=name,
                   disp=pars.get("disp", "constant"), cs=pars.get("cs", 1.0),
-                  gam=pars.get("gam", pars.get("ew", 0.0)))
+                  gam=pars.get("gam", pars.get("ew", 0.0)), eta=pars.get("eta", 0.0))
 
 
 def auto_L(ns, lam, nq=4, pts=2000, lmin=256, lmax=2048):

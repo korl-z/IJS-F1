@@ -630,7 +630,7 @@ def _device(pb):
         key = (id(pb.sh), id(pb.band), id(pb.mf), id(pb.A),
                pb.normal, pb.nc, pb.blk.tobytes(),
                tuple(tuple(g) for g in pb.grp),
-               tuple((b.amp, b.w0, b.c, b.disp, b.cs, b.gam) for b in pb.baths))
+               tuple((b.amp, b.w0, b.c, b.disp, b.cs, b.gam, b.eta) for b in pb.baths))
         if key not in _CORE_CACHE:
             _CORE_CACHE[key] = (pb, make_core(pb))
             if len(_CORE_CACHE) > 8:
