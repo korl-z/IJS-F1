@@ -37,6 +37,19 @@ def make_core(pb):
                    jnp.asarray(np.isin(pb.blk, g) & (pb.blk != c)))
                   for g in pb.grp for c in g)
     labels = tuple(c for g in pb.grp for c in g)
+    # sectors: pair factors on the shells, spread to the cells by index g
+    ncl, nb = sh.w.size, getattr(sh, "nb", 0)
+    sec = bool(nb) and nb < ncl
+    fi = np.arange(2 * ncl)
+    gix = jnp.asarray((fi // ncl) * nb + (fi % ncl) % nb) if sec else None
+    kpn, kmn = np.ones(ncl), np.ones(ncl)
+    if nb:
+        kpn[nb - 1::nb] = 0.0  # no GGE neighbours across sector blocks
+        kmn[::nb] = 0.0
+    kp, km = jnp.asarray(kpn), jnp.asarray(kmn)
+
+    def ex(z):
+        return z[gix[:, None], gix[None, :]] if sec else z
 
     def cl_calc(d, m):
         ea = 0.5 * bd.gap - 2.0 * bd.ta * ss
@@ -63,8 +76,11 @@ def make_core(pb):
 
     def rate(cl, ts):
         e, hw, ma, mb = cl[:4]
+        if sec:
+            e, hw, ma, mb = e[:, :nb], hw[:, :nb], ma[:nb], mb[:nb]
         e, hw = e.reshape(-1), hw.reshape(-1)
         x = e[None, :] - e[:, None]
+        xf = ex(x)
         ha, hb = hw[:, None], hw[None, :]
         cf = jnp.max(hw)
         mats = (ma, mb)
@@ -80,30 +96,30 @@ def make_core(pb):
                 else:
                     le = delta_geo(jnp, x, ha, hb, cmin, om[k])
                     brs = [delta_brk(jnp, le, om[k], ts[i]) for i in ix]
-                return tuple(a + A3[k] * br for a, br in zip(acc, brs))
+                return tuple(a + A3[k] * ex(br) for a, br in zip(acc, brs))
 
             acc = lax.fori_loop(0, om.shape[0], body,
-                                tuple(jnp.zeros_like(x) for _ in ix))
+                                tuple(jnp.zeros_like(xf) for _ in ix))
             for i, a in zip(ix, acc):
                 pp[i] = a
-        K = jnp.zeros_like(x)
+        K = jnp.zeros_like(xf)
         for i, (cm, amp) in enumerate(zip(cs, amps)):
             blocks = []
             for mi in mats:
                 a = jnp.einsum('ab,iac,cd->ibd', cm, mi, cm)
                 blocks.append(jnp.concatenate(
                     [jnp.einsum('ibd,jbd->ij', a, mj) for mj in mats], axis=1))
-            p = amp * jnp.concatenate(blocks, axis=0) * pp[i]
+            p = amp * ex(jnp.concatenate(blocks, axis=0)) * pp[i]
             t = ts[i]
-            up = jnp.where(t > 0.0, p.T * jnp.exp(jnp.minimum(x, 0.0) /
+            up = jnp.where(t > 0.0, p.T * jnp.exp(jnp.minimum(xf, 0.0) /
                                                   jnp.maximum(t, 1e-300)), 0.0)
-            K = K + jnp.where(x >= 0.0, p, up)
+            K = K + jnp.where(xf >= 0.0, p, up)
         return K.at[ids, ids].set(0.0)
 
     def coef(cl):
         e, es = cl[0], cl[4]
-        dp = jnp.pad(e[:, 1:] - e[:, :-1], ((0, 0), (0, 1)))
-        dm = jnp.pad(e[:, :-1] - e[:, 1:], ((0, 0), (1, 0)))
+        dp = jnp.pad(e[:, 1:] - e[:, :-1], ((0, 0), (0, 1))) * kp
+        dm = jnp.pad(e[:, :-1] - e[:, 1:], ((0, 0), (1, 0))) * km
         s2 = dp**2 + dm**2
         s2 = jnp.where(s2 > 0.0, s2, 1.0)
         de = es - e[..., None]

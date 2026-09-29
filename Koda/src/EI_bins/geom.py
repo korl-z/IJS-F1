@@ -95,6 +95,8 @@ def _key(sh, lam, qd, L, nq):
     h = hashlib.sha1()
     for a in (sh.se, np.array([lam, qd, L, nq], dtype=float)):
         h.update(np.ascontiguousarray(a).tobytes())
+    if getattr(sh, "nt", 1) > 1:
+        h.update(repr(("nt", sh.nt)).encode())  # sectors
     return h.hexdigest()[:16]
 
 
@@ -112,7 +114,7 @@ def pair_kernel(sh, lam, qd, L=None, nq=4, cache=None, batch=8):
             return np.load(path)["A"]
 
     k = -np.pi + 2 * np.pi * (np.arange(L) + 0.5) / L
-    lab = sh.cell(np.cos(k)[:, None] + np.cos(k)[None, :])
+    lab = sh.label(np.cos(k)[:, None], np.cos(k)[None, :])
     fp = sfft.rfft2(_phi(L, lam, qd, nq), workers=-1)
     lf = lab.ravel()
     A = np.empty((sh.ns, sh.ns))
@@ -195,6 +197,8 @@ def bath_kernel(sh, b, dw, L=None, nq=4, cache=None, batch=8):
         h = hashlib.sha1()
         h.update(np.ascontiguousarray(sh.se).tobytes())
         h.update(repr((b.disp, b.w0, b.cs, b.lam, b.qd, dw, L, nq)).encode())
+        if getattr(sh, "nt", 1) > 1:
+            h.update(repr(("nt", sh.nt)).encode())  # sectors
         path = Path(cache) / f"bath_{h.hexdigest()[:16]}.npz"
         if path.exists():
             z = np.load(path)
@@ -202,7 +206,7 @@ def bath_kernel(sh, b, dw, L=None, nq=4, cache=None, batch=8):
 
     phi, om, db = _phis(b, L, nq, dw)
     k = -np.pi + 2 * np.pi * (np.arange(L) + 0.5) / L
-    lab = sh.cell(np.cos(k)[:, None] + np.cos(k)[None, :])
+    lab = sh.label(np.cos(k)[:, None], np.cos(k)[None, :])
     lf = lab.ravel()
     fp = sfft.rfft2(phi, workers=-1)
     A = np.empty((om.size, sh.ns, sh.ns))

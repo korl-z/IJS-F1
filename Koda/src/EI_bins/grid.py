@@ -60,6 +60,48 @@ class Shells:
         i = np.searchsorted(self.se, s, side="right") - 1
         return np.clip(i, 0, self.ns - 1)
 
+    def label(self, cx, cy):
+        """Cell index of momenta given by cos kx, cos ky (broadcast)."""
+        return self.cell(np.asarray(cx) + np.asarray(cy))
+
+
+@dataclass(frozen=True)
+class Sectors:
+    """Shells split into nt sectors of tau = |t| / (2 - |s|), t = cos kx - cos ky.
+
+    tau = 0 is the diagonal kx = ky, tau = 1 the line through the saddle
+    points (pi, 0), (0, pi). Flat cell index c = a nb + I (sector a, shell I),
+    so the s neighbours of a cell are adjacent inside each sector block.
+    Energies depend on s only: sc, ss, ws of a cell are those of its shell.
+    """
+
+    se: np.ndarray  # shell edges in s, (nb + 1,)
+    sc: np.ndarray  # shell center of every cell, (nt nb,)
+    w: np.ndarray  # BZ fraction per cell, sums to 1
+    ss: np.ndarray  # sub node positions, (nt nb, nsub)
+    ws: np.ndarray  # sub node weights, normalized per cell
+    nt: int
+
+    @property
+    def nb(self):
+        return self.se.size - 1
+
+    @property
+    def ns(self):
+        return self.sc.size
+
+    def cell(self, s):
+        raise TypeError("sector cells need both cosines: use label(cos kx, cos ky)")
+
+    def label(self, cx, cy):
+        """Cell index a nb + I of momenta given by cos kx, cos ky (broadcast)."""
+        cx, cy = np.asarray(cx), np.asarray(cy)
+        s, t = cx + cy, cx - cy
+        i = np.clip(np.searchsorted(self.se, s, side="right") - 1, 0, self.nb - 1)
+        tau = np.abs(t) / np.maximum(2.0 - np.abs(s), 1e-300)
+        a = np.minimum((tau * self.nt).astype(int), self.nt - 1)
+        return a * self.nb + i
+
 
 def dos_cdf(x, nq=200):
     """Fraction of the BZ with cos kx + cos ky <= x.
@@ -101,6 +143,39 @@ def make_shells(ns, nsub=4, nq=200):
     if np.any(w <= 0.0):
         raise RuntimeError("empty cell, check ns")
     return Shells(fe[::nsub].copy(), ss.mean(axis=1), w / w.sum(), ss, wf / w[:, None])
+
+
+def make_sectors(ns, nt, nsub=4, nq=200, nk=2048):
+    """Shells of make_shells(ns, nsub) split into nt equal sectors in tau.
+
+    The exact sub interval weights of the shells are split between the
+    sectors by the area fractions on a uniform nk x nk grid of the reduced
+    quadrant [0, pi]^2 (kx, ky uniform there), so sums over the sectors of a
+    shell stay exact. nt = 1 reproduces make_shells.
+    """
+    nt = int(nt)
+    if nt < 1:
+        raise ValueError("nt must be at least 1")
+    base = make_shells(ns, nsub, nq)
+    nb = base.ns
+    fe = np.linspace(-2.0, 2.0, nb * nsub + 1)
+    c = np.cos((np.arange(nk) + 0.5) * np.pi / nk)
+    s = c[:, None] + c[None, :]
+    t = c[:, None] - c[None, :]
+    sub = np.clip(np.searchsorted(fe, s, side="right") - 1, 0, nb * nsub - 1)
+    tau = np.abs(t) / np.maximum(2.0 - np.abs(s), 1e-300)
+    a = np.minimum((tau * nt).astype(int), nt - 1)
+    cnt = np.bincount((sub * nt + a).ravel(), minlength=nb * nsub * nt)
+    cnt = cnt.reshape(nb * nsub, nt).astype(float)
+    tot = cnt.sum(axis=1, keepdims=True)
+    # sub intervals missed by the grid are split evenly
+    frac = np.where(tot > 0, cnt / np.where(tot > 0, tot, 1.0), 1.0 / nt)
+    wsub = (base.w[:, None] * base.ws).reshape(-1, 1) * frac  # (nb nsub, nt)
+    wc = wsub.reshape(nb, nsub, nt).sum(axis=1)  # (nb, nt)
+    if np.any(wc <= 0.0):
+        raise RuntimeError("empty sector cell, lower nt or raise nk")
+    return Sectors(base.se.copy(), np.tile(base.sc, nt), wc.T.ravel() / wc.sum(),
+                   np.tile(base.ss, (nt, 1)), np.tile(base.ws, (nt, 1)), nt)
 
 
 def auto_ns(band, scale, r=4.0, nmin=21):

@@ -50,8 +50,7 @@ def check_iso(sh, band, mf, baths, sol, A=None, cache=None):
     n, p = expit(-sol.mu).reshape(-1), expit(sol.mu).reshape(-1)
     L = max(auto_L(ns, b.lam) for b in baths)
     k = -np.pi + 2 * np.pi * (np.arange(L) + 0.5) / L
-    lab = sh.cell(np.cos(k)[:, None] + np.cos(k)[None, :])
-    chi = [sfft.rfft2((lab == j).astype(float), workers=-1) for j in range(ns)]
+    lab = sh.label(np.cos(k)[:, None], np.cos(k)[None, :])
     gin, gout = np.zeros((2, L, L)), np.zeros((2, L, L))
     for b, kb in zip(baths, kn):
         if b.disp == "constant":
@@ -68,7 +67,8 @@ def check_iso(sh, band, mf, baths, sol, A=None, cache=None):
             fp = sfft.rfft2(phi[m], workers=-1)
             for j in range(ns):
                 # r(k) = sum_{q in cell j} |g(k - q)|^2 / amp / L^2
-                r = sfft.irfft2(fp * chi[j], s=(L, L), workers=-1) / L**2
+                chi = sfft.rfft2((lab == j).astype(float), workers=-1)
+                r = sfft.irfft2(fp * chi, s=(L, L), workers=-1) / L**2
                 for nu in range(2):
                     jj = nu * ns + j
                     for mu in range(2):

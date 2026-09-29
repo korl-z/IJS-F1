@@ -1,6 +1,6 @@
 """Steady states of the bath driven excitonic insulator on an energy shell grid."""
 
-from .grid import Band, MF, Shells, auto_ns, make_shells, s_of_k
+from .grid import Band, MF, Sectors, Shells, auto_ns, make_sectors, make_shells, s_of_k
 from .geom import Kern, Phonon, bath_kernel, from_cfg, kernels, omega, pair_kernel
 from .kernel import cells, rates
 from .eq import solve_eq
@@ -22,7 +22,7 @@ def sweep_jax(*args, **kwargs):
     return sweep(*args, **kwargs)
 
 __all__ = [
-    "Band", "MF", "Shells", "auto_ns", "make_shells", "s_of_k",
+    "Band", "MF", "Sectors", "Shells", "auto_ns", "make_sectors", "make_shells", "s_of_k",
     "Kern", "Phonon", "bath_kernel", "from_cfg", "kernels", "omega", "pair_kernel",
     "cells", "rates", "solve_eq",
     "Sol", "pair_chi", "solve_auto", "solve_ness", "sweep", "t_eff", "to_k",

@@ -22,6 +22,7 @@ class Cells(NamedTuple):
     uvs: np.ndarray  # u v at the sub nodes, (ns, nsub)
     xes: np.ndarray  # u^2 - v^2 at the sub nodes
     ies: np.ndarray  # 1 / (2 E) at the sub nodes
+    nb: int = 0  # shells per sector block (Sectors), 0 for plain shells
 
 
 def _qp(s, band, mf, d, m):
@@ -58,7 +59,7 @@ def cells(sh, band, mf, d, m, hmin=1e-12):
     ma = np.stack((np.stack((a, -c), -1), np.stack((-c, b), -1)), -2)
     mb = np.stack((np.stack((b, c), -1), np.stack((c, a), -1)), -2)
     ie = np.where(ok, 0.5 / ep, 0.0)
-    return Cells(e, hw, ma, mb, es, uv, xr, ie)
+    return Cells(e, hw, ma, mb, es, uv, xr, ie, getattr(sh, "nb", 0))
 
 
 def gge_coef(cl):
@@ -73,6 +74,10 @@ def gge_coef(cl):
     dm = np.zeros_like(e)
     dp[:, :-1] = e[:, 1:] - e[:, :-1]
     dm[:, 1:] = e[:, :-1] - e[:, 1:]
+    if cl.nb:
+        # no neighbours across sector blocks
+        dp[:, cl.nb - 1::cl.nb] = 0.0
+        dm[:, ::cl.nb] = 0.0
     s2 = dp**2 + dm**2
     s2 = np.where(s2 > 0.0, s2, 1.0)
     de = cl.es - e[..., None]
@@ -301,13 +306,26 @@ def rates(cl, baths, kerns):
     """
     if isinstance(kerns, np.ndarray):
         kerns = tuple(Kern(kerns[None] / b.w0, np.array([b.w0]), 0.0) for b in baths)
-    e = cl.e.reshape(-1)
-    hw = cl.hw.reshape(-1)
+    nc, nb = cl.e.shape[1], cl.nb
+    if nb and nb < nc:
+        # sectors: energies and coherence live on the shells, the pair
+        # factors are computed there and spread to all sector pairs
+        e, hw, m2 = cl.e[:, :nb].reshape(-1), cl.hw[:, :nb].reshape(-1), (cl.ma[:nb], cl.mb[:nb])
+        fi = np.arange(2 * nc)
+        g = (fi // nc) * nb + (fi % nc) % nb
+
+        def ex(z):
+            return z[np.ix_(g, g)]
+    else:
+        e, hw, m2 = cl.e.reshape(-1), cl.hw.reshape(-1), (cl.ma, cl.mb)
+
+        def ex(z):
+            return z
     x = e[None, :] - e[:, None]
     ha, hb = hw[:, None], hw[None, :]
     cf = hw.max()
-    m2 = (cl.ma, cl.mb)
-    K = np.zeros_like(x)
+    xf = ex(x)
+    K = np.zeros_like(xf)
     geo, cohs, tiles = {}, {}, {}
     tmin = {}
     for bt, kn in zip(baths, kerns):
@@ -319,7 +337,7 @@ def rates(cl, baths, kerns):
             cohs[bt.c] = np.block([[coh2(m2[i], m2[j], cm) for j in range(2)]
                                    for i in range(2)])
         cmin = max(cf, kn.dw)
-        p = np.zeros_like(x)
+        p = np.zeros_like(xf)
         for m in range(kn.om.size):
             key = (id(kn), m, bt.gam)
             if key not in geo:
@@ -330,12 +348,12 @@ def rates(cl, baths, kerns):
                 tiles[key] = np.tile(kn.A[m], (2, 2))
             br = (spec_brk(np, geo[key], bt.t) if bt.gam > 0
                   else delta_brk(np, geo[key], kn.om[m], bt.t))
-            p += tiles[key] * br
-        p *= 2.0 * np.pi * bt.amp * cohs[bt.c]
+            p += tiles[key] * ex(br)
+        p *= 2.0 * np.pi * bt.amp * ex(cohs[bt.c])
         if bt.t > 0:
-            up = p.T * np.exp(np.minimum(x, 0.0) / bt.t)
+            up = p.T * np.exp(np.minimum(xf, 0.0) / bt.t)
         else:
             up = np.zeros_like(p)
-        K += np.where(x >= 0.0, p, up)
+        K += np.where(xf >= 0.0, p, up)
     np.fill_diagonal(K, 0.0)
     return K

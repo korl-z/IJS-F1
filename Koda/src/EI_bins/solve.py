@@ -23,7 +23,7 @@ from scipy.special import expit
 
 from .eq import solve_eq
 from .geom import kernels
-from .grid import auto_ns, make_shells
+from .grid import auto_ns, make_sectors, make_shells
 from .kernel import cells, gge_coef, mf_terms, rates, sub_grad, sub_mu
 
 TINY = 1e-300
@@ -631,20 +631,26 @@ def solve_ness(sh, band, mf, baths, A=None, d=1.0, m=0.0, mu=None, t0=None,
                "normal" if pb.normal else "ordered", hist)
 
 
-def solve_auto(band, mf, baths, scale, tol=1e-5, ns=None, nref=5, cache=None, **kw):
+def solve_auto(band, mf, baths, scale, tol=1e-5, ns=None, nref=5, cache=None, nt=1,
+               **kw):
     """Refine the shell grid until d and m change by less than tol.
 
     scale: smallest physical energy to resolve, e.g. min(d0, Tc, w0).
     Returns the finest solution and a dict with the refinement history and
     Richardson extrapolated d and m (the discretization error is O(h^2)).
+    nt > 1 uses make_sectors(ns, nt) with nt fixed during the refinement.
     """
     ns = auto_ns(band, scale) if ns is None else ns
     rec = {"ns": [], "d": [], "m": [], "err": []}
     prev, sol = None, None
     for _ in range(nref):
-        sh = make_shells(ns)
+        sh = make_sectors(ns, nt) if nt > 1 else make_shells(ns)
         if prev is not None:
-            mu = np.array([np.interp(sh.sc, prev.sc, prev.mu[i]) for i in range(2)])
+            # interpolate along s inside every sector block
+            nb0, nb1 = prev.sc.size // nt, sh.sc.size // nt
+            mo = prev.mu.reshape(2, nt, nb0)
+            mu = np.array([[np.interp(sh.sc[:nb1], prev.sc[:nb0], mo[i, a])
+                            for a in range(nt)] for i in range(2)]).reshape(2, -1)
             kw.update(mu=mu, d=prev.d, m=prev.m, normal=prev.branch == "normal")
         sol = solve_ness(sh, band, mf, baths, cache=cache, **kw)
         rec["ns"].append(ns)
@@ -665,7 +671,7 @@ def solve_auto(band, mf, baths, scale, tol=1e-5, ns=None, nref=5, cache=None, **
 def to_k(sol, sh, k):
     """Occupations (2, nk) on arbitrary momenta k (nk, 2), e.g. bd.k."""
     k = np.asarray(k, dtype=float)
-    return sol.n[:, sh.cell(np.cos(k[:, 0]) + np.cos(k[:, 1]))]
+    return sol.n[:, sh.label(np.cos(k[:, 0]), np.cos(k[:, 1]))]
 
 
 def sweep(sh, band, mf, baths_of, xs, A=None, d=1.0, m=0.0, normal=False,
