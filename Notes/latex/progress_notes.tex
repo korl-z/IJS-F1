@@ -432,44 +432,57 @@ $\chi_{ij} = \langle C_{i} C_{j} \rangle - \langle C_{i} \rangle \langle C_{j} \
   \text{Tr}\left[ f\frac{1}{2} \{ \rho, A \} \right] &= \text{Tr}\left[ \frac{1}{2} f \rho A + \frac{1}{2} f A \rho \right] = \frac{1}{2} \text{Tr}\left[ A f \rho + f A \rho \right] \\ &= \frac{1}{2} \text{Tr}\left[ (A f + f A) \rho \right] = \frac{1}{2} \langle A f + f A \rangle 
 \end{align}
 
-\begin{align} 
-  \dot{n}_k = \langle \dot{n}_k \rangle &= \text{Tr}[n_k(t) \rho(t)] = -i \text{Tr}(n_k(t) [H(t), \rho(t)]) + \gamma_0 \text{Tr}[n_k(t) \mathcal{D} \rho] = 0
- \end{align}
+% \begin{align} 
+%   \dot{n}_k = \langle \dot{n}_k \rangle &= \text{Tr}[n_k(t) \rho(t)] = -i \text{Tr}(n_k(t) [H(t), \rho(t)]) + \gamma_0 \text{Tr}[n_k(t) \mathcal{D} \rho] = 0
+%  \end{align}
 
-\begin{align}
-\cdot \quad 2. \quad L_{qp}^{\lambda \lambda'} &= \sqrt{\gamma_{qp}^{\lambda \lambda'}} \, d_{\lambda q}^\dagger d_{\lambda' p} \quad \text{kjer } (\lambda, \lambda') \in \{(\alpha\alpha), (\beta\beta), (\alpha\beta), (\beta\alpha)\} \\
-\Rightarrow \quad \dot{n}_{\alpha k} &= \text{Tr}\left[ n_{\alpha k} \mathcal{D}(\rho) \right] = \sum_{\substack{q,p \\ \lambda, \lambda'}} \text{Tr}\left[ n_{\alpha k} \left( L_{qp}^{\lambda \lambda'} \rho(t) L_{qp}^{\lambda \lambda'\dagger} - \frac{1}{2} \left\{ L_{qp}^{\lambda \lambda'\dagger} L_{qp}^{\lambda \lambda'}, \rho \right\} \right) \right] \\
-&= \sum_{\substack{q,p \\ \lambda, \lambda'}} \langle [L^\dagger, [n, L]] \rangle = ? \\
-&\quad [n_{\alpha k}, d_{\lambda q}^\dagger d_{\lambda' p}] = d_{\lambda q}^\dagger [n_{\alpha k}, d_{\lambda' p}] + [n_{\alpha k}, d_{\lambda q}^\dagger] d_{\lambda' p} \\
-&\quad \text{kjer } d_{\lambda q}^\dagger \{d_{\alpha k}^\dagger, d_{\lambda' p}\} - \{d_{\alpha k}^\dagger, d_{\lambda q}^\dagger\} d_{\lambda' p} = -\delta_{\alpha\lambda'} \delta_{kp} \, d_{\lambda' p} \\
-&\quad = -d_{\lambda q}^\dagger d_{\lambda' p} \, \delta_{\alpha\lambda'} \delta_{kp} + d_{\lambda q}^\dagger d_{\lambda' p} \, \delta_{\alpha\lambda} \delta_{kq} \\
-&= \sum_{\substack{q,p \\ \lambda, \lambda' \\ T_1, T_2}} \left[ \langle d_{\lambda' p}^\dagger d_{\lambda q} (-d_{\lambda q}^\dagger d_{\lambda' p}) \rangle \gamma_{qp}^{\lambda \lambda'} \, \delta_{\alpha\lambda'} \delta_{kp} + \langle d_{\lambda' p}^\dagger d_{\lambda q} d_{\lambda q}^\dagger d_{\lambda' p} \rangle \delta_{\alpha\lambda} \delta_{kq} \, \gamma_{qp}^{\lambda \lambda'} \right] \\
-&= \sum_{p, \lambda'} \Gamma_{kp}^{\alpha \lambda'} n_{\lambda' p} (1 - n_{\alpha k}) - \sum_{q, \lambda} \Gamma_{qk}^{\lambda \alpha} n_{\alpha k} (1 - n_{\lambda q}) \\
-\dot{n}_{\alpha k} &= \sum_{\substack{p, \lambda \\ \lambda \in \{\alpha, \beta\}}} \left[ \Gamma_{kp}^{\alpha \lambda} n_{\lambda p} (1 - n_{\alpha k}) - \Gamma_{pk}^{\lambda \alpha} n_{\alpha k} (1 - n_{\lambda p}) \right]
-\end{align}
+% \begin{align}
+% \cdot \quad 2. \quad L_{qp}^{\lambda \lambda'} &= \sqrt{\gamma_{qp}^{\lambda \lambda'}} \, d_{\lambda q}^\dagger d_{\lambda' p} \quad \text{kjer } (\lambda, \lambda') \in \{(\alpha\alpha), (\beta\beta), (\alpha\beta), (\beta\alpha)\} \\
+% \Rightarrow \quad \dot{n}_{\alpha k} &= \text{Tr}\left[ n_{\alpha k} \mathcal{D}(\rho) \right] = \sum_{\substack{q,p \\ \lambda, \lambda'}} \text{Tr}\left[ n_{\alpha k} \left( L_{qp}^{\lambda \lambda'} \rho(t) L_{qp}^{\lambda \lambda'\dagger} - \frac{1}{2} \left\{ L_{qp}^{\lambda \lambda'\dagger} L_{qp}^{\lambda \lambda'}, \rho \right\} \right) \right] \\
+% &= \sum_{\substack{q,p \\ \lambda, \lambda'}} \langle [L^\dagger, [n, L]] \rangle = ? \\
+% &\quad [n_{\alpha k}, d_{\lambda q}^\dagger d_{\lambda' p}] = d_{\lambda q}^\dagger [n_{\alpha k}, d_{\lambda' p}] + [n_{\alpha k}, d_{\lambda q}^\dagger] d_{\lambda' p} \\
+% &\quad \text{kjer } d_{\lambda q}^\dagger \{d_{\alpha k}^\dagger, d_{\lambda' p}\} - \{d_{\alpha k}^\dagger, d_{\lambda q}^\dagger\} d_{\lambda' p} = -\delta_{\alpha\lambda'} \delta_{kp} \, d_{\lambda' p} \\
+% &\quad = -d_{\lambda q}^\dagger d_{\lambda' p} \, \delta_{\alpha\lambda'} \delta_{kp} + d_{\lambda q}^\dagger d_{\lambda' p} \, \delta_{\alpha\lambda} \delta_{kq} \\
+% &= \sum_{\substack{q,p \\ \lambda, \lambda' \\ T_1, T_2}} \left[ \langle d_{\lambda' p}^\dagger d_{\lambda q} (-d_{\lambda q}^\dagger d_{\lambda' p}) \rangle \gamma_{qp}^{\lambda \lambda'} \, \delta_{\alpha\lambda'} \delta_{kp} + \langle d_{\lambda' p}^\dagger d_{\lambda q} d_{\lambda q}^\dagger d_{\lambda' p} \rangle \delta_{\alpha\lambda} \delta_{kq} \, \gamma_{qp}^{\lambda \lambda'} \right] \\
+% &= \sum_{p, \lambda'} \Gamma_{kp}^{\alpha \lambda'} n_{\lambda' p} (1 - n_{\alpha k}) - \sum_{q, \lambda} \Gamma_{qk}^{\lambda \alpha} n_{\alpha k} (1 - n_{\lambda q}) \\
+% \dot{n}_{\alpha k} &= \sum_{\substack{p, \lambda \\ \lambda \in \{\alpha, \beta\}}} \left[ \Gamma_{kp}^{\alpha \lambda} n_{\lambda p} (1 - n_{\alpha k}) - \Gamma_{pk}^{\lambda \alpha} n_{\alpha k} (1 - n_{\lambda p}) \right]
+% \end{align}
 
 \subsection{Osnovni modeli kopeli}
 
 \subsection{Limita neskončne temperature}
 \subsection{Fononske sklopitve}
-
+Začnemo z modelom, ki ga modificiram od prej za interband sklopitve: 
 \begin{align}
-\dot{n}_{\alpha k} = \sum_{p} \bigg( & \Gamma_{\alpha p \to \alpha k} \, n_{\alpha p} (1 - n_{\alpha k}) - \Gamma_{\alpha k \to \alpha p} \, n_{\alpha k} (1 - n_{\alpha p}) + \\
-& + \Gamma_{\beta p \to \alpha k} \, n_{\beta p} (1 - n_{\alpha k}) - \Gamma_{\alpha k \to \beta p} \, n_{\alpha k} (1 - n_{\beta p}) \bigg)
+  H(\{\mathbf{u}\}) = \underbrace{\sum_{i, \alpha, \beta} \epsilon_{\alpha\beta}(\mathbf{u}_i) \, c_{\alpha,i}^\dagger c_{\beta,i}}_{\text{on-site in CEF}} + \underbrace{\sum_{\langle i,j \rangle, \alpha, \beta} t_{ij}^{(\alpha\beta)}(\mathbf{r}_{ij}) \, c_{\alpha,i}^\dagger c_{\beta,j}}_{\text{hopping, med oribitalami}} + \underbrace{V \sum_j n_{a,j} n_{b,j}}_{\text{Coulomb}}
+\end{align}
+kjer privzamemo: 
+\begin{align}
+  t_{ij}^{(aa)}(\mathbf{r}_{ij}) &\approx t_{ij}^{(a)0} + \alpha_t^{(a)} \, \hat{\mathbf{R}}_{ij}^0 \cdot (\mathbf{u}_j - \mathbf{u}_i)\\
+  t_{ij}^{(bb)}(\mathbf{r}_{ij}) &\approx t_{ij}^{(b)0} + \alpha_t^{(b)} \, \hat{\mathbf{R}}_{ij}^0 \cdot (\mathbf{u}_j - \mathbf{u}_i)\\
+  t_{ij}^{(ab)}(\mathbf{r}_{ij}) &\approx \underbrace{0}_{\text{ni hoppinga v nedeform. mrezi}} + \, \boldsymbol{\alpha}_t^{(ab)} \cdot (\mathbf{u}_j - \mathbf{u}_i)
 \end{align}
 
 \begin{align}
-\Gamma_{\mu p \to \nu k} = \frac{2\pi}{V} \sum_{\lambda} \left| G_{\mu \nu}^{\lambda} (k, q) \right|^2 \left\{ (1 + N_{q}) \delta (E_{\nu k} - E_{\mu p} + \omega_{q \lambda}) + N_{-q} \delta (E_{\nu k} - E_{\mu p} - \omega_{-q \lambda}) \right\}
+  \boldsymbol{\alpha}_t^{(ab)} = \left. \nabla_{\mathbf{r}} t_{ij}^{(ab)} \right\vert{}_{\mathbf{R}_{ij}^0} \neq 0
 \end{align}
+% \begin{align}
+% \dot{n}_{\alpha k} = \sum_{p} \bigg( & \Gamma_{\alpha p \to \alpha k} \, n_{\alpha p} (1 - n_{\alpha k}) - \Gamma_{\alpha k \to \alpha p} \, n_{\alpha k} (1 - n_{\alpha p}) + \\
+% & + \Gamma_{\beta p \to \alpha k} \, n_{\beta p} (1 - n_{\alpha k}) - \Gamma_{\alpha k \to \beta p} \, n_{\alpha k} (1 - n_{\beta p}) \bigg)
+% \end{align}
 
-\begin{align}
-\Gamma_{\nu k \to \mu p} = \frac{2\pi}{V} \sum_{\lambda} \left| G_{\mu \nu}^{\lambda} (k, q) \right|^2 \left\{ (1 + N_{-q}) \delta (E_{\mu p} - E_{\nu k} + \omega_{-q \lambda}) + N_{q} \delta (E_{\mu p} - E_{\nu k} - \omega_{q \lambda}) \right\}
-\end{align}
+% \begin{align}
+% \Gamma_{\mu p \to \nu k} = \frac{2\pi}{V} \sum_{\lambda} \left| G_{\mu \nu}^{\lambda} (k, q) \right|^2 \left\{ (1 + N_{q}) \delta (E_{\nu k} - E_{\mu p} + \omega_{q \lambda}) + N_{-q} \delta (E_{\nu k} - E_{\mu p} - \omega_{-q \lambda}) \right\}
+% \end{align}
 
-\begin{align}
-G^\lambda(\vec{k}, \vec{q}) &= \begin{pmatrix} u_{k+q} & -v_{k+q} \\ v_{k+q} & u_{k+q} \end{pmatrix} \begin{pmatrix} g_{a\lambda}(\vec{q}) & 0 \\ 0 & g_{b\lambda}(\vec{q}) \end{pmatrix} \begin{pmatrix} u_k & v_k \\ -v_k & u_k \end{pmatrix} \\[1.5em]
-g_{\substack{a\\b}\lambda}(\vec{q}) &= -i\ \frac{4\pi e^2}{\sqrt{2M\Omega\omega_{\vec{q}\lambda}}} \cdot \frac{1}{|\vec{q}|^2 + k_{\text{TF}}^2} \left( \vec{q} \cdot \vec{\varepsilon}_{\vec{q}\lambda}^* \right)
-\end{align}
+% \begin{align}
+% \Gamma_{\nu k \to \mu p} = \frac{2\pi}{V} \sum_{\lambda} \left| G_{\mu \nu}^{\lambda} (k, q) \right|^2 \left\{ (1 + N_{-q}) \delta (E_{\mu p} - E_{\nu k} + \omega_{-q \lambda}) + N_{q} \delta (E_{\mu p} - E_{\nu k} - \omega_{q \lambda}) \right\}
+% \end{align}
+
+% \begin{align}
+% G^\lambda(\vec{k}, \vec{q}) &= \begin{pmatrix} u_{k+q} & -v_{k+q} \\ v_{k+q} & u_{k+q} \end{pmatrix} \begin{pmatrix} g_{a\lambda}(\vec{q}) & 0 \\ 0 & g_{b\lambda}(\vec{q}) \end{pmatrix} \begin{pmatrix} u_k & v_k \\ -v_k & u_k \end{pmatrix} \\[1.5em]
+% g_{\substack{a\\b}\lambda}(\vec{q}) &= -i\ \frac{4\pi e^2}{\sqrt{2M\Omega\omega_{\vec{q}\lambda}}} \cdot \frac{1}{|\vec{q}|^2 + k_{\text{TF}}^2} \left( \vec{q} \cdot \vec{\varepsilon}_{\vec{q}\lambda}^* \right)
+% \end{align}
 
 
 \subsection{Fotonske sklopitve v resonatorju}
