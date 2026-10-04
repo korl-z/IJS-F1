@@ -1,0 +1,1953 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{combescot_excitons_2016}{book}{}{}
+      \name{author}{2}{}{%
+        {{hash=d62d6e5b75056ef922fe064f9ec8df9f}{%
+           family={Combescot},
+           familyi={C\bibinitperiod},
+           given={Monique},
+           giveni={M\bibinitperiod}}}%
+        {{hash=9ff33067d9fe21e9a09a54ab4b2a9205}{%
+           family={Shiau},
+           familyi={S\bibinitperiod},
+           given={Shiue-Yuan},
+           giveni={S\bibinithyphendelim Y\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Oxford}%
+      }
+      \list{publisher}{1}{%
+        {Oxford university press}%
+      }
+      \strng{namehash}{de2fd5be5071d4e23b0b56eda9a082bb}
+      \strng{fullhash}{de2fd5be5071d4e23b0b56eda9a082bb}
+      \strng{fullhashraw}{de2fd5be5071d4e23b0b56eda9a082bb}
+      \strng{bibnamehash}{de2fd5be5071d4e23b0b56eda9a082bb}
+      \strng{authorbibnamehash}{de2fd5be5071d4e23b0b56eda9a082bb}
+      \strng{authornamehash}{de2fd5be5071d4e23b0b56eda9a082bb}
+      \strng{authorfullhash}{de2fd5be5071d4e23b0b56eda9a082bb}
+      \strng{authorfullhashraw}{de2fd5be5071d4e23b0b56eda9a082bb}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{isbn}{978-0-19-875373-5}
+      \field{langid}{english}
+      \field{series}{Oxford graduate texts}
+      \field{shorttitle}{Excitons and cooper pairs}
+      \field{title}{Excitons and cooper pairs: two composite bosons in many-body physics}
+      \field{year}{2016}
+      \field{dateera}{ce}
+      \true{nocite}
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/84D7M64Y/Combescot in Shiau - 2016 - Excitons and cooper pairs two composite bosons in many-body physics.pdf:application/pdf
+      \endverb
+    \endentry
+    \entry{jerome_excitonic_1967}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=bcea8b81c65ae9773cf0f0a9b5791a1f}{%
+           family={Jérome},
+           familyi={J\bibinitperiod},
+           given={D.},
+           giveni={D\bibinitperiod}}}%
+        {{hash=1e0efb44d6e8e34a04db87cb8e3ed04c}{%
+           family={Rice},
+           familyi={R\bibinitperiod},
+           given={T.\bibnamedelimi M.},
+           giveni={T\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=5d41414fe0631332e20a859e66a25627}{%
+           family={Kohn},
+           familyi={K\bibinitperiod},
+           given={W.},
+           giveni={W\bibinitperiod}}}%
+      }
+      \strng{namehash}{12f1c9f7a8a108e3e59a4adc67054114}
+      \strng{fullhash}{12f1c9f7a8a108e3e59a4adc67054114}
+      \strng{fullhashraw}{12f1c9f7a8a108e3e59a4adc67054114}
+      \strng{bibnamehash}{12f1c9f7a8a108e3e59a4adc67054114}
+      \strng{authorbibnamehash}{12f1c9f7a8a108e3e59a4adc67054114}
+      \strng{authornamehash}{12f1c9f7a8a108e3e59a4adc67054114}
+      \strng{authorfullhash}{12f1c9f7a8a108e3e59a4adc67054114}
+      \strng{authorfullhashraw}{12f1c9f7a8a108e3e59a4adc67054114}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{10}
+      \field{issn}{0031-899X}
+      \field{journaltitle}{Physical Review}
+      \field{langid}{english}
+      \field{month}{6}
+      \field{number}{2}
+      \field{shortjournal}{Phys. Rev.}
+      \field{title}{Excitonic Insulator}
+      \field{urlday}{27}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{volume}{158}
+      \field{year}{1967}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{462\bibrangedash 475}
+      \range{pages}{14}
+      \verb{doi}
+      \verb 10.1103/PhysRev.158.462
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/NBR7UBGH/Jérome idr. - 1967 - Excitonic Insulator.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://link.aps.org/doi/10.1103/PhysRev.158.462
+      \endverb
+      \verb{url}
+      \verb https://link.aps.org/doi/10.1103/PhysRev.158.462
+      \endverb
+    \endentry
+    \entry{asenjo-garcia_exponential_2017}{article}{}{}
+      \name{author}{5}{}{%
+        {{hash=5965a8c0d391fed446691b9f5a26870d}{%
+           family={Asenjo-Garcia},
+           familyi={A\bibinithyphendelim G\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+        {{hash=81ca81efb01c73dd31f7ecc4a68701bf}{%
+           family={Moreno-Cardoner},
+           familyi={M\bibinithyphendelim C\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+        {{hash=9cd3f3d3d6c9693dd32626a94929c951}{%
+           family={Albrecht},
+           familyi={A\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+        {{hash=aea70dd628dc6535ce5213ef85f63855}{%
+           family={Kimble},
+           familyi={K\bibinitperiod},
+           given={H.\bibnamedelimi J.},
+           giveni={H\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=eb4dded13edbd82a818650b29378b89e}{%
+           family={Chang},
+           familyi={C\bibinitperiod},
+           given={D.\bibnamedelimi E.},
+           giveni={D\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+      }
+      \strng{namehash}{7b8dc75d7595d671db8c8981940573ec}
+      \strng{fullhash}{d0c8c7547256d521b597801df8034648}
+      \strng{fullhashraw}{d0c8c7547256d521b597801df8034648}
+      \strng{bibnamehash}{7b8dc75d7595d671db8c8981940573ec}
+      \strng{authorbibnamehash}{7b8dc75d7595d671db8c8981940573ec}
+      \strng{authornamehash}{7b8dc75d7595d671db8c8981940573ec}
+      \strng{authorfullhash}{d0c8c7547256d521b597801df8034648}
+      \strng{authorfullhashraw}{d0c8c7547256d521b597801df8034648}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{3}
+      \field{issn}{2160-3308}
+      \field{journaltitle}{Physical Review X}
+      \field{langid}{english}
+      \field{month}{8}
+      \field{number}{3}
+      \field{shortjournal}{Phys. Rev. X}
+      \field{title}{Exponential Improvement in Photon Storage Fidelities Using Subradiance and “Selective Radiance” in Atomic Arrays}
+      \field{urlday}{27}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{volume}{7}
+      \field{year}{2017}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{031024}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1103/PhysRevX.7.031024
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/LY8RWJ98/Asenjo-Garcia idr. - 2017 - Exponential Improvement in Photon Storage Fidelities Using Subradiance and “Selective Radiance” in A.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://link.aps.org/doi/10.1103/PhysRevX.7.031024
+      \endverb
+      \verb{url}
+      \verb http://link.aps.org/doi/10.1103/PhysRevX.7.031024
+      \endverb
+    \endentry
+    \entry{lagnese_neural_2026}{misc}{}{}
+      \name{author}{6}{}{%
+        {{hash=1b6279d121330c6f802f7d9bde7cbf71}{%
+           family={Lagnese},
+           familyi={L\bibinitperiod},
+           given={Gianluca},
+           giveni={G\bibinitperiod}}}%
+        {{hash=31642833c6224eb5bd6f6b4e99173739}{%
+           family={Brunner},
+           familyi={B\bibinitperiod},
+           given={Laurin},
+           giveni={L\bibinitperiod}}}%
+        {{hash=fb0cb72cc6addcaa8c76a12cc36238bb}{%
+           family={Rossi},
+           familyi={R\bibinitperiod},
+           given={Lorenzo},
+           giveni={L\bibinitperiod}}}%
+        {{hash=626309b6f9272b0d6f74f3680a28393f}{%
+           family={Chang},
+           familyi={C\bibinitperiod},
+           given={Darrick},
+           giveni={D\bibinitperiod}}}%
+        {{hash=32905b80b4f9c8b9a467854c8e73b931}{%
+           family={Schmitt},
+           familyi={S\bibinitperiod},
+           given={Markus},
+           giveni={M\bibinitperiod}}}%
+        {{hash=4042dd32511232a49a9b77b06e0daa3e}{%
+           family={Lenarčič},
+           familyi={L\bibinitperiod},
+           given={Zala},
+           giveni={Z\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {arXiv}%
+      }
+      \strng{namehash}{de686594626e3885db4ad1340d2c1964}
+      \strng{fullhash}{b0ad7ba70e6025665a1ba4ff616b7c6d}
+      \strng{fullhashraw}{b0ad7ba70e6025665a1ba4ff616b7c6d}
+      \strng{bibnamehash}{de686594626e3885db4ad1340d2c1964}
+      \strng{authorbibnamehash}{de686594626e3885db4ad1340d2c1964}
+      \strng{authornamehash}{de686594626e3885db4ad1340d2c1964}
+      \strng{authorfullhash}{b0ad7ba70e6025665a1ba4ff616b7c6d}
+      \strng{authorfullhashraw}{b0ad7ba70e6025665a1ba4ff616b7c6d}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{There is significant interest in exploring novel phenomena in quantum light-matter interfaces, which are driven by the combination of structured dissipation and long-range interactions that are typical in such systems. To this end, it is important to develop new general numerical simulation techniques, which can access large system sizes and are not based on semi-classical approaches. Here, we report the first application of neural quantum states to obtain the dissipative dynamics of light-matter-coupled systems beyond what is accessible with exact and tensor-network calculations. We specifically apply this method to simulate the many-body emission dynamics of approximately 40 atoms, arranged in dense arrays in one and two dimensions. These systems have been chosen because they can support prominent subradiant dynamics at late times and could be realized with cold atomic quantum simulators.}
+      \field{day}{6}
+      \field{eprinttype}{arxiv}
+      \field{langid}{english}
+      \field{month}{5}
+      \field{number}{{arXiv}:2605.04640}
+      \field{title}{Neural network modeling of many-body super- and sub-radiant dynamics}
+      \field{urlday}{27}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \verb{doi}
+      \verb 10.48550/arXiv.2605.04640
+      \endverb
+      \verb{eprint}
+      \verb 2605.04640 [quant-ph]
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/LPAVV8FN/Lagnese idr. - 2026 - Neural network modeling of many-body super- and sub-radiant dynamics.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/2605.04640
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/2605.04640
+      \endverb
+      \keyw{Condensed Matter - Disordered Systems and Neural Networks,Condensed Matter - Quantum Gases,Condensed Matter - Strongly Correlated Electrons,Quantum Physics}
+    \endentry
+    \entry{kim_direct_2021}{article}{}{}
+      \name{author}{6}{}{%
+        {{hash=01842277b99f7dac7d182645af4ded30}{%
+           family={Kim},
+           familyi={K\bibinitperiod},
+           given={Kwangrae},
+           giveni={K\bibinitperiod}}}%
+        {{hash=b87a4c1df5dd642082f7c8794a6f755f}{%
+           family={Kim},
+           familyi={K\bibinitperiod},
+           given={Hoon},
+           giveni={H\bibinitperiod}}}%
+        {{hash=d78f7da10cc5cd4915edb0a52e63f929}{%
+           family={Kim},
+           familyi={K\bibinitperiod},
+           given={Jonghwan},
+           giveni={J\bibinitperiod}}}%
+        {{hash=ff3b41820e1e7e3858a166b69f5cb47d}{%
+           family={Kwon},
+           familyi={K\bibinitperiod},
+           given={Changil},
+           giveni={C\bibinitperiod}}}%
+        {{hash=583a3ab160be9a0c665d2bf3f5344da1}{%
+           family={Kim},
+           familyi={K\bibinitperiod},
+           given={Jun\bibnamedelima Sung},
+           giveni={J\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+        {{hash=c5c6c14cbe849b3bb92fa1738e4329af}{%
+           family={Kim},
+           familyi={K\bibinitperiod},
+           given={B.\bibnamedelimi J.},
+           giveni={B\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+      }
+      \strng{namehash}{4492fc2676f183e8892929c721170f54}
+      \strng{fullhash}{4152c4e8577b8c47f5027b02f5ad2604}
+      \strng{fullhashraw}{4152c4e8577b8c47f5027b02f5ad2604}
+      \strng{bibnamehash}{4492fc2676f183e8892929c721170f54}
+      \strng{authorbibnamehash}{4492fc2676f183e8892929c721170f54}
+      \strng{authornamehash}{4492fc2676f183e8892929c721170f54}
+      \strng{authorfullhash}{4152c4e8577b8c47f5027b02f5ad2604}
+      \strng{authorfullhashraw}{4152c4e8577b8c47f5027b02f5ad2604}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Coulomb attraction between electrons and holes in a narrow-gap semiconductor or a semimetal is predicted to lead to an elusive phase of matter dubbed 'excitonic insulator'. However, direct observation of such electronic instability remains extremely rare. Here, we report the observation of incipient divergence in the static excitonic susceptibility of the candidate material Ta2NiSe5 using Raman spectroscopy. Critical fluctuations of the excitonic order parameter give rise to quasi-elastic scattering of B2g symmetry, whose intensity grows inversely with temperature toward the Weiss temperature of Tw {\textasciitilde}241 K, which is arrested by a structural phase transition driven by an acoustic phonon of the same symmetry at Tc =325 K. Concurrently, a B2g optical phonon becomes heavily damped to the extent that its trace is almost invisible around Tc, which manifests a strong electron-phonon coupling that has obscured the identification of the low-temperature phase as an excitonic insulator for more than a decade. Our result unambiguously reveals the electronic origin of the phase transition.}
+      \field{day}{30}
+      \field{eprinttype}{arxiv}
+      \field{issn}{2041-1723}
+      \field{journaltitle}{Nature Communications}
+      \field{langid}{english}
+      \field{month}{3}
+      \field{number}{1}
+      \field{shortjournal}{Nat Commun}
+      \field{title}{Direct observation of excitonic instability in Ta2NiSe5}
+      \field{urlday}{27}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{volume}{12}
+      \field{year}{2021}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{1969}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1038/s41467-021-22133-z
+      \endverb
+      \verb{eprint}
+      \verb 2007.08212 [cond-mat.str-el]
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/595BEZFB/Kim idr. - 2021 - Direct observation of excitonic instability in Ta2NiSe5.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/2007.08212
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/2007.08212
+      \endverb
+      \keyw{Condensed Matter - Strongly Correlated Electrons}
+    \endentry
+    \entry{murakami_collective_2020}{article}{}{}
+      \name{author}{6}{}{%
+        {{hash=0969a8f6ca725b308dc0d535015af566}{%
+           family={Murakami},
+           familyi={M\bibinitperiod},
+           given={Yuta},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=4ea117d70d22b828407577abab25b030}{%
+           family={Golež},
+           familyi={G\bibinitperiod},
+           given={Denis},
+           giveni={D\bibinitperiod}}}%
+        {{hash=6f7ac50af7ee08ef0638c73aa3bfcdb8}{%
+           family={Kaneko},
+           familyi={K\bibinitperiod},
+           given={Tatsuya},
+           giveni={T\bibinitperiod}}}%
+        {{hash=88709cb6d8db3d067d7e5d16a883c618}{%
+           family={Koga},
+           familyi={K\bibinitperiod},
+           given={Akihisa},
+           giveni={A\bibinitperiod}}}%
+        {{hash=427e59bd9e640048338adc8a138a111b}{%
+           family={Millis},
+           familyi={M\bibinitperiod},
+           given={Andrew\bibnamedelima J.},
+           giveni={A\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=10293dcb07bc11f7278907f834aa6932}{%
+           family={Werner},
+           familyi={W\bibinitperiod},
+           given={Philipp},
+           giveni={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{8f2905af0632eee5b83b3b369086f69b}
+      \strng{fullhash}{d7d56dfe83ad3ad3eec762556a5b7cb6}
+      \strng{fullhashraw}{d7d56dfe83ad3ad3eec762556a5b7cb6}
+      \strng{bibnamehash}{8f2905af0632eee5b83b3b369086f69b}
+      \strng{authorbibnamehash}{8f2905af0632eee5b83b3b369086f69b}
+      \strng{authornamehash}{8f2905af0632eee5b83b3b369086f69b}
+      \strng{authorfullhash}{d7d56dfe83ad3ad3eec762556a5b7cb6}
+      \strng{authorfullhashraw}{d7d56dfe83ad3ad3eec762556a5b7cb6}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{We consider a two-band spinless model describing an excitonic insulator ({EI}) on the two-dimensional square lattice with anisotropic hopping parameters and electron-phonon (el-ph) coupling, inspired by the {EI} candidate Ta\$\_2\${NiSe}\$\_5\$. We systematically study the nature of the collective excitations in the ordered phase which originates from the interband Coulomb interaction and the el-ph coupling. When the ordered phase is stabilized only by the Coulomb interaction (pure {EI} phase), its collective response exhibits a massless phase mode in addition to the amplitude mode. We show that in the {BEC} regime, the signal of the amplitude mode becomes less prominent and that the anisotropy in the phase mode velocities is relaxed compared to the model bandstructure. Through coupling to the lattice, the phase mode acquires a mass and the signal of the amplitude mode becomes less prominent. Importantly, character of the softening mode at the boundary between the normal semiconductor phase and the ordered phase depends on the parameter condition. In particular, we point out that even for el-ph coupling smaller than the Coulomb interaction the mode that softens to zero at the boundary can have a phonon character. We also discuss how the collective modes can be observed in the optical conductivity. Furthermore, we study the effects of nonlocal interactions on the collective modes and show the possibility of realizing a coexistence of an in-gap mode and an above-gap mode split off from the single amplitude mode in the system with the local interaction only.}
+      \field{day}{11}
+      \field{eprinttype}{arxiv}
+      \field{issn}{2469-9950, 2469-9969}
+      \field{journaltitle}{Physical Review B}
+      \field{langid}{english}
+      \field{month}{5}
+      \field{number}{19}
+      \field{shortjournal}{Phys. Rev. B}
+      \field{shorttitle}{Collective Modes in Excitonic Insulators}
+      \field{title}{Collective Modes in Excitonic Insulators: Effects of Electron-Phonon Coupling and Signatures in Optical Response}
+      \field{urlday}{28}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{volume}{101}
+      \field{year}{2020}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{195118}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1103/PhysRevB.101.195118
+      \endverb
+      \verb{eprint}
+      \verb 2003.10789 [cond-mat.str-el]
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/W787BNRX/Murakami idr. - 2020 - Collective Modes in Excitonic Insulators Effects of Electron-Phonon Coupling and Signatures in Opti.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/2003.10789
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/2003.10789
+      \endverb
+      \keyw{Condensed Matter - Strongly Correlated Electrons,Condensed Matter - Mesoscale and Nanoscale Physics}
+    \endentry
+    \entry{kaneko_new_2025}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=6f7ac50af7ee08ef0638c73aa3bfcdb8}{%
+           family={Kaneko},
+           familyi={K\bibinitperiod},
+           given={Tatsuya},
+           giveni={T\bibinitperiod}}}%
+        {{hash=fe976c6580e7407d6db2d926b424ecb0}{%
+           family={Ohta},
+           familyi={O\bibinitperiod},
+           given={Yukinori},
+           giveni={Y\bibinitperiod}}}%
+      }
+      \strng{namehash}{f8af1f2be21ffd8bd76f039d4e2951c3}
+      \strng{fullhash}{f8af1f2be21ffd8bd76f039d4e2951c3}
+      \strng{fullhashraw}{f8af1f2be21ffd8bd76f039d4e2951c3}
+      \strng{bibnamehash}{f8af1f2be21ffd8bd76f039d4e2951c3}
+      \strng{authorbibnamehash}{f8af1f2be21ffd8bd76f039d4e2951c3}
+      \strng{authornamehash}{f8af1f2be21ffd8bd76f039d4e2951c3}
+      \strng{authorfullhash}{f8af1f2be21ffd8bd76f039d4e2951c3}
+      \strng{authorfullhashraw}{f8af1f2be21ffd8bd76f039d4e2951c3}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{The fundamental idea of the excitonic insulator ({EI}) driven by electron-hole correlations in narrow-gap semiconductors or semimetals was originally proposed in the 1960s, and only theoretical studies had been advanced for a long time. However, the rise of new candidate materials and recent developments in measurement techniques have enabled us to discuss the possibilities of {EI} states in real materials experimentally. In this article, we review recent progress in the research of {EIs}. We start with an introduction to the theoretical background of the {EI} and the mechanism of the order formation including its relation to the physics of the Bardeen-Cooper-Schrieffer ({BCS}) - Bose-Einstein condensation ({BEC}) crossover. We also review the {EI} states studied in the context of strongly correlated electron systems. Then, we introduce the candidate materials for the {EI} and the issues raised by recent experiments. For example, the phase transitions in several candidate materials are accompanied by lattice distortions, and the contributions from electron-lattice coupling hinder the identification of the excitonic entity. We also review the profiles of the collective modes to discuss the dynamical signatures of the {EI}.}
+      \field{day}{15}
+      \field{eprinttype}{arxiv}
+      \field{issn}{0031-9015, 1347-4073}
+      \field{journaltitle}{Journal of the Physical Society of Japan}
+      \field{langid}{english}
+      \field{month}{1}
+      \field{number}{1}
+      \field{shortjournal}{J. Phys. Soc. Jpn.}
+      \field{title}{A New Era of Excitonic Insulators}
+      \field{urlday}{28}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{volume}{94}
+      \field{year}{2025}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{012001}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.7566/JPSJ.94.012001
+      \endverb
+      \verb{eprint}
+      \verb 2411.10985 [cond-mat.str-el]
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/GNRSJYR8/Kaneko in Ohta - 2025 - A New Era of Excitonic Insulators.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/2411.10985
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/2411.10985
+      \endverb
+      \keyw{Condensed Matter - Strongly Correlated Electrons}
+    \endentry
+    \entry{arovas_lecture_nodate}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=7e069ab968fef39dc50de546a96ce08f}{%
+           family={Arovas},
+           familyi={A\bibinitperiod},
+           given={Daniel},
+           giveni={D\bibinitperiod}}}%
+      }
+      \strng{namehash}{7e069ab968fef39dc50de546a96ce08f}
+      \strng{fullhash}{7e069ab968fef39dc50de546a96ce08f}
+      \strng{fullhashraw}{7e069ab968fef39dc50de546a96ce08f}
+      \strng{bibnamehash}{7e069ab968fef39dc50de546a96ce08f}
+      \strng{authorbibnamehash}{7e069ab968fef39dc50de546a96ce08f}
+      \strng{authornamehash}{7e069ab968fef39dc50de546a96ce08f}
+      \strng{authorfullhash}{7e069ab968fef39dc50de546a96ce08f}
+      \strng{authorfullhashraw}{7e069ab968fef39dc50de546a96ce08f}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{english}
+      \field{title}{Lecture Notes on Condensed Matter Physics (A Work in Progress)}
+      \true{nocite}
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/Y686A7RI/Arovas - Lecture Notes on Condensed Matter Physics (A Work in Progress).pdf:application/pdf
+      \endverb
+    \endentry
+    \entry{hulsen_phase_2006}{article}{}{}
+      \name{author}{4}{}{%
+        {{hash=ecb81aa064c45910cd70f3ae59cf8c86}{%
+           family={Hülsen},
+           familyi={H\bibinitperiod},
+           given={B.},
+           giveni={B\bibinitperiod}}}%
+        {{hash=aee647296bb1637a793064de2a3e9e56}{%
+           family={Bronold},
+           familyi={B\bibinitperiod},
+           given={F.X.},
+           giveni={F\bibinitperiod}}}%
+        {{hash=65d82fdddf75b735b39c70032973f0f5}{%
+           family={Fehske},
+           familyi={F\bibinitperiod},
+           given={H.},
+           giveni={H\bibinitperiod}}}%
+        {{hash=bc678b29283dc87a5aeb5817f3b28aa4}{%
+           family={Yonemitsu},
+           familyi={Y\bibinitperiod},
+           given={K.},
+           giveni={K\bibinitperiod}}}%
+      }
+      \strng{namehash}{97d1c4f1ec6bc50312286345d496004d}
+      \strng{fullhash}{8e2f516ce90b344a9749578252d34a5d}
+      \strng{fullhashraw}{8e2f516ce90b344a9749578252d34a5d}
+      \strng{bibnamehash}{97d1c4f1ec6bc50312286345d496004d}
+      \strng{authorbibnamehash}{97d1c4f1ec6bc50312286345d496004d}
+      \strng{authornamehash}{97d1c4f1ec6bc50312286345d496004d}
+      \strng{authorfullhash}{8e2f516ce90b344a9749578252d34a5d}
+      \strng{authorfullhashraw}{8e2f516ce90b344a9749578252d34a5d}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Motivated by recent experiments, which give strong evidence for an excitonic insulating phase in {TmSe}0:45Te0:55, we developed a scheme to quantitatively construct, for generic two-band models, the phase diagram of an excitonic insulator. As a ﬁrst application of our approach, we calculated the phase diagram for an effective mass two-band model with long-range Coulomb interaction. The shielded potential approximation is used to derive a generalized gap equation controlling for positive (negative) energy gaps the transition from a semi-conducting (semi-metallic) phase to an insulating phase. Numerical results, obtained within the quasi-static approximation, show a steeple-like phase diagram in contrast to long-standing expectations.}
+      \field{issn}{09214526}
+      \field{journaltitle}{Physica B: Condensed Matter}
+      \field{langid}{english}
+      \field{month}{5}
+      \field{shortjournal}{Physica B: Condensed Matter}
+      \field{title}{Phase diagram of the excitonic insulator}
+      \field{urlday}{9}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{volume}{378-380}
+      \field{year}{2006}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{267\bibrangedash 268}
+      \range{pages}{2}
+      \verb{doi}
+      \verb 10.1016/j.physb.2006.01.099
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/YWHYSUEV/Hülsen idr. - 2006 - Phase diagram of the excitonic insulator.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://linkinghub.elsevier.com/retrieve/pii/S092145260600130X
+      \endverb
+      \verb{url}
+      \verb https://linkinghub.elsevier.com/retrieve/pii/S092145260600130X
+      \endverb
+    \endentry
+    \entry{apinyan_phase_2015}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=a0fcaba9bb9fa147ab65583c567066ab}{%
+           family={Apinyan},
+           familyi={A\bibinitperiod},
+           given={V.},
+           giveni={V\bibinitperiod}}}%
+        {{hash=f5da20ba7854023eb8612574acd51df5}{%
+           family={Kopeć},
+           familyi={K\bibinitperiod},
+           given={T.\bibnamedelimi K.},
+           giveni={T\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+      }
+      \strng{namehash}{ef5ef064340e4b8bf11ca1a85dbdd448}
+      \strng{fullhash}{ef5ef064340e4b8bf11ca1a85dbdd448}
+      \strng{fullhashraw}{ef5ef064340e4b8bf11ca1a85dbdd448}
+      \strng{bibnamehash}{ef5ef064340e4b8bf11ca1a85dbdd448}
+      \strng{authorbibnamehash}{ef5ef064340e4b8bf11ca1a85dbdd448}
+      \strng{authornamehash}{ef5ef064340e4b8bf11ca1a85dbdd448}
+      \strng{authorfullhash}{ef5ef064340e4b8bf11ca1a85dbdd448}
+      \strng{authorfullhashraw}{ef5ef064340e4b8bf11ca1a85dbdd448}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{The nonlocal correlation mechanism between excitonic pairs is considered for a two dimensional exciton system. On the base of the unitary decomposition of the usual electron operator, we include the electron phase degrees of freedom into the problem of interacting excitons. Applying the path integral formalism, we treat the excitonic insulator state ({EI}) and the Bose-Einstein condensation ({BEC}) of preformed excitonic pairs as two independent problems. For the {BEC} of excitons the phase field variables play a crucial role. We derive the expression of the local {EI} order parameter by integrating out the phase variables. Then, considering the zero temperature limit, we obtain the excitonic {BEC} transition probability function, by integrating out the fermions. We calculate the normal excitonic Green functions for the conduction and valence band electrons and we derive the excitonic spectral functions, both analytically and numerically. Different values of the Coulomb interaction parameter are considered.}
+      \field{eprinttype}{arxiv}
+      \field{issn}{09214526}
+      \field{journaltitle}{Physica B: Condensed Matter}
+      \field{langid}{english}
+      \field{month}{9}
+      \field{shortjournal}{Physica B: Condensed Matter}
+      \field{title}{Phase coherence and spectral functions in the two-dimensional excitonic systems}
+      \field{urlday}{9}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{volume}{473}
+      \field{year}{2015}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{75\bibrangedash 92}
+      \range{pages}{18}
+      \verb{doi}
+      \verb 10.1016/j.physb.2015.05.027
+      \endverb
+      \verb{eprint}
+      \verb 1311.1645 [cond-mat.str-el]
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/6VYMLIZ2/Apinyan in Kopeć - 2015 - Phase coherence and spectral functions in the two-dimensional excitonic systems.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/1311.1645
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/1311.1645
+      \endverb
+      \keyw{Condensed Matter - Strongly Correlated Electrons}
+    \endentry
+    \entry{golosov_excitonic_2025}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=ab0f0dd914ac0f8f40c4449aab7cd638}{%
+           family={Golosov},
+           familyi={G\bibinitperiod},
+           given={D.\bibnamedelimi I.},
+           giveni={D\bibinitperiod\bibinitdelim I\bibinitperiod}}}%
+      }
+      \strng{namehash}{ab0f0dd914ac0f8f40c4449aab7cd638}
+      \strng{fullhash}{ab0f0dd914ac0f8f40c4449aab7cd638}
+      \strng{fullhashraw}{ab0f0dd914ac0f8f40c4449aab7cd638}
+      \strng{bibnamehash}{ab0f0dd914ac0f8f40c4449aab7cd638}
+      \strng{authorbibnamehash}{ab0f0dd914ac0f8f40c4449aab7cd638}
+      \strng{authornamehash}{ab0f0dd914ac0f8f40c4449aab7cd638}
+      \strng{authorfullhash}{ab0f0dd914ac0f8f40c4449aab7cd638}
+      \strng{authorfullhashraw}{ab0f0dd914ac0f8f40c4449aab7cd638}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{We consider an extended spinless Falicov--Kimball model at an arbitrary doping level, focusing on the range of parameter values where a uniform excitonic insulator is stabilised at half-filling. We compare the properties of possible uniform phases and construct the Hartree--Fock phase diagrams, which include sizeable phase separation regions. It is seen that the excitonic insulator can appear as a component phase in a mixed-phase state in a broad interval of doping levels. In addition, in a certain range of parameter values the excitonic metal (doped excitonic insulator) is identified as the lowest-energy uniform phase. We suggest that this phase, which is unstable with respect to phase separation, may be stabilised when the phase separation is suppressed by the long-range Coulomb interaction. Overall, we find that excitonic correlations can affect the behaviour of the system relatively far away from half-filling.}
+      \field{day}{26}
+      \field{eprinttype}{arxiv}
+      \field{issn}{2469-9950, 2469-9969}
+      \field{journaltitle}{Physical Review B}
+      \field{langid}{english}
+      \field{month}{12}
+      \field{number}{24}
+      \field{shortjournal}{Phys. Rev. B}
+      \field{title}{Excitonic Insulator and the Extended Falicov--Kimball Model Away from Half-Filling}
+      \field{urlday}{9}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{volume}{112}
+      \field{year}{2025}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{245161}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1103/l9zh-ldpv
+      \endverb
+      \verb{eprint}
+      \verb 2507.13967 [cond-mat.str-el]
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/ZV2CTEWE/Golosov - 2025 - Excitonic Insulator and the Extended Falicov--Kimball Model Away from Half-Filling.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/2507.13967
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/2507.13967
+      \endverb
+      \keyw{Condensed Matter - Strongly Correlated Electrons,Condensed Matter - Materials Science}
+    \endentry
+    \entry{farkasovsky_dmrg_2020}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=55a1f5998e6adad46fa028350aa19625}{%
+           family={{Farkašovský}},
+           familyi={F\bibinitperiod}}}%
+      }
+      \strng{namehash}{55a1f5998e6adad46fa028350aa19625}
+      \strng{fullhash}{55a1f5998e6adad46fa028350aa19625}
+      \strng{fullhashraw}{55a1f5998e6adad46fa028350aa19625}
+      \strng{bibnamehash}{55a1f5998e6adad46fa028350aa19625}
+      \strng{authorbibnamehash}{55a1f5998e6adad46fa028350aa19625}
+      \strng{authornamehash}{55a1f5998e6adad46fa028350aa19625}
+      \strng{authorfullhash}{55a1f5998e6adad46fa028350aa19625}
+      \strng{authorfullhashraw}{55a1f5998e6adad46fa028350aa19625}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{1607324X, 22249079}
+      \field{journaltitle}{Condensed Matter Physics}
+      \field{langid}{english}
+      \field{month}{12}
+      \field{number}{4}
+      \field{shortjournal}{Condens. Matter Phys.}
+      \field{title}{{DMRG} study of exciton condensation in the extended Falicov-Kimball model}
+      \field{urlday}{9}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{volume}{23}
+      \field{year}{2020}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{43709}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.5488/CMP.23.43709
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/Y2HM6D7W/Farkašovský - 2020 - DMRG study of exciton condensation in the extended Falicov-Kimball model.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://www.icmp.lviv.ua/journal/zbirnyk.104/43709/abstract.html
+      \endverb
+      \verb{url}
+      \verb http://www.icmp.lviv.ua/journal/zbirnyk.104/43709/abstract.html
+      \endverb
+    \endentry
+    \entry{campaioli_quantum_2024}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=e6dad518097c1bdc7aae81f14b3ecadb}{%
+           family={Campaioli},
+           familyi={C\bibinitperiod},
+           given={Francesco},
+           giveni={F\bibinitperiod}}}%
+        {{hash=7fbb16abdfe5ae8480059e85d0c3810b}{%
+           family={Cole},
+           familyi={C\bibinitperiod},
+           given={Jared\bibnamedelima H.},
+           giveni={J\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+        {{hash=c92a395ca1a7cfc9cddd31c27a214d19}{%
+           family={Hapuarachchi},
+           familyi={H\bibinitperiod},
+           given={Harini},
+           giveni={H\bibinitperiod}}}%
+      }
+      \strng{namehash}{b26be170534dd73ebcae7dd2bc870fce}
+      \strng{fullhash}{b26be170534dd73ebcae7dd2bc870fce}
+      \strng{fullhashraw}{b26be170534dd73ebcae7dd2bc870fce}
+      \strng{bibnamehash}{b26be170534dd73ebcae7dd2bc870fce}
+      \strng{authorbibnamehash}{b26be170534dd73ebcae7dd2bc870fce}
+      \strng{authornamehash}{b26be170534dd73ebcae7dd2bc870fce}
+      \strng{authorfullhash}{b26be170534dd73ebcae7dd2bc870fce}
+      \strng{authorfullhashraw}{b26be170534dd73ebcae7dd2bc870fce}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Quantum master equations are an invaluable tool to model the dynamics of a plethora of microscopic systems, ranging from quantum optics and quantum information processing to energy and charge transport, electronic and nuclear spin resonance, photochemistry, and more. This tutorial offers a concise and pedagogical introduction to quantum master equations, accessible to a broad, cross-disciplinary audience. The reader is guided through the basics of quantum dynamics with hands-on examples that increase in complexity. The tutorial covers essential methods such as the use of the Lindblad master equation, Redfield relaxation, and Floquet theory, as well as techniques such as Suzuki-Trotter expansion and numerical approaches for sparse solvers. These methods are illustrated with code snippets implemented in and other languages, which can be used as a starting point for generalization and more sophisticated implementations. Published by the American Physical Society 2024}
+      \field{day}{10}
+      \field{issn}{2691-3399}
+      \field{journaltitle}{{PRX} Quantum}
+      \field{langid}{english}
+      \field{month}{6}
+      \field{number}{2}
+      \field{shortjournal}{{PRX} Quantum}
+      \field{shorttitle}{Quantum Master Equations}
+      \field{title}{Quantum Master Equations: Tips and Tricks for Quantum Optics, Quantum Computing, and Beyond}
+      \field{urlday}{12}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{volume}{5}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{020202}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1103/PRXQuantum.5.020202
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/R454PX22/Campaioli idr. - 2024 - Quantum Master Equations Tips and Tricks for Quantum Optics, Quantum Computing, and Beyond.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://link.aps.org/doi/10.1103/PRXQuantum.5.020202
+      \endverb
+      \verb{url}
+      \verb https://link.aps.org/doi/10.1103/PRXQuantum.5.020202
+      \endverb
+    \endentry
+    \entry{ulcakar_generalized_2025}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=5e945f84c43723f884019dfe54c80dea}{%
+           family={Ulčakar},
+           familyi={U\bibinitperiod},
+           given={Iris},
+           giveni={I\bibinitperiod}}}%
+        {{hash=4042dd32511232a49a9b77b06e0daa3e}{%
+           family={Lenarčič},
+           familyi={L\bibinitperiod},
+           given={Zala},
+           giveni={Z\bibinitperiod}}}%
+      }
+      \strng{namehash}{8d9872740f3e239cff5b36ad6a5210d0}
+      \strng{fullhash}{8d9872740f3e239cff5b36ad6a5210d0}
+      \strng{fullhashraw}{8d9872740f3e239cff5b36ad6a5210d0}
+      \strng{bibnamehash}{8d9872740f3e239cff5b36ad6a5210d0}
+      \strng{authorbibnamehash}{8d9872740f3e239cff5b36ad6a5210d0}
+      \strng{authornamehash}{8d9872740f3e239cff5b36ad6a5210d0}
+      \strng{authorfullhash}{8d9872740f3e239cff5b36ad6a5210d0}
+      \strng{authorfullhashraw}{8d9872740f3e239cff5b36ad6a5210d0}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Identifying use cases with superconducting circuits not critically affected by the inherent noise is a pertinent challenge. Here, we propose using a digital quantum computer to showcase the activation of integrable effects in weakly dissipative integrable systems. Dissipation is realized by coupling the system’s qubits to ancillary ones that are periodically reset. We compare the digital reset protocol to the usual Lindblad continuous-time evolution by considering non-interacting integrable systems dynamics, which can be analyzed using scattering between the Bogoliubov quasiparticles caused by the dissipation. If not dominant, the inherent noise would cause extra scattering but would not critically change the physics. A corresponding quantum computer implementation would illuminate the possibilities of stabilizing exotic states in nearly integrable quantum materials.}
+      \field{day}{4}
+      \field{issn}{2542-4653}
+      \field{journaltitle}{{SciPost} Physics}
+      \field{langid}{english}
+      \field{month}{9}
+      \field{number}{3}
+      \field{shortjournal}{{SciPost} Phys.}
+      \field{title}{Generalized Gibbs ensembles in weakly interacting dissipative systems and digital quantum computers}
+      \field{urlday}{13}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{volume}{19}
+      \field{year}{2025}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{068}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.21468/SciPostPhys.19.3.068
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/NKRADG5W/Ulčakar in Lenarčič - 2025 - Generalized Gibbs ensembles in weakly interacting dissipative systems and digital quantum computers.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://scipost.org/10.21468/SciPostPhys.19.3.068
+      \endverb
+      \verb{url}
+      \verb https://scipost.org/10.21468/SciPostPhys.19.3.068
+      \endverb
+    \endentry
+    \entry{ilievski_complete_2015}{article}{}{}
+      \name{author}{5}{}{%
+        {{hash=8e6450308b23a0ce118e60c05b816cd0}{%
+           family={Ilievski},
+           familyi={I\bibinitperiod},
+           given={E.},
+           giveni={E\bibinitperiod}}}%
+        {{hash=ef7b224709b1bd6f686fcf9148c28650}{%
+           family={De\bibnamedelima Nardis},
+           familyi={D\bibinitperiod\bibinitdelim N\bibinitperiod},
+           given={J.},
+           giveni={J\bibinitperiod}}}%
+        {{hash=1522d4b588a8812c961554077e4cc03f}{%
+           family={Wouters},
+           familyi={W\bibinitperiod},
+           given={B.},
+           giveni={B\bibinitperiod}}}%
+        {{hash=aeeb07b6a893be1829cd0a5d030fb86f}{%
+           family={Caux},
+           familyi={C\bibinitperiod},
+           given={J.-S.},
+           giveni={J\bibinithyphendelim S\bibinitperiod}}}%
+        {{hash=78593f94d9b5d94a996e43be7c4cce78}{%
+           family={Et.},
+           familyi={E\bibinitperiod},
+           given={Al},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{1545d29fd45103c2f2f1b323cdf798e2}
+      \strng{fullhash}{cad02cfc927f6e080f33d9203c69dd9a}
+      \strng{fullhashraw}{cad02cfc927f6e080f33d9203c69dd9a}
+      \strng{bibnamehash}{1545d29fd45103c2f2f1b323cdf798e2}
+      \strng{authorbibnamehash}{1545d29fd45103c2f2f1b323cdf798e2}
+      \strng{authornamehash}{1545d29fd45103c2f2f1b323cdf798e2}
+      \strng{authorfullhash}{cad02cfc927f6e080f33d9203c69dd9a}
+      \strng{authorfullhashraw}{cad02cfc927f6e080f33d9203c69dd9a}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Physical Review Letters}
+      \field{title}{Complete Generalized Gibbs Ensembles in an Interacting Theory}
+      \field{urlday}{13}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{year}{2015}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \verb{doi}
+      \verb 10.1103/PhysRevLett.115.157201
+      \endverb
+      \verb{file}
+      \verb Full Text PDF:/home/kzeleznikar/Zotero/storage/JNPDWG4J/Ilievski idr. - 2015 - Complete Generalized Gibbs Ensembles in an Interacting Theory.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://sci-hub.box/10.1103/PhysRevLett.115.157201
+      \endverb
+      \verb{url}
+      \verb https://sci-hub.box/10.1103/PhysRevLett.115.157201
+      \endverb
+    \endentry
+    \entry{rigol_relaxation_2007}{article}{}{}
+      \name{author}{4}{}{%
+        {{hash=145e1c99debd158a634281ebd563ecd4}{%
+           family={Rigol},
+           familyi={R\bibinitperiod},
+           given={Marcos},
+           giveni={M\bibinitperiod}}}%
+        {{hash=fb4976a1abee86116a9634750a5d8733}{%
+           family={Dunjko},
+           familyi={D\bibinitperiod},
+           given={Vanja},
+           giveni={V\bibinitperiod}}}%
+        {{hash=8d80bec84dd3c006ee529ff55d0e593b}{%
+           family={Yurovsky},
+           familyi={Y\bibinitperiod},
+           given={Vladimir},
+           giveni={V\bibinitperiod}}}%
+        {{hash=70e920a36119f88e790872d30eabf2cd}{%
+           family={Olshanii},
+           familyi={O\bibinitperiod},
+           given={Maxim},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{dd29ebf48068deb3ee448acdb5055949}
+      \strng{fullhash}{914f92f1a811bb380b090b1ca6b5ff9f}
+      \strng{fullhashraw}{914f92f1a811bb380b090b1ca6b5ff9f}
+      \strng{bibnamehash}{dd29ebf48068deb3ee448acdb5055949}
+      \strng{authorbibnamehash}{dd29ebf48068deb3ee448acdb5055949}
+      \strng{authornamehash}{dd29ebf48068deb3ee448acdb5055949}
+      \strng{authorfullhash}{914f92f1a811bb380b090b1ca6b5ff9f}
+      \strng{authorfullhashraw}{914f92f1a811bb380b090b1ca6b5ff9f}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{We have demonstrated that an integrable many-body quantum system—one-dimensional hard-core bosons on a lattice—can undergo relaxation to an equilibrium state. The properties of this state are governed by the usual laws of statistical physics, properly updated to accommodate all the integrals of motion. We further show that our generalized equilibrium state carries more memory of the initial conditions than the usual thermodynamic one. It is in the light of that observation that we interpret the results of the recent experiment on the non-equilibrium dynamics of one-dimensional hard-core bosons performed at Penn State University [34], where an initial two-peaked (quasi-)momentum distribution failed to relax to a single-bell distribution.}
+      \field{day}{1}
+      \field{eprinttype}{arxiv}
+      \field{issn}{0031-9007, 1079-7114}
+      \field{journaltitle}{Physical Review Letters}
+      \field{langid}{english}
+      \field{month}{2}
+      \field{number}{5}
+      \field{shortjournal}{Phys. Rev. Lett.}
+      \field{shorttitle}{Relaxation in a Completely Integrable Many-Body Quantum System}
+      \field{title}{Relaxation in a Completely Integrable Many-Body Quantum System: An Ab Initio Study of the Dynamics of the Highly Excited States of Lattice Hard-Core Bosons}
+      \field{urlday}{13}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{volume}{98}
+      \field{year}{2007}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{050405}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1103/PhysRevLett.98.050405
+      \endverb
+      \verb{eprint}
+      \verb cond-mat/0604476
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/66BXDMSK/Rigol idr. - 2007 - Relaxation in a Completely Integrable Many-Body Quantum System An Ab Initio Study of the Dynamics o.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/cond-mat/0604476
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/cond-mat/0604476
+      \endverb
+      \keyw{Condensed Matter - Quantum Gases,Condensed Matter - Statistical Mechanics,Condensed Matter - Other Condensed Matter}
+    \endentry
+    \entry{davidson_dark_2020}{article}{}{}
+      \name{author}{4}{}{%
+        {{hash=f87f00d4aaa189302b869cd9297441dd}{%
+           family={Davidson},
+           familyi={D\bibinitperiod},
+           given={Scott},
+           giveni={S\bibinitperiod}}}%
+        {{hash=fd5453fbb228793836b5aca550df6f0d}{%
+           family={Fruchtman},
+           familyi={F\bibinitperiod},
+           given={Amir},
+           giveni={A\bibinitperiod}}}%
+        {{hash=4a0b0fb47dc12e3a7def6dff47792085}{%
+           family={Pollock},
+           familyi={P\bibinitperiod},
+           given={Felix\bibnamedelima A.},
+           giveni={F\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+        {{hash=03cda6154416a956c604ac878e3c93c3}{%
+           family={Gauger},
+           familyi={G\bibinitperiod},
+           given={Erik\bibnamedelima M.},
+           giveni={E\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \strng{namehash}{0cd6bcb33b5277e42ecbc8d04655cfb7}
+      \strng{fullhash}{d442e2ba4fbdaced5689d1bfc440feeb}
+      \strng{fullhashraw}{d442e2ba4fbdaced5689d1bfc440feeb}
+      \strng{bibnamehash}{0cd6bcb33b5277e42ecbc8d04655cfb7}
+      \strng{authorbibnamehash}{0cd6bcb33b5277e42ecbc8d04655cfb7}
+      \strng{authornamehash}{0cd6bcb33b5277e42ecbc8d04655cfb7}
+      \strng{authorfullhash}{d442e2ba4fbdaced5689d1bfc440feeb}
+      \strng{authorfullhashraw}{d442e2ba4fbdaced5689d1bfc440feeb}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{journaltitle}{The Journal of Chemical Physics}
+      \field{shorttitle}{The dark side of energy transport along excitonic wires}
+      \field{title}{The dark side of energy transport along excitonic wires: On-site energy barriers facilitate efficient, vibrationally mediated transport through optically dark subspaces}
+      \field{urlday}{16}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{year}{2020}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \verb{doi}
+      \verb 10.1063/5.0023702
+      \endverb
+      \verb{file}
+      \verb Full Text PDF:/home/kzeleznikar/Zotero/storage/39LZCWYY/Davidson idr. - 2020 - The dark side of energy transport along excitonic wires On-site energy barriers facilitate efficien.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://sci-hub.box/10.1063/5.0023702
+      \endverb
+      \verb{url}
+      \verb https://sci-hub.box/10.1063/5.0023702
+      \endverb
+    \endentry
+    \entry{lange_pumping_2017}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=42f33ec736c6b73a2d1073ab67b3ad3f}{%
+           family={Lange},
+           familyi={L\bibinitperiod},
+           given={Florian},
+           giveni={F\bibinitperiod}}}%
+        {{hash=4042dd32511232a49a9b77b06e0daa3e}{%
+           family={Lenarčič},
+           familyi={L\bibinitperiod},
+           given={Zala},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=5a07ad37374114b0892ea630f2a599a6}{%
+           family={Rosch},
+           familyi={R\bibinitperiod},
+           given={Achim},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{c303636ab6361c502cec269871ae0f5f}
+      \strng{fullhash}{c303636ab6361c502cec269871ae0f5f}
+      \strng{fullhashraw}{c303636ab6361c502cec269871ae0f5f}
+      \strng{bibnamehash}{c303636ab6361c502cec269871ae0f5f}
+      \strng{authorbibnamehash}{c303636ab6361c502cec269871ae0f5f}
+      \strng{authornamehash}{c303636ab6361c502cec269871ae0f5f}
+      \strng{authorfullhash}{c303636ab6361c502cec269871ae0f5f}
+      \strng{authorfullhashraw}{c303636ab6361c502cec269871ae0f5f}
+      \field{extraname}{1}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Weak perturbations can drive an interacting many-particle system far from its initial equilibrium state if one is able to pump into degrees of freedom approximately protected by conservation laws. This concept has for example been used to realize Bose-Einstein condensates of photons, magnons, and excitons. Integrable quantum systems, like the one-dimensional Heisenberg model, are characterized by an infinite set of conservation laws. Here we develop a theory of weakly driven integrable systems and show that pumping can induce large spin or heat currents even in the presence of integrability breaking perturbations, since it activates local and quasi-local approximate conserved quantities. The resulting steady state is qualitatively captured by a truncated generalized Gibbs ensemble with Lagrange parameters that depend on the structure but not on the overall amplitude of perturbations nor the initial state. We suggest to use spin-chain materials driven by terahertz radiation to realize integrability-based spin and heat pumps.}
+      \field{day}{9}
+      \field{eprinttype}{arxiv}
+      \field{issn}{2041-1723}
+      \field{journaltitle}{Nature Communications}
+      \field{langid}{english}
+      \field{month}{6}
+      \field{number}{1}
+      \field{shortjournal}{Nat Commun}
+      \field{title}{Pumping approximately integrable systems}
+      \field{urlday}{16}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{volume}{8}
+      \field{year}{2017}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{15767}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1038/ncomms15767
+      \endverb
+      \verb{eprint}
+      \verb 1608.03563 [cond-mat.str-el]
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/R7PSSPSF/Lange idr. - 2017 - Pumping approximately integrable systems.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/1608.03563
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/1608.03563
+      \endverb
+      \keyw{Condensed Matter - Strongly Correlated Electrons,Condensed Matter - Statistical Mechanics}
+    \endentry
+    \entry{zanoci_thermalization_2023}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=e2698a9d09006aa6bf02709f16cfa2a0}{%
+           family={Zanoci},
+           familyi={Z\bibinitperiod},
+           given={Cristian},
+           giveni={C\bibinitperiod}}}%
+        {{hash=3f8c753082e1160ad3b48c3c2fbed2e5}{%
+           family={Yoo},
+           familyi={Y\bibinitperiod},
+           given={Yongchan},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=9069021ff25fea1f37622b0751c0f899}{%
+           family={Swingle},
+           familyi={S\bibinitperiod},
+           given={Brian},
+           giveni={B\bibinitperiod}}}%
+      }
+      \strng{namehash}{03f6e20ca36b555b23cf00b04020e554}
+      \strng{fullhash}{03f6e20ca36b555b23cf00b04020e554}
+      \strng{fullhashraw}{03f6e20ca36b555b23cf00b04020e554}
+      \strng{bibnamehash}{03f6e20ca36b555b23cf00b04020e554}
+      \strng{authorbibnamehash}{03f6e20ca36b555b23cf00b04020e554}
+      \strng{authornamehash}{03f6e20ca36b555b23cf00b04020e554}
+      \strng{authorfullhash}{03f6e20ca36b555b23cf00b04020e554}
+      \strng{authorfullhashraw}{03f6e20ca36b555b23cf00b04020e554}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{We study the thermalization properties of one-dimensional open quantum systems coupled to baths at their boundary. The baths are driven to their thermal states via Lindblad operators, while the system undergoes Hamiltonian dynamics. We specifically consider multi-site baths and investigate the extent to which the late-time steady state resembles a Gibbs state at some controllable temperature set by the baths. We study three models: a non-interacting fermion model accessible via free-fermion technology, and two interacting models, the {XZ} model and the chiral clock model, which are accessible via tensor network methods. We show that, by tuning towards the weak coupling and slow relaxation limits, one can engineer low temperatures in the bulk of the system provided the bath size is big enough. We use this capability to study energy transport in the {XZ} model at lower temperatures than previously reported. Our work paves the way for future studies of interacting open quantum systems at low temperatures.}
+      \field{day}{31}
+      \field{eprinttype}{arxiv}
+      \field{issn}{2469-9950, 2469-9969}
+      \field{journaltitle}{Physical Review B}
+      \field{langid}{english}
+      \field{month}{7}
+      \field{number}{3}
+      \field{shortjournal}{Phys. Rev. B}
+      \field{title}{Thermalization at Low Temperatures via Weakly-Damped Multi-Site Baths}
+      \field{urlday}{17}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{volume}{108}
+      \field{year}{2023}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{035156}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1103/PhysRevB.108.035156
+      \endverb
+      \verb{eprint}
+      \verb 2304.08525 [cond-mat.str-el]
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/HM35ZGJX/Zanoci idr. - 2023 - Thermalization at Low Temperatures via Weakly-Damped Multi-Site Baths.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/2304.08525
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/2304.08525
+      \endverb
+      \keyw{Condensed Matter - Strongly Correlated Electrons,Quantum Physics}
+    \endentry
+    \entry{stuhec_termoelektricni_nodate}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=43f78048825e241c79108210ec85ddae}{%
+           family={Štuhec},
+           familyi={Š\bibinitperiod},
+           given={Ana},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{43f78048825e241c79108210ec85ddae}
+      \strng{fullhash}{43f78048825e241c79108210ec85ddae}
+      \strng{fullhashraw}{43f78048825e241c79108210ec85ddae}
+      \strng{bibnamehash}{43f78048825e241c79108210ec85ddae}
+      \strng{authorbibnamehash}{43f78048825e241c79108210ec85ddae}
+      \strng{authornamehash}{43f78048825e241c79108210ec85ddae}
+      \strng{authorfullhash}{43f78048825e241c79108210ec85ddae}
+      \strng{authorfullhashraw}{43f78048825e241c79108210ec85ddae}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{slovene}
+      \field{title}{Termoelektrični pojav v ekscitonskih izolatorjih}
+      \true{nocite}
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/DZNV3TUU/Štuhec - Termoelektrični pojav v ekscitonskih izolatorjih.pdf:application/pdf
+      \endverb
+    \endentry
+    \entry{daley_quantum_2014}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=b38b88e1e822b087568ddfe7ac34752f}{%
+           family={Daley},
+           familyi={D\bibinitperiod},
+           given={Andrew\bibnamedelima J.},
+           giveni={A\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+      }
+      \strng{namehash}{b38b88e1e822b087568ddfe7ac34752f}
+      \strng{fullhash}{b38b88e1e822b087568ddfe7ac34752f}
+      \strng{fullhashraw}{b38b88e1e822b087568ddfe7ac34752f}
+      \strng{bibnamehash}{b38b88e1e822b087568ddfe7ac34752f}
+      \strng{authorbibnamehash}{b38b88e1e822b087568ddfe7ac34752f}
+      \strng{authornamehash}{b38b88e1e822b087568ddfe7ac34752f}
+      \strng{authorfullhash}{b38b88e1e822b087568ddfe7ac34752f}
+      \strng{authorfullhashraw}{b38b88e1e822b087568ddfe7ac34752f}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{4}
+      \field{issn}{0001-8732, 1460-6976}
+      \field{journaltitle}{Advances in Physics}
+      \field{langid}{english}
+      \field{month}{3}
+      \field{number}{2}
+      \field{shortjournal}{Advances in Physics}
+      \field{title}{Quantum trajectories and open many-body quantum systems}
+      \field{urlday}{19}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{volume}{63}
+      \field{year}{2014}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{77\bibrangedash 149}
+      \range{pages}{73}
+      \verb{doi}
+      \verb 10.1080/00018732.2014.933502
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/YFTGTDVL/Daley - 2014 - Quantum trajectories and open many-body quantum systems.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://www.tandfonline.com/doi/abs/10.1080/00018732.2014.933502
+      \endverb
+      \verb{url}
+      \verb http://www.tandfonline.com/doi/abs/10.1080/00018732.2014.933502
+      \endverb
+    \endentry
+    \entry{davari_probing_2025}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=e0b9f104177278308b693b4168da6709}{%
+           family={Davari},
+           familyi={D\bibinitperiod},
+           given={Elahe},
+           giveni={E\bibinitperiod}}}%
+        {{hash=8070e73d84a4a006ae51824c80bf06e9}{%
+           family={Kargarian},
+           familyi={K\bibinitperiod},
+           given={Mehdi},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{f033c58f46e0938aa734bd16a130b654}
+      \strng{fullhash}{f033c58f46e0938aa734bd16a130b654}
+      \strng{fullhashraw}{f033c58f46e0938aa734bd16a130b654}
+      \strng{bibnamehash}{f033c58f46e0938aa734bd16a130b654}
+      \strng{authorbibnamehash}{f033c58f46e0938aa734bd16a130b654}
+      \strng{authornamehash}{f033c58f46e0938aa734bd16a130b654}
+      \strng{authorfullhash}{f033c58f46e0938aa734bd16a130b654}
+      \strng{authorfullhashraw}{f033c58f46e0938aa734bd16a130b654}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{The light--matter interaction in optical cavities offers a promising ground to create hybrid states and manipulate material properties. In this work, we examine the effect of light-matter coupling in the excitonic insulator phase using a quasi one-dimensional lattice model with two opposite parity orbitals at each site. We show that the model allows for a coupling between the collective phase mode and cavity photons. Our findings reveal that the collective mode of the excitonic state significantly impacts the dispersion of the cavity mode, giving rise to an avoiding band crossing in the photon dispersion. This phenomenon is absent in trivial and topological insulator phases and also in phonon-mediated excitonic insulators, underscoring the unique characteristics of collective excitations in excitonic insulators. Our results demonstrate the significant impact of light-matter interaction on photon propagation in the presence of excitonic collective excitations.}
+      \field{day}{17}
+      \field{eprinttype}{arxiv}
+      \field{issn}{2469-9950, 2469-9969}
+      \field{journaltitle}{Physical Review B}
+      \field{langid}{english}
+      \field{month}{10}
+      \field{number}{16}
+      \field{shortjournal}{Phys. Rev. B}
+      \field{title}{Probing the collective excitations of excitonic insulators in an optical cavity}
+      \field{urlday}{25}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{volume}{112}
+      \field{year}{2025}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{165124}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1103/zqhl-kncx
+      \endverb
+      \verb{eprint}
+      \verb 2501.04736 [cond-mat.mes-hall]
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/IJQW9BJV/Davari in Kargarian - 2025 - Probing the collective excitations of excitonic insulators in an optical cavity.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/2501.04736
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/2501.04736
+      \endverb
+      \keyw{Condensed Matter - Mesoscale and Nanoscale Physics,Physics - Optics}
+    \endentry
+    \entry{jaynes_comparison_1963}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=750189cbf905cceea863a5e1aed9afaf}{%
+           family={Jaynes},
+           familyi={J\bibinitperiod},
+           given={E.\bibnamedelimi T.},
+           giveni={E\bibinitperiod\bibinitdelim T\bibinitperiod}}}%
+        {{hash=656c9ef427ca2931e16ff0bc07279924}{%
+           family={Cummings},
+           familyi={C\bibinitperiod},
+           given={F.\bibnamedelimi W.},
+           giveni={F\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
+      }
+      \strng{namehash}{cc9f717b0ab3876e759aa6ecae1f4fc6}
+      \strng{fullhash}{cc9f717b0ab3876e759aa6ecae1f4fc6}
+      \strng{fullhashraw}{cc9f717b0ab3876e759aa6ecae1f4fc6}
+      \strng{bibnamehash}{cc9f717b0ab3876e759aa6ecae1f4fc6}
+      \strng{authorbibnamehash}{cc9f717b0ab3876e759aa6ecae1f4fc6}
+      \strng{authornamehash}{cc9f717b0ab3876e759aa6ecae1f4fc6}
+      \strng{authorfullhash}{cc9f717b0ab3876e759aa6ecae1f4fc6}
+      \strng{authorfullhashraw}{cc9f717b0ab3876e759aa6ecae1f4fc6}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the {IEEE}}
+      \field{title}{Comparison of quantum and semiclassical radiation theories with application to the beam maser}
+      \field{urlday}{25}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{year}{1963}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \verb{doi}
+      \verb 10.1109/PROC.1963.1664
+      \endverb
+      \verb{file}
+      \verb Full Text PDF:/home/kzeleznikar/Zotero/storage/N23IG2MC/Jaynes in Cummings - 1963 - Comparison of quantum and semiclassical radiation theories with application to the beam maser.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://sci-hub.box/10.1109/PROC.1963.1664
+      \endverb
+      \verb{url}
+      \verb https://sci-hub.box/10.1109/PROC.1963.1664
+      \endverb
+    \endentry
+    \entry{paul_light-matter_2025}{misc}{}{}
+      \name{author}{2}{}{%
+        {{hash=802c829dce67dd69b8ede70a19f74155}{%
+           family={Paul},
+           familyi={P\bibinitperiod},
+           given={Anneswa},
+           giveni={A\bibinitperiod}}}%
+        {{hash=06e355fb465dde9367d6de3c82182f36}{%
+           family={Harbola},
+           familyi={H\bibinitperiod},
+           given={Upendra},
+           giveni={U\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {arXiv}%
+      }
+      \strng{namehash}{3221d67c02d4106e7fbfc2c4839c4915}
+      \strng{fullhash}{3221d67c02d4106e7fbfc2c4839c4915}
+      \strng{fullhashraw}{3221d67c02d4106e7fbfc2c4839c4915}
+      \strng{bibnamehash}{3221d67c02d4106e7fbfc2c4839c4915}
+      \strng{authorbibnamehash}{3221d67c02d4106e7fbfc2c4839c4915}
+      \strng{authornamehash}{3221d67c02d4106e7fbfc2c4839c4915}
+      \strng{authorfullhash}{3221d67c02d4106e7fbfc2c4839c4915}
+      \strng{authorfullhashraw}{3221d67c02d4106e7fbfc2c4839c4915}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Light-matter interaction inside an optical cavity and formation of polaritonic states have gained interest in the past decades as it has direct applications in many research fields. Different regimes of light-matter coupling have been studied using different approximations, one of which is rotating wave approximation({RWA}), which is said to be valid for weak coupling and near resonant regimes. In this study, we have categorized the light-matter coupling into four regimes depending on the validity of the {RWA} as moderate, λ/ωc ≤ 0.1, strong, 0.1 ≤ λ/ωc ≤ 0.5, ultra-strong, 0.5 ≤ λ/ωc ≤ 1.0 and deep-strong, λ/ωc ≥ 1.0 coupling, where λ is the coupling strength and ωc is the cavity frequency. In experiments, vacuum Rabi-splitting has been observed which is a clear indication of formation of polaritonic states. It is a common misunderstanding that the cavity remains in vacuum state when the coupled system is in the ground state. Here we show that upon coupling, the cavity has non-zero excitation even in the ground state, which is not captured by {RWA}. In fact, {RWA} breaks down completely to predict the ground state properties as it fails to capture the interaction between the matter and the cavity field.}
+      \field{day}{27}
+      \field{eprinttype}{arxiv}
+      \field{langid}{english}
+      \field{month}{4}
+      \field{number}{{arXiv}:2504.14266}
+      \field{shorttitle}{Light-matter interaction inside an optical cavity}
+      \field{title}{Light-matter interaction inside an optical cavity: A perspective}
+      \field{urlday}{25}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{year}{2025}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \verb{doi}
+      \verb 10.48550/arXiv.2504.14266
+      \endverb
+      \verb{eprint}
+      \verb 2504.14266 [quant-ph]
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/VBPTVSPD/Paul in Harbola - 2025 - Light-matter interaction inside an optical cavity A perspective.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/2504.14266
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/2504.14266
+      \endverb
+      \keyw{Quantum Physics}
+    \endentry
+    \entry{mandal_theoretical_2022}{misc}{}{}
+      \name{author}{6}{}{%
+        {{hash=7e7cf83c86da926a0c0215c015e934e0}{%
+           family={Mandal},
+           familyi={M\bibinitperiod},
+           given={Arkajit},
+           giveni={A\bibinitperiod}}}%
+        {{hash=5efe73c0ef8f0e873d520c4ea41f807e}{%
+           family={Taylor},
+           familyi={T\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+        {{hash=1146ec52ad98144519f510eb29d0a5d3}{%
+           family={Weight},
+           familyi={W\bibinitperiod},
+           given={Braden},
+           giveni={B\bibinitperiod}}}%
+        {{hash=b2390180afea6cddc40914fe3b9e2297}{%
+           family={Koessler},
+           familyi={K\bibinitperiod},
+           given={Eric},
+           giveni={E\bibinitperiod}}}%
+        {{hash=68358e1dd9402c83014af6c15672d57d}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Xinyang},
+           giveni={X\bibinitperiod}}}%
+        {{hash=7a1e1c37d087f22e16957a3cae814d38}{%
+           family={Huo},
+           familyi={H\bibinitperiod},
+           given={Pengfei},
+           giveni={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{ff012e37156deeda233e5fd42ac0eb3c}
+      \strng{fullhash}{d78bbc405a8f73f671d11bdf79590115}
+      \strng{fullhashraw}{d78bbc405a8f73f671d11bdf79590115}
+      \strng{bibnamehash}{ff012e37156deeda233e5fd42ac0eb3c}
+      \strng{authorbibnamehash}{ff012e37156deeda233e5fd42ac0eb3c}
+      \strng{authornamehash}{ff012e37156deeda233e5fd42ac0eb3c}
+      \strng{authorfullhash}{d78bbc405a8f73f671d11bdf79590115}
+      \strng{authorfullhashraw}{d78bbc405a8f73f671d11bdf79590115}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{When molecules are coupled to an optical cavity, new light-matter hybrid states, so-called polaritons, are formed due to quantum light-matter interactions. With the experimental demonstrations of modifying chemical reactivities by forming polaritons under strong light-matter interactions, theorists have been encouraged to develop new methods to simulate these systems and discover new strategies to tune and control reactions. This review summarizes some of these exciting theoretical advances in polariton chemistry, in methods ranging from the fundamental framework to computational techniques and applications spanning from photochemistry to vibrational strong coupling. Even though the theory of quantum light-matter interactions goes back to the mid-twentieth century, the gaps in the knowledge of molecular quantum electrodynamics ({QED}) have only recently been filled. We review recent advances made in resolving gauge ambiguities, the correct form of different {QED} Hamiltonians under different gauges, and their connections to various quantum optics models. Then, we review recently developed \{{\textbackslash}it ab-initio\} {QED} approaches which can accurately describe polariton states in a realistic molecule-cavity hybrid system. We then discuss applications using these method advancements. We review advancements in polariton photochemistry where the cavity is made resonant to electronic transitions to control molecular non-adiabatic excited state dynamics and enable new photochemical reactivities. When the cavity resonance is tuned to the molecular vibrations instead, ground-state chemical reaction modifications have been demonstrated experimentally, though its mechanistic principle remains unclear. We present some recent theoretical progress in resolving this mystery. Finally, we review the recent advances in understanding the collective coupling regime between light and matter, where many molecules can collectively couple to a single cavity mode or many cavity modes. We also lay out the current challenges in theory to explain the observed experimental results. We hope that this review will serve as a useful document for anyone who wants to become familiar with the context of polariton chemistry and molecular cavity {QED} and thus significantly benefit the entire community.}
+      \field{day}{7}
+      \field{langid}{english}
+      \field{month}{12}
+      \field{title}{Theoretical Advances in Polariton Chemistry and Molecular Cavity Quantum Electrodynamics}
+      \field{urlday}{25}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{year}{2022}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \verb{doi}
+      \verb 10.26434/chemrxiv-2022-g9lr7
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/KD4Z58C7/Mandal idr. - 2022 - Theoretical Advances in Polariton Chemistry and Molecular Cavity Quantum Electrodynamics.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://chemrxiv.org/doi/full/10.26434/chemrxiv-2022-g9lr7
+      \endverb
+      \verb{url}
+      \verb https://chemrxiv.org/doi/full/10.26434/chemrxiv-2022-g9lr7
+      \endverb
+    \endentry
+    \entry{li_electromagnetic_2020}{article}{}{}
+      \name{author}{6}{}{%
+        {{hash=9958ccb241e8eac42694f3fcb9e4c43d}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Jiajun},
+           giveni={J\bibinitperiod}}}%
+        {{hash=d3f03903ea4f5c63f57393b428e4d30e}{%
+           family={Golez},
+           familyi={G\bibinitperiod},
+           given={Denis},
+           giveni={D\bibinitperiod}}}%
+        {{hash=44563f98eb8466602dec5adbf6e16723}{%
+           family={Mazza},
+           familyi={M\bibinitperiod},
+           given={Giacomo},
+           giveni={G\bibinitperiod}}}%
+        {{hash=ebe91a14c89c66f196350237861f819a}{%
+           family={Millis},
+           familyi={M\bibinitperiod},
+           given={Andrew},
+           giveni={A\bibinitperiod}}}%
+        {{hash=a3fd2f2b22938dc53c1d195381d71109}{%
+           family={Georges},
+           familyi={G\bibinitperiod},
+           given={Antoine},
+           giveni={A\bibinitperiod}}}%
+        {{hash=013c4d8832721d2832729aee28626ec2}{%
+           family={Eckstein},
+           familyi={E\bibinitperiod},
+           given={Martin},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{afd54655a4feceb79d0c9a065953d22d}
+      \strng{fullhash}{7b22b7449ab074002ad47cf91b82f3b6}
+      \strng{fullhashraw}{7b22b7449ab074002ad47cf91b82f3b6}
+      \strng{bibnamehash}{afd54655a4feceb79d0c9a065953d22d}
+      \strng{authorbibnamehash}{afd54655a4feceb79d0c9a065953d22d}
+      \strng{authornamehash}{afd54655a4feceb79d0c9a065953d22d}
+      \strng{authorfullhash}{7b22b7449ab074002ad47cf91b82f3b6}
+      \strng{authorfullhashraw}{7b22b7449ab074002ad47cf91b82f3b6}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{We discuss the construction of low-energy tight-binding Hamiltonians for condensed matter systems with a strong coupling to the quantum electromagnetic field. Such Hamiltonians can be obtained by projecting the continuum theory on a given set of Wannier orbitals. However, different representations of the continuum theory lead to different low-energy formulations, because different representations may entangle light and matter, transforming orbitals into light-matter hybrid states before the projection. In particular, a multi-center Power-Zienau-Woolley transformation yields a dipolar Hamiltonian which incorporates the light-matter coupling via both Peierls phases and a polarization density. We compare this dipolar gauge Hamiltonian and the straightforward Coulomb gauge Hamiltonian for a one-dimensional solid, to describe sub-cycle light-driven electronic motion in the semiclassical limit, and a coupling of the solid to a quantized cavity mode which renormalizes the band-structure into electron-polariton bands. Both descriptions yield the same result when many bands are taken into account, but the dipolar Hamiltonian is more accurate when the model is restricted to few electronic bands, while the Coulomb Hamiltonian requires fewer electromagnetic modes.}
+      \field{day}{21}
+      \field{eprinttype}{arxiv}
+      \field{issn}{2469-9950, 2469-9969}
+      \field{journaltitle}{Physical Review B}
+      \field{langid}{english}
+      \field{month}{5}
+      \field{number}{20}
+      \field{shortjournal}{Phys. Rev. B}
+      \field{title}{Electromagnetic coupling in tight-binding models for strongly correlated light and matter}
+      \field{urlday}{25}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{volume}{101}
+      \field{year}{2020}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{205140}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1103/PhysRevB.101.205140
+      \endverb
+      \verb{eprint}
+      \verb 2001.09726 [cond-mat.str-el]
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/ZA98JYH6/Li idr. - 2020 - Electromagnetic coupling in tight-binding models for strongly correlated light and matter.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/2001.09726
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/2001.09726
+      \endverb
+      \keyw{Condensed Matter - Strongly Correlated Electrons,Condensed Matter - Mesoscale and Nanoscale Physics}
+    \endentry
+    \entry{jager_lindblad_2022}{article}{}{}
+      \name{author}{5}{}{%
+        {{hash=a5c9808520d1c330d1c691a03ab1c929}{%
+           family={Jäger},
+           familyi={J\bibinitperiod},
+           given={Simon\bibnamedelima B.},
+           giveni={S\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
+        {{hash=58190d89d6d711b7c12e6c99615c1ecb}{%
+           family={Schmit},
+           familyi={S\bibinitperiod},
+           given={Tom},
+           giveni={T\bibinitperiod}}}%
+        {{hash=4eab7676829d5f3396e8a6a1d7526ebd}{%
+           family={Morigi},
+           familyi={M\bibinitperiod},
+           given={Giovanna},
+           giveni={G\bibinitperiod}}}%
+        {{hash=7ba77b4a11340375de885ce4a88b8314}{%
+           family={Holland},
+           familyi={H\bibinitperiod},
+           given={Murray\bibnamedelima J.},
+           giveni={M\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=b86117f6d0e23b505424832b5c7bdcac}{%
+           family={Betzholz},
+           familyi={B\bibinitperiod},
+           given={Ralf},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{dbb29b5116b5e7e2b71ae8f98b4c64b4}
+      \strng{fullhash}{581ce22c7cb4f9cc4d313fff48dc96b1}
+      \strng{fullhashraw}{581ce22c7cb4f9cc4d313fff48dc96b1}
+      \strng{bibnamehash}{dbb29b5116b5e7e2b71ae8f98b4c64b4}
+      \strng{authorbibnamehash}{dbb29b5116b5e7e2b71ae8f98b4c64b4}
+      \strng{authornamehash}{dbb29b5116b5e7e2b71ae8f98b4c64b4}
+      \strng{authorfullhash}{581ce22c7cb4f9cc4d313fff48dc96b1}
+      \strng{authorfullhashraw}{581ce22c7cb4f9cc4d313fff48dc96b1}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{We present a general approach to derive Lindblad master equations for a subsystem whose dynamics is coupled to dissipative bosonic modes. The derivation relies on a Schrieffer-Wolff transformation which allows to eliminate the bosonic degrees of freedom after self-consistently determining their state as a function of the coupled quantum system. We apply this formalism to the dissipative Dicke model and derive a Lindblad master equation for the atomic spins, which includes the coherent and dissipative interactions mediated by the bosonic mode. This master equation accurately predicts the Dicke phase transition and gives the correct steady state. In addition, we compare the dynamics using exact diagonalization and numerical integration of the master equation with the predictions of semiclassical trajectories. We finally test the performance of our formalism by studying the relaxation of a {NOON} state and show that the dynamics captures quantum metastability beyond the mean-field approximation.}
+      \field{day}{2}
+      \field{eprinttype}{arxiv}
+      \field{issn}{0031-9007, 1079-7114}
+      \field{journaltitle}{Physical Review Letters}
+      \field{langid}{english}
+      \field{month}{8}
+      \field{number}{6}
+      \field{shortjournal}{Phys. Rev. Lett.}
+      \field{title}{Lindblad master equations for quantum systems coupled to dissipative bosonic modes}
+      \field{urlday}{25}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{volume}{129}
+      \field{year}{2022}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{063601}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1103/PhysRevLett.129.063601
+      \endverb
+      \verb{eprint}
+      \verb 2203.03302 [quant-ph]
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/SY2JJ5EY/Jäger idr. - 2022 - Lindblad master equations for quantum systems coupled to dissipative bosonic modes.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/2203.03302
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/2203.03302
+      \endverb
+      \keyw{Condensed Matter - Quantum Gases,Quantum Physics}
+    \endentry
+    \entry{dunne_peireles_1993}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=5550e7044e562d2694edfbbd57492515}{%
+           family={Dunne},
+           familyi={D\bibinitperiod},
+           given={Gerald},
+           giveni={G\bibinitperiod}}}%
+        {{hash=4b53bfbcc666225a5779363f45c96476}{%
+           family={Jackiw},
+           familyi={J\bibinitperiod},
+           given={Roman},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{360b0f9e5770b4e49701a28e6c162861}
+      \strng{fullhash}{360b0f9e5770b4e49701a28e6c162861}
+      \strng{fullhashraw}{360b0f9e5770b4e49701a28e6c162861}
+      \strng{bibnamehash}{360b0f9e5770b4e49701a28e6c162861}
+      \strng{authorbibnamehash}{360b0f9e5770b4e49701a28e6c162861}
+      \strng{authornamehash}{360b0f9e5770b4e49701a28e6c162861}
+      \strng{authorfullhash}{360b0f9e5770b4e49701a28e6c162861}
+      \strng{authorfullhashraw}{360b0f9e5770b4e49701a28e6c162861}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{An elementary derivation is given for the ``Peierles substitution'' used in projecting dynamics in a strong magnetic field onto the lowest Landau level. The projection of wavefunctions and the ordering prescription for the projected Hamiltonian is explained.}
+      \field{eprinttype}{arxiv}
+      \field{issn}{09205632}
+      \field{journaltitle}{Nuclear Physics B - Proceedings Supplements}
+      \field{langid}{english}
+      \field{month}{11}
+      \field{number}{3}
+      \field{shortjournal}{Nuclear Physics B - Proceedings Supplements}
+      \field{title}{"Peireles Substitution" and Chern-Simons Quantum Mechanics}
+      \field{urlday}{26}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{volume}{33}
+      \field{year}{1993}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{114\bibrangedash 118}
+      \range{pages}{5}
+      \verb{doi}
+      \verb 10.1016/0920-5632(93)90376-H
+      \endverb
+      \verb{eprint}
+      \verb hep-th/9204057
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/9BITI5GB/Dunne in Jackiw - 1993 - Peireles Substitution and Chern-Simons Quantum Mechanics.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/hep-th/9204057
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/hep-th/9204057
+      \endverb
+      \keyw{High Energy Physics - Theory}
+    \endentry
+    \entry{lange_time-dependent_2018}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=42f33ec736c6b73a2d1073ab67b3ad3f}{%
+           family={Lange},
+           familyi={L\bibinitperiod},
+           given={Florian},
+           giveni={F\bibinitperiod}}}%
+        {{hash=4042dd32511232a49a9b77b06e0daa3e}{%
+           family={Lenarčič},
+           familyi={L\bibinitperiod},
+           given={Zala},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=5a07ad37374114b0892ea630f2a599a6}{%
+           family={Rosch},
+           familyi={R\bibinitperiod},
+           given={Achim},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{c303636ab6361c502cec269871ae0f5f}
+      \strng{fullhash}{c303636ab6361c502cec269871ae0f5f}
+      \strng{fullhashraw}{c303636ab6361c502cec269871ae0f5f}
+      \strng{bibnamehash}{c303636ab6361c502cec269871ae0f5f}
+      \strng{authorbibnamehash}{c303636ab6361c502cec269871ae0f5f}
+      \strng{authornamehash}{c303636ab6361c502cec269871ae0f5f}
+      \strng{authorfullhash}{c303636ab6361c502cec269871ae0f5f}
+      \strng{authorfullhashraw}{c303636ab6361c502cec269871ae0f5f}
+      \field{extraname}{2}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Generalized Gibbs ensembles have been used as powerful tools to describe the steady state of integrable many-particle quantum systems after a sudden change of the Hamiltonian. Here we demonstrate numerically, that they can be used for a much broader class of problems. We consider integrable systems in the presence of weak perturbations which both break integrability and drive the system to a state far from equilibrium. Under these conditions, we show that the steady state and the time-evolution on long time-scales can be accurately described by a (truncated) generalized Gibbs ensemble with time-dependent Lagrange parameters, determined from simple rate equations. We compare the numerically exact time evolutions of density matrices for small systems with a theory based on block-diagonal density matrices (diagonal ensemble) and a time-dependent generalized Gibbs ensemble containing only small number of approximately conserved quantities, using the one-dimensional Heisenberg model with perturbations described by Lindblad operators as an example.}
+      \field{day}{26}
+      \field{eprinttype}{arxiv}
+      \field{issn}{2469-9950, 2469-9969}
+      \field{journaltitle}{Physical Review B}
+      \field{langid}{english}
+      \field{month}{4}
+      \field{number}{16}
+      \field{shortjournal}{Phys. Rev. B}
+      \field{title}{Time-dependent generalized Gibbs ensembles in open quantum systems}
+      \field{urlday}{2}
+      \field{urlmonth}{9}
+      \field{urlyear}{2026}
+      \field{volume}{97}
+      \field{year}{2018}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{165138}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1103/PhysRevB.97.165138
+      \endverb
+      \verb{eprint}
+      \verb 1801.07646 [cond-mat.str-el]
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/XHQRGRX8/Lange idr. - 2018 - Time-dependent generalized Gibbs ensembles in open quantum systems.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/1801.07646
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/1801.07646
+      \endverb
+      \keyw{Condensed Matter - Strongly Correlated Electrons,Condensed Matter - Statistical Mechanics}
+    \endentry
+    \entry{curtis_cavity_2019}{article}{}{}
+      \name{author}{5}{}{%
+        {{hash=7210d0702a3b112aff2dbbd18f2a68e4}{%
+           family={Curtis},
+           familyi={C\bibinitperiod},
+           given={Jonathan\bibnamedelima B.},
+           giveni={J\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
+        {{hash=f9c3b5c53ed3925bb5e6972152757a25}{%
+           family={Raines},
+           familyi={R\bibinitperiod},
+           given={Zachary\bibnamedelima M.},
+           giveni={Z\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=c3a4eabc2cb01f8139089f793ddd3673}{%
+           family={Allocca},
+           familyi={A\bibinitperiod},
+           given={Andrew\bibnamedelima A.},
+           giveni={A\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+        {{hash=839f26c256a782490534308c26f8f4d7}{%
+           family={Hafezi},
+           familyi={H\bibinitperiod},
+           given={Mohammad},
+           giveni={M\bibinitperiod}}}%
+        {{hash=36e36f8ecf389a74e08d06acf7ca48f8}{%
+           family={Galitski},
+           familyi={G\bibinitperiod},
+           given={Victor\bibnamedelima M.},
+           giveni={V\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \strng{namehash}{5750b5d60d1725cc2782006e79671b49}
+      \strng{fullhash}{1cd1e86595cc4f2c670aa5a5e0242a16}
+      \strng{fullhashraw}{1cd1e86595cc4f2c670aa5a5e0242a16}
+      \strng{bibnamehash}{5750b5d60d1725cc2782006e79671b49}
+      \strng{authorbibnamehash}{5750b5d60d1725cc2782006e79671b49}
+      \strng{authornamehash}{5750b5d60d1725cc2782006e79671b49}
+      \strng{authorfullhash}{1cd1e86595cc4f2c670aa5a5e0242a16}
+      \strng{authorfullhashraw}{1cd1e86595cc4f2c670aa5a5e0242a16}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{26}
+      \field{issn}{0031-9007, 1079-7114}
+      \field{journaltitle}{Physical Review Letters}
+      \field{langid}{english}
+      \field{month}{4}
+      \field{number}{16}
+      \field{shortjournal}{Phys. Rev. Lett.}
+      \field{title}{Cavity Quantum Eliashberg Enhancement of Superconductivity}
+      \field{urlday}{10}
+      \field{urlmonth}{9}
+      \field{urlyear}{2026}
+      \field{volume}{122}
+      \field{year}{2019}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{167002}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1103/PhysRevLett.122.167002
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/KB3BQ36Z/Curtis idr. - 2019 - Cavity Quantum Eliashberg Enhancement of Superconductivity.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://link.aps.org/doi/10.1103/PhysRevLett.122.167002
+      \endverb
+      \verb{url}
+      \verb https://link.aps.org/doi/10.1103/PhysRevLett.122.167002
+      \endverb
+    \endentry
+    \entry{kalthoff_nonequilibrium_2022}{article}{}{}
+      \name{author}{4}{}{%
+        {{hash=eb49f5067bc3152ec97ae67a4a071463}{%
+           family={Kalthoff},
+           familyi={K\bibinitperiod},
+           given={Mona\bibnamedelima H.},
+           giveni={M\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+        {{hash=1532d1d0a343b7c51dbb5db40c951971}{%
+           family={Kennes},
+           familyi={K\bibinitperiod},
+           given={Dante\bibnamedelima M.},
+           giveni={D\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=427e59bd9e640048338adc8a138a111b}{%
+           family={Millis},
+           familyi={M\bibinitperiod},
+           given={Andrew\bibnamedelima J.},
+           giveni={A\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=d98bafb8f3781d080a1ef8f29db2a435}{%
+           family={Sentef},
+           familyi={S\bibinitperiod},
+           given={Michael\bibnamedelima A.},
+           giveni={M\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+      }
+      \strng{namehash}{8f4f460620695c43632c1df16c4164b5}
+      \strng{fullhash}{694bcfb077c2464c710e52111c83c888}
+      \strng{fullhashraw}{694bcfb077c2464c710e52111c83c888}
+      \strng{bibnamehash}{8f4f460620695c43632c1df16c4164b5}
+      \strng{authorbibnamehash}{8f4f460620695c43632c1df16c4164b5}
+      \strng{authornamehash}{8f4f460620695c43632c1df16c4164b5}
+      \strng{authorfullhash}{694bcfb077c2464c710e52111c83c888}
+      \strng{authorfullhashraw}{694bcfb077c2464c710e52111c83c888}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{12}
+      \field{issn}{2643-1564}
+      \field{journaltitle}{Physical Review Research}
+      \field{langid}{english}
+      \field{month}{5}
+      \field{number}{2}
+      \field{shortjournal}{Phys. Rev. Research}
+      \field{title}{Nonequilibrium phase transition in a driven-dissipative quantum antiferromagnet}
+      \field{urlday}{16}
+      \field{urlmonth}{9}
+      \field{urlyear}{2026}
+      \field{volume}{4}
+      \field{year}{2022}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{023115}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1103/PhysRevResearch.4.023115
+      \endverb
+      \verb{file}
+      \verb PDF:/home/kzeleznikar/Zotero/storage/K4NVKTSQ/Kalthoff idr. - 2022 - Nonequilibrium phase transition in a driven-dissipative quantum antiferromagnet.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://link.aps.org/doi/10.1103/PhysRevResearch.4.023115
+      \endverb
+      \verb{url}
+      \verb https://link.aps.org/doi/10.1103/PhysRevResearch.4.023115
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
