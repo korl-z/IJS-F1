@@ -64,6 +64,8 @@
 \usepackage{algorithm}
 \usepackage{booktabs}
 \usepackage{algpseudocode}
+\usepackage{scalerel}
+\newcommand\Dag{\scalerel*{\dag}{X}}
 % ---------------------------------------------------------------
 \algnewcommand\algorithmicreturnx{\textbf{return}}
 \algnewcommand\Ret{\State \algorithmicreturnx{} }
@@ -100,7 +102,7 @@
 % \titleformat*{\subsubsection}{\subsubsectionfont\centering}
 \titleformat*{\section}{\Large\bfseries\sffamily\centering}
 \titleformat*{\subsection}{\large\bfseries\sffamily\centering}
-\titleformat*{\subsubsection}{\itshape\subsubsectionfont\centering}
+\titleformat*{\subsubsection}{\normalsize\bfseries\sffamily\centering}
 
 
 %MISC
@@ -212,11 +214,11 @@ iz česar sledi enačba za režo pri $T>0$ (seštevamo po $k$ okoli $E_F$):
 Pri izolatorju za minimalni model vzamemo dve orbitali ($a, b$) model tesne vezi v vsaki posebej in lokalno Coulombovo interakcijo na mestu $j$ med elektronskima gostotama v posameznih pasovih 
 \begin{align}
   H = H_0 + H_V &= \sum_{i,j} \left( \epsilon_a^{(0)} \delta_{ij} + t_{ij}^{(a)} \right) c_{a,i}^\dagger c_{a,j} + \sum_{i,j} \left( \epsilon_b^{(0)} \delta_{ij} + t_{ij}^{(b)} \right) c_{b,i}^\dagger c_{b,j} + V \sum_j c_{a,j}^\dagger c_{a,j} c_{b,j}^\dagger c_{b,j} \\
-  &= \sum_k \epsilon_{a,k} c_{a,k}^\dagger c_{a,k} + \sum_k \epsilon_{b,k} c_{b,k}^\dagger c_{b,k} + V \sum_j c_{a,j}^\dagger c_{a,j} c_{b,j}^\dagger c_{b,j}
+  &= \sum_k \varepsilon_{a,k} c_{a,k}^\dagger c_{a,k} + \sum_k \varepsilon_{b,k} c_{b,k}^\dagger c_{b,k} + V \sum_j c_{a,j}^\dagger c_{a,j} c_{b,j}^\dagger c_{b,j}
 \end{align}
 najprej diagonaliziramo vsako orbitalo posebej, kar da gole disperzije (vezavni energiji nastavimo na $\pm G/2$) (delamo v dveh dimenzijah in mrežna konstanta $a_0=1$): 
 \begin{align} \label{free el tb}
-  \epsilon_{a(b),k} = \pm \frac{G}{2} - 2 t_{a(b)}(\cos(k_x) + \cos(k_y))\,,
+  \varepsilon_{a(b),k} = \pm \frac{G}{2} - 2 t_{a(b)}(\cos(k_x) + \cos(k_y))\,,
 \end{align}
 v tem primeru je najmanjša razdalja med pasovoma $G_0 = G - 4 (t_a -t_b)$ oziroma $G_0=G - 8t_a$, če je $t_b = -t_a$. Za interakcijo spet naredimo približek povprečnega polja: 
 \begin{align}
@@ -245,13 +247,13 @@ Uporabimo FT še na celotnem Hamiltonjanu
   c_{a,j}^\dagger = \frac{1}{\sqrt{N}} \sum_k e^{-i \vec{k} \cdot \vec{r}_j} c_{a,k}^\dagger
 \end{align}
 \begin{align}
-  H^{\text{MF}} = \sum_k \left( [\epsilon_{a,k} + V n_b] c_{a,k}^\dagger c_{a,k} + [\epsilon_{b,k} + V n_a] c_{b,k}^\dagger c_{b,k} + \Delta^* c_{a,k}^\dagger c_{b,k} + \Delta c_{b,k}^\dagger c_{a,k} \right) + \left( \frac{\vert{}\Delta\vert{}^2}{V} N - V N n_a n_b \right)
+  H^{\text{MF}} = \sum_k \left( [\varepsilon_{a,k} + V n_b] c_{a,k}^\dagger c_{a,k} + [\varepsilon_{b,k} + V n_a] c_{b,k}^\dagger c_{b,k} + \Delta^* c_{a,k}^\dagger c_{b,k} + \Delta c_{b,k}^\dagger c_{a,k} \right) + \left( \frac{\vert{}\Delta\vert{}^2}{V} N - V N n_a n_b \right)
 \end{align}
 oziroma: 
 \begin{align}
   H^{\text{MF}} = \sum_k \begin{pmatrix} c_{a,k}^\dagger & c_{b,k}^\dagger \end{pmatrix} \begin{pmatrix} {\epsilon}^H_{a,k} & \Delta^* \\ \Delta & {\epsilon}^H_{b,k} \end{pmatrix} \begin{pmatrix} c_{a,k} \\ c_{b,k} \end{pmatrix} + \text{konst.}\,,
 \end{align}
-kjer definiramo Hartree energiji ${\epsilon}^H_{a(b),k} = \epsilon_{a(b),k} + V n_{b(a)}$. Transformacija v diagonalno  / Bogoljubov bazo je podobna kot pri BCS, le da ne meša kreatorjev in anihilatorjev / ohranja število delcev:
+kjer definiramo Hartree energiji ${\epsilon}^H_{a(b),k} = \varepsilon_{a(b),k} + V n_{b(a)}$. Transformacija v diagonalno  / Bogoljubov bazo je podobna kot pri BCS, le da ne meša kreatorjev in anihilatorjev / ohranja število delcev:
 \begin{align}
   \begin{pmatrix} c_{a,k} \\ c_{b,k} \end{pmatrix} = \begin{pmatrix} u_k & v_k \\ -v_k & u_k \end{pmatrix} \begin{pmatrix} \alpha_k \\ \beta_k \end{pmatrix}
 \end{align}
@@ -275,7 +277,7 @@ od tod
 Opomba, lahko definiramo tudi $n = n_a + n_b = \text{konst.} = 1$ in $n_a-n_b =: m$ od tod sledi
 
 \begin{align}
-  H^{\text{MF}} = \sum_k \left( \left[\epsilon_{a,k} + \frac{V}{2}n - \frac{V}{2}m\right] c_{a,k}^\dagger c_{a,k} + \left[\epsilon_{b,k} + \frac{V}{2}n -\frac{V}{2}m\right] c_{b,k}^\dagger c_{b,k} + \Delta^* c_{a,k}^\dagger c_{b,k} + \Delta c_{b,k}^\dagger c_{a,k} \right)
+  H^{\text{MF}} = \sum_k \left( \left[\varepsilon_{a,k} + \frac{V}{2}n - \frac{V}{2}m\right] c_{a,k}^\dagger c_{a,k} + \left[\varepsilon_{b,k} + \frac{V}{2}n -\frac{V}{2}m\right] c_{b,k}^\dagger c_{b,k} + \Delta^* c_{a,k}^\dagger c_{b,k} + \Delta c_{b,k}^\dagger c_{a,k} \right)
 \end{align}
 od koder je v 2D Hartree gap enak: 
 \begin{align}
@@ -453,189 +455,122 @@ $\chi_{ij} = \langle C_{i} C_{j} \rangle - \langle C_{i} \rangle \langle C_{j} \
 
 \subsection{Limita neskončne temperature}
 \subsection{Fononske sklopitve}
-Tu sta dve (tri) opcije. Najprej pogledamo, kako modificiran (Peierls tip) hopping integral in modificiran orbital energy vplivata na sklopitev. Model spremenimo: atoma znotraj o.c. sta na enakem položaju in se deformirata vedno v isto smer, torej $\vec{u}_{a,i}=\vec{u}_{b,i}=\vec{u}_{i}$:
+Najprej pogledamo, kako modificiran (Peierls tip) hopping integral in modificiran orbital energy vplivata na sklopitev. Model spremenimo: orbitali znotraj o.c. sta na enakem položaju in se deformirata vedno v isto smer, torej $\vec{u}_{a,i}=\vec{u}_{b,i}=\vec{u}_{i}$. Coulombski potencial se zaradi deformacije ne spremeni veliko. Hamiltonka za nedeformiran kristal ostane enaka, višje člene pa obravnavamo perturbativno: 
 \begin{align}
-  H(\{\mathbf{u}\}) = \underbrace{\sum_{i, \gamma, \tau} \epsilon_{\gamma\tau}(\mathbf{u}_i) \, c_{\gamma,i}^\dagger c_{\tau,i}}_{\text{on-site in CEF}} + \underbrace{\sum_{\langle i,j \rangle, \gamma, \tau} t_{\gamma\tau}(\mathbf{r}_{ij}) \, c_{\gamma,i}^\dagger c_{\tau,j}}_{\text{hopping, med oribitalami}} + \underbrace{V \sum_j n_{a,j} n_{b,j}}_{\text{Coulomb}}
+  H[\{\mathbf{u}\}] = \underbrace{\sum_{i, \gamma, \gamma'} \varepsilon_{\gamma\gamma',i}[\{\mathbf{u}\}] \, c_{\gamma,i}^\dagger c_{\gamma',i}^{\vphantom\dagger}}_{\text{on-site in CEF}} + \underbrace{\sum_{\langle i,j \rangle, \gamma} t_{\gamma}(|\mathbf{r}_{ij}|) \, c_{\gamma,i}^\dagger c_{\gamma,j}^{\vphantom\dagger}}_{\text{hopping, med oribitalami}} + \underbrace{V \sum_j n_{a,j} n_{b,j}}_{\text{Coulomb}}
 \end{align}
-Predpostavimo, da se z deformacijo energija na orbitalo spremeni (podobnokot Kittel, str. 131), torej:
-\begin{equation}
-\begin{pmatrix}  \epsilon_a^{(0)} & 0 \\ 0 &  \epsilon_b^{(0)} \end{pmatrix} \to \begin{pmatrix}  \epsilon_a^{(0)} + D_a \displaystyle\sum_{\langle ij \rangle} \hat{\mathbf{R}}_{ij}^0 \cdot (\mathbf{u}_j - \mathbf{u}_i) & D_{ab} \displaystyle\sum_{\langle ij \rangle} (\hat{R}_{ij}^0)_x \, \delta \vec{R}_{ij} \\  D_{ab} \displaystyle\sum_{\langle ij \rangle} (\hat{R}_{ij}^0)_x \, \delta \vec{R}_{ij} & \epsilon_b^{(0)} + D_b \displaystyle\sum_{\langle ij \rangle} \hat{\mathbf{R}}_{ij}^0 \cdot (\mathbf{u}_j - \mathbf{u}_i)  \end{pmatrix}
-\end{equation}
-
+Razdalje so: 
 \begin{align}
-\vec r_{\ell,j}=\vec R_j+\vec u_{\ell,j}.
+\vec r_{j}=\vec R_j+\vec u_{j}\,,
 \end{align}
-
+oziroma razdalje med paroma (sosedi): 
 \begin{align}
-\vec U_j=\frac{\vec u_{a,j}+\vec u_{b,j}}{2},
-\qquad
-\vec r_j=\vec u_{a,j}-\vec u_{b,j}.
+\vec r_{ij}=\bm \delta +\vec u_{j} -\vec u_{i}\,\to |\vec r_{ij}| \simeq |\bm \delta| + \bm \delta \cdot (\vec u_{j} -\vec u_{i}) + \mathcal{O}(u^2)
 \end{align}
-
+Predpostavimo da na hopping vpliva samo sprememba razdalje:
 \begin{align}
-\vec u_{a,j}=\vec U_j+\frac{\vec r_j}{2},
-\qquad
-\vec u_{b,j}=\vec U_j-\frac{\vec r_j}{2}.
-\tag{3}
-\end{align}
-Razvijemo
+  t_{\gamma}(|\mathbf{r}_{ij}|) \simeq t_{\gamma}(|\bm \delta|) + \bm \delta \cdot (\vec u_{j} -\vec u_{i}) \dv{t_\gamma(x)}{x}\bigg|_{x=|\bm\delta|=1}
+\end{align} 
+Deformacija vpliva na vezavno energijo preko CEF, razvijemo preko deformacijskega tenzorja ($\varepsilon_{\mu\nu}=\frac12(\partial_\mu u_\nu+\partial_\nu u_\mu)$ oziroma diskretno: $\varepsilon_{\mu\nu,j} = \frac14(u_{j+\mu}^\nu-u_{j-\mu}^\nu + u_{j+\nu}^\mu-u_{j-\nu}^\mu)$ zgornji indeks je koordinata vektorja). Če je eno elektronska Hamiltonka na mestu $j$ (el. - ion) (po $\mu, \nu$ se sešteva po Einsteinu): 
 \begin{align}
-H_e[\vec u]
-=
-H_e[0]+H_{e\text{-}ph}^{(1)}+O(u^2),
-\qquad
-H_{e\text{-}ph}^{(1)}
-=
-\left.
-\sum_{\ell,j}
-\vec u_{\ell,j}\cdot
-\frac{\partial H_e}{\partial\vec u_{\ell,j}}
-\right|_0.
+h_j=h_0+\delta h_{j}+O(\varepsilon^2), \quad \delta h_j= \pdv{U_{\text{el-ion}}}{\varepsilon_{\mu \nu,j}}\varepsilon_{\mu \nu,j}, \,(\mu, \nu) = (x, y)
+\end{align}
+in je v nedeformiranem stanju: 
+\begin{align}
+  \varepsilon_{\gamma}^{(0)} = \langle \phi_\gamma |h_0|\phi_\gamma \rangle
+\end{align}
+potem so popravki (lahko mešajo orbitali)
+\begin{align} \label{deps_gamgam}
+  \delta\varepsilon_{\gamma\gamma'} = \left\langle \phi_\gamma \left|\pdv{U_{\text{el-ion}}}{\varepsilon_{\mu \nu,j}} \right|\phi_{\gamma'} \right\rangle \varepsilon_{\mu \nu,j} = D^{\mu \nu}_{\gamma\gamma'}\varepsilon_{\mu \nu,j}
+\end{align}
+Sklopitvena Hamiltonka v realni bazi je tako ($\sum_{\langle ij\rangle} \to \sum_i\sum_{\delta=\{x, y\}}$)
+\begin{tcolorbox}
+\begin{align}
+  H_{ep}^{(1)}=\sum_{i, \gamma, \gamma'} D^{\mu \nu}_{\gamma\gamma'}\varepsilon_{\mu \nu,i}  c_{\gamma,i}^\dagger c_{\gamma',i}^{\vphantom\dagger} + \sum_{i, \delta, \gamma} t^\prime_{\gamma} \bm \delta \cdot (\vec u_{i + \delta} -\vec u_{i}) \left(c_{\gamma,i}^\dagger c_{\gamma,i + \delta}^{\vphantom\dagger}  +\text{h.c.}\right)
+\end{align}
+\end{tcolorbox}
+(note):
+\begin{align}
+     \sum_{\bm{\delta}} \bm{\delta} \cdot (\vec{u}_{i+\delta} - \vec{u}_i) = \hat{x} \cdot (\vec{u}_{i+x} - \vec{u}_i) - \hat{x} \cdot (\vec{u}_{i-x} - \vec{u}_i) + \hat{y} \cdot (\vec{u}_{i+y} - \vec{u}_i) - \hat{y} \cdot (\vec{u}_{i-y} - \vec{u}_i) \approx 2 (\varepsilon_{xx} + \varepsilon_{yy})
+\end{align}
+Zdaj kvantiziramo odmike in prepišemo v k-prostor, specificno za 2D square lattice: 
+\begin{equation}
+\vec{u}_j = \frac{1}{\sqrt{N}} \sum_{\vec{q}, \lambda} \frac{1}{\sqrt{2M\omega_{\vec{q}\lambda}}} \bm{\epsilon}_{\vec{q}\lambda} e^{i\vec{q}\cdot\vec{R}_j} \left( b^{\vphantom{\dagger}}_{\vec{q}\lambda} + b_{-\vec{q}\lambda}^\dagger \right)
+\end{equation}
+v prvem členu so sami členi oblike (od defomracijskega tenzorja, diskretna verzija)
+\begin{align} 
+  u_{j+\delta}^{\mu}-u_{j-\delta}^{\mu} = \frac{2i}{\sqrt N} \sum_{\vec q,\lambda} \frac{\epsilon_{\vec q\lambda}^{\mu}}{\sqrt{2M\omega_{\vec{q}\lambda}}} \sin(q_\delta)\, e^{i\vec q\cdot\vec R_j} \left( b^{\vphantom{\dagger}}_{\vec{q}\lambda} + b_{-\vec{q}\lambda}^\dagger \right).
+\end{align}
+v drugem pa členi ($\delta = \mu = \{x, y\}$, glej note):
+\begin{align}
+  &\frac{t_\gamma'}{\sqrt N} \sum_{\vec q,\vec k',\vec k}  \frac{\epsilon_{\vec q\lambda}^{\mu}}{\sqrt{2M\omega_{\vec{q}\lambda}}} \left( b^{\vphantom{\dagger}}_{\vec{q}\lambda} + b_{-\vec{q}\lambda}^\dagger \right) \left(e^{iq_\mu}-1\right) \left(e^{ik_\mu}+e^{-ik_\mu'}\right) c_{\gamma,\vec k'}^\dagger c_{\gamma,\vec k} \sum_j \frac{1}{N} e^{i(\vec q+\vec k-\vec k')\cdot\vec R_j}  = \\
+  &= \frac{t_\gamma'}{\sqrt N} \sum_{\vec k,\vec q} \frac{\epsilon_{\vec q\lambda}^{\mu}}{\sqrt{2M\omega_{\vec{q}\lambda}}} \left( b^{\vphantom{\dagger}}_{\vec{q}\lambda} + b_{-\vec{q}\lambda}^\dagger \right) \left(e^{iq_\mu}-1\right) \left(e^{ik_\mu}+e^{-i(k_\mu+q_\mu)}\right) c_{\gamma,\vec k+\vec q}^\dagger c_{\gamma,\vec k} = \\
+  &= \frac{2 i t_\gamma'}{\sqrt N} \sum_{\vec k,\vec q} \frac{\epsilon_{\vec q\lambda}^{\mu}}{\sqrt{2M\omega_{\vec{q}\lambda}}}  \left(\sin(k_\mu + q_\mu)  - \sin(k_\mu)\right) c_{\gamma,\vec k+\vec q}^\dagger c_{\gamma,\vec k} \left( b^{\vphantom{\dagger}}_{\vec{q}\lambda} + b_{-\vec{q}\lambda}^\dagger \right)
+\end{align}
+Hamiltonka je na koncu oblike (intraband = $\gamma = \gamma'$):
+\begin{tcolorbox}
+\begin{align}
+  H_{ep} = \frac1{\sqrt N} \sum_{\vec k,\vec q,\lambda} \psi_{\vec k+\vec q}^{\dagger} \begin{pmatrix} g_{aa}^{\lambda}(\vec k,\vec q) & g_{ab}^{\lambda}(\vec q)\\ g_{ba}^{\lambda}(\vec q) & g_{bb}^{\lambda}(\vec k,\vec q) \end{pmatrix} \psi_{\vec k} \left( b_{\vec q\lambda}+b_{-\vec q\lambda}^{\dagger} \right)
 \end{align}
 \begin{align}
-  t_{ij}^{(aa)}(\mathbf{r}_{ij}) &\approx t_{ij}^{(a)0} + \alpha_t^{(a)} \, \hat{\mathbf{R}}_{ij}^0 \cdot (\mathbf{u}_j - \mathbf{u}_i)\\
-  t_{ij}^{(bb)}(\mathbf{r}_{ij}) &\approx t_{ij}^{(b)0} + \alpha_t^{(b)} \, \hat{\mathbf{R}}_{ij}^0 \cdot (\mathbf{u}_j - \mathbf{u}_i)\\
-  t_{ij}^{(ab)}(\mathbf{r}_{ij}) &\approx \underbrace{0}_{\text{ni hoppinga v nedeform. mrezi}} + \, \boldsymbol{\alpha}_t^{(ab)} \cdot (\mathbf{u}_j - \mathbf{u}_i)
+   g^\lambda(\vec k,\vec q) = \frac{i}{\sqrt{2M\omega_{\vec q\lambda}}} \begin{pmatrix} 2t_a'T^\lambda(\vec k,\vec q) +{F_{aa}^\lambda(\vec q)} & {F_{ab}^\lambda(\vec q)}\\ {F_{ba}^\lambda(\vec q)} & 2t_b'T^\lambda(\vec k,\vec q) +{F_{bb}^\lambda(\vec q)} \end{pmatrix}.
 \end{align}
 
+kjer so: 
 \begin{align}
-  \boldsymbol{\alpha}_t^{(ab)} = \left. \nabla_{\mathbf{r}} t_{ij}^{(ab)} \right\vert{}_{\mathbf{R}_{ij}^0} \neq 0
+  &T^\lambda(\vec k,\vec q) =\sum_{\mu=x,y}\epsilon_{\vec q\lambda}^{\mu} \left[\sin(k_\mu+q_\mu)-\sin(k_\mu)\right] \\
+  &F_{\gamma\gamma'}^\lambda(\vec q) = D_{\gamma\gamma'}^{xx}\epsilon_{\vec q\lambda}^{x}\sin(q_x) + D_{\gamma\gamma'}^{yy}\epsilon_{\vec q\lambda}^{y}\sin(q_y) + D_{\gamma\gamma'}^{xy} \left[ \epsilon_{\vec q\lambda}^{y}\sin(q_x) + \epsilon_{\vec q\lambda}^{x}\sin(q_y)
+\right].
 \end{align}
-
-\begin{equation}
-H_e = \sum_j \left( \epsilon_a c_{ja}^\dagger c_{ja} + \epsilon_b c_{jb}^\dagger c_{jb} \right) - \sum_{\langle i, j \rangle} \left( t_a(\vec{R}_j - \vec{R}_i) c_{ja}^\dagger c_{ia} + t_b(\vec{R}_j - \vec{R}_i) c_{jb}^\dagger c_{ib} + \text{h.c.} \right) + \sum_{\langle i, j \rangle} t_{ab}(\vec{R}_j - \vec{R}_i) c_{ja}^\dagger c_{ib} + \text{h.c.}
-\end{equation}
-
-\begin{equation}
-\vec{d}_{ij, ab} = \vec{r}_{j,b} - \vec{r}_{i,a} = (\vec{R}_j - \vec{R}_i) + (\vec{r}_{jb} - \vec{r}_{ia}) + (\vec{u}_{j,b} - \vec{u}_{i,a})
-\end{equation}
-
-\begin{equation}
-t_a = t_a(d_{ij, aa}), \quad t_b = t_b(d_{ij, bb})
-\end{equation}
-
-\begin{equation}
-t_a = t_a(d_{ij, aa}^0) + \vec{\nabla}_{\vec{r}} t_a(\vec{r}) \Big|_{\vec{d}_{ij, aa}^0} \cdot (\vec{u}_{j,a} - \vec{u}_{i,a})
-\end{equation}
-
-\begin{equation}
-t_a(\vec{R}_{ij}^0) \approx t_a(R_{ij}^0) + \vec{\nabla}_{\vec{r}} t_a(\vec{r}) \cdot (\vec{u}_j - \vec{u}_i)
-\end{equation}
-
-\begin{equation}
-t_{ab}(\vec{R}_{ij}^0) \simeq 0 + \vec{\nabla}_{\vec{r}} t_{ab}(\vec{r}) \Big|_{\vec{R}_{ij}^0} \cdot (\vec{u}_j - \vec{u}_i) \approx \alpha_{ab} \hat{e}_{ij} \cdot (\vec{u}_j - \vec{u}_i)
-\end{equation}
-
-\begin{equation}
-\vec{\nabla} [t_{ab}(x,y)] = \vec{\nabla}(x y \cdot f(r))
-\end{equation}
-
-\begin{equation}
-H_e = \sum_i \left( \epsilon_a^{(0)} c_{ai}^\dagger c_{ai} + \epsilon_b^{(0)} c_{bi}^\dagger c_{bi} \right) - \sum_{\langle i, j \rangle} \left( t_a c_{aj}^\dagger c_{ia} + t_b c_{bj}^\dagger c_{ib} + \text{h.c.} \right) + V \sum_i n_{ai} n_{bi}
-\end{equation}
-
-\begin{equation}
-H_{ep} = \sum_{\langle i, j \rangle} \left( \alpha_a c_{ja}^\dagger c_{ia} \hat{R}_{ij}^0 + \alpha_b c_{jb}^\dagger c_{ib} \hat{R}_{ij}^0 + \alpha_{ab} c_{ja}^\dagger c_{ib} + \alpha_{ba} c_{jb}^\dagger c_{ia} + \text{h.c.} \right) \cdot (\vec{u}_j - \vec{u}_i)
-\end{equation}
-
-\begin{equation}
-V(\vec{R}_i - \vec{R}_j) \simeq V_{\text{onsite}} \delta(\vec{R}_j - \vec{R}_i) + \mathcal{O}(|\vec{u}_j - \vec{u}_i|)
-\end{equation}
-
-\begin{equation}
-\vec{u}_j = \frac{1}{\sqrt{N_{\text{uc}}}} \sum_{\vec{q}, \lambda} \frac{1}{\sqrt{2M\omega_{\vec{q}\lambda}}} \vec{\xi}_{\vec{q}\lambda} e^{i\vec{q}\cdot\vec{R}_j} \left( b_{\vec{q}\lambda} + b_{-\vec{q}\lambda}^\dagger \right)
-\end{equation}
-
-\begin{equation}
-c_{aj} = \frac{1}{\sqrt{N_{\text{uc}}}} \sum_{\vec{k}} e^{i\vec{k}\cdot\vec{R}_j} c_{a\vec{k}}
-\end{equation}
-
-
-
-\begin{equation}
-\hat{\delta} = (\delta_x, \delta_y) \in \{\pm \hat{x}, \pm \hat{y}\}
-\end{equation}
-
-\begin{equation}
-\sum_{\hat{\delta}} \hat{\delta} \cdot (\vec{u}_{i+\delta} - \vec{u}_i) = \hat{x} \cdot (\vec{u}_{i+x} - \vec{u}_i) - \hat{x} \cdot (\vec{u}_{i-x} - \vec{u}_i) + \hat{y} \cdot (\vec{u}_{i+y} - \vec{u}_i) - \hat{y} \cdot (\vec{u}_{i-y} - \vec{u}_i) \approx 2 \vec{\nabla} \cdot \vec{u}
-\end{equation}
-
-\begin{equation}
-\sum_{\hat{\delta}} \tilde{\delta} \cdot (\vec{u}_{i+\delta} - \vec{u}_i) = (u_{i+x}^y - u_{i-x}^y) - (u_{i+y}^x - u_{i-y}^x)
-\end{equation}
-
-\begin{equation}
-H_{e-p} = \sum_{i, \hat{\delta}} \left( D_a c_{ai}^\dagger c_{ai} + D_b c_{bi}^\dagger c_{bi} + \alpha_a c_{a, i+\delta}^\dagger c_{ai} + \alpha_b c_{b, i+\delta}^\dagger c_{bi} \right) \hat{\delta} \cdot (\vec{u}_{i+\delta} - \vec{u}_i) + \sum_{i, \hat{\delta}} \left( D_{ab} c_{ai}^\dagger c_{bi} + \text{h.c.} \right) \hat{\delta} \cdot (\vec{u}_{i+\delta} - \vec{u}_i)
-\end{equation}
-
-\begin{equation}
-\vec{u}_{i+\delta} - \vec{u}_i = \frac{1}{\sqrt{N}} \sum_{\vec{q}, \lambda} \frac{1}{\sqrt{2M\omega_{\vec{q}\lambda}}} \vec{\epsilon}_{\vec{q}\lambda} \left( e^{i\vec{q}\cdot\hat{\delta}} - 1 \right) e^{i\vec{q}\cdot\vec{R}_i^0} \left( b_{\vec{q}\lambda} + b_{-\vec{q}\lambda}^\dagger \right)
-\end{equation}
-
-
-\begin{equation}
-H_{e-p} = \frac{1}{\sqrt{N}} \sum_{\vec{k}, \vec{q}, \lambda} \left[ \frac{1}{\sqrt{2M\omega_{\vec{q}\lambda}}} \sum_{\hat{\delta}} \hat{\delta} \cdot \vec{\epsilon}_{\vec{q}\lambda} \left( e^{i\vec{q}\cdot\hat{\delta}} - 1 \right) e^{i\vec{k}\cdot\hat{\delta}} \right] c_{\alpha, \vec{k}+\vec{q}}^\dagger c_{\beta\vec{k}} \left( b_{\vec{q}\lambda} + b_{-\vec{q}\lambda}^\dagger \right)
-\end{equation}
-
-\begin{equation}
-\sum_{\hat{\delta}} \left( e^{i\vec{k}\cdot\hat{\delta}} - 1 \right) e^{i\vec{k}\cdot\hat{\delta}} \hat{\delta} \cdot \vec{\epsilon}_{\vec{q}\lambda} = \epsilon_{\vec{q}\lambda}^x \left[ \left( e^{iq_x} - 1 \right) - \left( e^{-iq_x} - 1 \right) \right] e^{ik_x}
-\end{equation}
-
-\begin{equation}
-g_{aa}^\lambda(\vec{k}, \vec{q}) = \frac{2i}{\sqrt{2M}} \frac{1}{\sqrt{\omega_{\vec{q}\lambda}}} \left[ \epsilon_{\vec{q}\lambda}^x \left( D_a \sin(q_x) + \alpha_a \left( \sin(k_x + q_x) - \sin(k_x) \right) \right) + \epsilon_{\vec{q}\lambda}^y (x \to y) \right]
-\end{equation}
-
-\begin{equation}
-g_{ab}^\lambda(\vec{k}, \vec{q}) = \frac{2i}{\sqrt{2M}} \frac{1}{\sqrt{\omega_{\vec{q}\lambda}}} \left[ \epsilon_{\vec{q}\lambda}^y \left( D_{ab} \sin(q_y) \right) + \epsilon_{\vec{q}\lambda}^x \left( D_{ab} \sin(q_x) \right) \right]
-\end{equation}
-
-\begin{equation}
-\hat{R}_{ij}^0 = \frac{1}{\sqrt{N}} \sum_{\vec{k}, \vec{q}} \left( c_{a\vec{k}}^\dagger, c_{b\vec{k}}^\dagger \right) \begin{pmatrix} \alpha_{aa} & \alpha_{ab} \\ \alpha_{ba} & \alpha_{bb} \end{pmatrix} \begin{pmatrix} c_{a, \vec{k}+\vec{q}} \\ c_{b, \vec{k}+\vec{q}} \end{pmatrix}
-\end{equation}
-
-
-\begin{equation}
-\rho(\vec{r}) = -e \cdot \psi^\dagger(\vec{r}) \psi(\vec{r})
-\end{equation}
-
-\begin{equation}
-\psi(\vec{r}) = \sum_{i, \alpha} \phi_\alpha(\vec{r} - \vec{R}_i) c_{\alpha i}
-\end{equation}
-
-\begin{equation}
-\rho(\vec{q}) = -e \sum_{i,j} \sum_{\alpha, \beta} \int \dd{\vec{r}} \, e^{-i\vec{q}\cdot\vec{r}} \phi_\alpha^*(\vec{r} - \vec{R}_i) \phi_\beta(\vec{r} - \vec{R}_j) c_{\alpha i}^\dagger c_{\beta j} = -e \sum_{i, \alpha, \beta} e^{-i\vec{q}\cdot\vec{R}_i} \langle \phi_\alpha | e^{-i\vec{q}\cdot\vec{r}} | \phi_\beta \rangle c_{\alpha i}^\dagger c_{\beta i} \, \delta_{ij}
-\end{equation}
-
-\begin{equation}
-\rho(\vec{q}) \simeq -e \sum_i e^{-i\vec{q}\cdot\vec{R}_i} \left( n_{ai} + n_{bi} - i \vec{q} \cdot 2 \langle \phi_a(\vec{r}) | \vec{r} | \phi_b(\vec{r}) \rangle \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix} \begin{pmatrix} c_{ai} \\ c_{bi} \end{pmatrix} \right)
-\end{equation}
-
-\begin{equation}
-\sum_i e^{i\vec{q}\cdot\vec{R}_i} c_{ai}^\dagger c_{bi} = \frac{1}{N} \sum_{\vec{k}} c_{a, \vec{k}+\vec{q}}^\dagger c_{b\vec{k}}
-\end{equation}
+\end{tcolorbox}
+interband členi so neničelni, glede na izbrane orbitale (glej \eqref{deps_gamgam}) in izbran CF potencial, odvisno od simetrije. Ker smo izbrali $\vec u_{a,i} = \vec u_{b,i}$ se ti elementi sklapljajo samo z akustičnimi fononi, ce znotraj o.c. ni prostostnih stopenj(??). 
+\subsection{Optični fononi}
+Rabimo dodatne ligande / dodatne ione znotraj celice. Še vedno obdržimo $\vec u_{a,j}=\vec u_{b,j}=\vec u_j$, okolica pa se deformira neodvisno. Odmik liganda $\ell$ v celici $j$ razvijemo po normalnih nacinih
+\begin{align}
+  \vec v_{j,\ell} = \sum_s Q_{s,j}\, \vec e_{s,\ell}, \qquad \sum_\ell \vec e_{s,\ell}\cdot\vec e_{s',\ell} = \delta_{ss'},
+\end{align}
+kjer je $s$ indeks nacina, $Q_{s,j}$ skalarna amplituda. Razvijemo enoelektronsko hamiltonko
+\begin{align}
+  h_j=h_0+\sum_s \pdv{U_{\text{el-ion}}}{Q_{s,j}}\bigg|_{Q=0} Q_{s,j}+O(Q^2), \qquad \Lambda^{s}_{\gamma\gamma'} = \left\langle\phi_\gamma\left| \pdv{U_{\text{el-ion}}}{Q_{s,j}} \right|\phi_{\gamma'}\right\rangle_0 .
+\end{align}
+\begin{align}
+  H_{ep}^{\mathrm{opt}} = \sum_{j, s} \sum_{\gamma, \gamma'} \Lambda^{s}_{\gamma\gamma'} Q_{s,j} \, c_{\gamma,j}^\dagger c_{\gamma',j}^{\vphantom\dagger}.
+\end{align}
+Kvantiziramo koordinate okoliških ionov:
+\begin{align}
+  Q_{s,j}= \frac1{\sqrt N} \sum_{\vec q} \frac{1}{\sqrt{2M_s\omega_{\vec q s}}} e^{i\vec q\cdot\vec R_j} \left(b^{\vphantom{\dagger}}_{\vec q s}+b_{-\vec q s}^\dagger\right),
+\end{align}
+od tod
+\begin{align}
+  H_{ep}^{\mathrm{opt}} = \frac1{\sqrt N}\sum_{\vec k,\vec q, s} \psi_{\vec k+\vec q}^\dagger \, g^{s}(\vec q) \, \psi_{\vec k} \left(b^{\vphantom{\dagger}}_{\vec q s}+b_{-\vec q s}^\dagger\right), \qquad g^{s}(\vec q) = \frac{\Lambda^{s}}{\sqrt{2M_s\omega_{\vec q s}}}.
+\end{align}
+% Simetrija določa obliko matrik $\Lambda^s$ (za par orbital s $\phi_a\phi_b\sim xy$):
 % \begin{align}
-% \dot{n}_{\alpha k} = \sum_{p} \bigg( & \Gamma_{\alpha p \to \alpha k} \, n_{\alpha p} (1 - n_{\alpha k}) - \Gamma_{\alpha k \to \alpha p} \, n_{\alpha k} (1 - n_{\alpha p}) + \\
-% & + \Gamma_{\beta p \to \alpha k} \, n_{\beta p} (1 - n_{\alpha k}) - \Gamma_{\alpha k \to \beta p} \, n_{\alpha k} (1 - n_{\beta p}) \bigg)
+%   \Lambda^{A_{1g}} = \begin{pmatrix} \Lambda_a & 0 \\ 0 & \Lambda_b \end{pmatrix}, \qquad \Lambda^{B_{2g}} = \begin{pmatrix} 0 & \Lambda_{ab} \\ \Lambda_{ab} & 0 \end{pmatrix},
 % \end{align}
+% za ostale načine je $\Lambda^s = 0$.
+Kar da končne sklopitve pri $\vec q \to 0$ ($\Omega_s \equiv \omega_{\vec q\to 0, s}$):
+\begin{align}
+  g^{s}(\vec q\to0) = \frac{\Lambda^{s}}{\sqrt{2M_s\Omega_s}}.
+\end{align}
 
-% \begin{align}
-% \Gamma_{\mu p \to \nu k} = \frac{2\pi}{V} \sum_{\lambda} \left| G_{\mu \nu}^{\lambda} (k, q) \right|^2 \left\{ (1 + N_{q}) \delta (E_{\nu k} - E_{\mu p} + \omega_{q \lambda}) + N_{-q} \delta (E_{\nu k} - E_{\mu p} - \omega_{-q \lambda}) \right\}
-% \end{align}
-
-% \begin{align}
-% \Gamma_{\nu k \to \mu p} = \frac{2\pi}{V} \sum_{\lambda} \left| G_{\mu \nu}^{\lambda} (k, q) \right|^2 \left\{ (1 + N_{-q}) \delta (E_{\mu p} - E_{\nu k} + \omega_{-q \lambda}) + N_{q} \delta (E_{\mu p} - E_{\nu k} - \omega_{q \lambda}) \right\}
-% \end{align}
-
-% \begin{align}
-% G^\lambda(\vec{k}, \vec{q}) &= \begin{pmatrix} u_{k+q} & -v_{k+q} \\ v_{k+q} & u_{k+q} \end{pmatrix} \begin{pmatrix} g_{a\lambda}(\vec{q}) & 0 \\ 0 & g_{b\lambda}(\vec{q}) \end{pmatrix} \begin{pmatrix} u_k & v_k \\ -v_k & u_k \end{pmatrix} \\[1.5em]
-% g_{\substack{a\\b}\lambda}(\vec{q}) &= -i\ \frac{4\pi e^2}{\sqrt{2M\Omega\omega_{\vec{q}\lambda}}} \cdot \frac{1}{|\vec{q}|^2 + k_{\text{TF}}^2} \left( \vec{q} \cdot \vec{\varepsilon}_{\vec{q}\lambda}^* \right)
-% \end{align}
-
-
+% \subsubsection{Model prostih elektronov in sklopitev s fononi}
+% Razvijemo disperziji
+% \begin{equation}
+% \varepsilon_{\gamma \vec{k}} = \pm \frac{G}{2} \mp 2t (\cos k_x + \cos k_y) \quad \text{za}\quad k_x, k_y \sim 0
+% \end{equation}
+% od tod
+% \begin{equation}
+% \varepsilon_{\gamma \vec{k}} \approx \pm \frac{G}{2} \mp 2t \left( 1 - \frac{k_x^2}{2} + 1 - \frac{k_y^2}{2} \right) = \pm \left( \frac{G}{2} - 4t \right) \pm t (k_x^2 + k_y^2) = \pm (\varepsilon^0 + t \vec{k} \cdot \vec{k})
+% \end{equation}
+% Torej je Hamiltonka
+% \begin{equation}
+% H_e^{(0)}  = \sum_{\gamma, \vec{k}} \left( \varepsilon_{\gamma}^0+ t_\gamma {k}^2 \right) c_{\gamma,\vec{k}}^\dagger c_{\gamma,\vec{k}}
+% \end{equation}
 \subsection{Fotonske sklopitve v resonatorju}
 Začnemo z minimalnim modelom za elektrone: 
 \begin{align}
-  H_e = H_e^{(0)} + H_V = \sum_k \epsilon_{a,k} c_{a,k}^\dagger c_{a,k} + \sum_k \epsilon_{b,k} c_{b,k}^\dagger c_{b,k} + V \sum_j c_{a,j}^\dagger c_{a,j} c_{b,j}^\dagger c_{b,j}
+  H_e = H_e^{(0)} + H_V = \sum_k \varepsilon_{a,k} c_{a,k}^\dagger c_{a,k} + \sum_k \varepsilon_{b,k} c_{b,k}^\dagger c_{b,k} + V \sum_j c_{a,j}^\dagger c_{a,j} c_{b,j}^\dagger c_{b,j}
 \end{align}
 in privzamemo 2D plast, kjer sta dve orbitali na o.c., ki hibridizirata samo preko Coulombske interakcije. Disperzije za model neinteragirajoč sistem so v tem primeru enake \eqref{free el tb}. Interakcija pa je v prvem redu oblike: 
 \begin{equation}
@@ -663,7 +598,7 @@ operatorje polja razvijemo po lokaliziranih / Wannierovih orbitalah
 \end{equation}
 Transformiramo s FT, uvedemo $\vec{r} = \vec{R}_i + \vec{x}$ in razvijemo do dipolov $e^{-i\vec{q}\cdot\vec{x}} \simeq 1 -i\vec{q}\cdot\vec{x}$ (delamo se da se orbitale ne prekrivajo izven o.c.): 
 \begin{equation}
-\rho(\vec{q}) = -e \sum_{i,j} \sum_{\gamma, \tau} \int \dd{\vec{r}} \, e^{-i\vec{q}\cdot\vec{r}} \phi_\gamma^*(\vec{r} - \vec{R}_i) \phi_\tau(\vec{r} - \vec{R}_j) c_{\gamma i}^\dagger c_{\tau j} = -e \sum_{i,\gamma,\tau} e^{-i\vec{q}\cdot\vec{R}_i} \langle \phi_\gamma | e^{-i\vec{q}\cdot\vec{x}} | \phi_\tau \rangle c_{\gamma i}^\dagger c_{\tau i} 
+\rho(\vec{q}) = -e \sum_{i,j} \sum_{\gamma, \gamma'} \int \dd{\vec{r}} \, e^{-i\vec{q}\cdot\vec{r}} \phi_\gamma^*(\vec{r} - \vec{R}_i) \phi_{\gamma'}(\vec{r} - \vec{R}_j) c_{\gamma i}^\dagger c_{\gamma' j} = -e \sum_{i,\gamma,\gamma'} e^{-i\vec{q}\cdot\vec{R}_i} \langle \phi_\gamma | e^{-i\vec{q}\cdot\vec{x}} | \phi_{\gamma'} \rangle c_{\gamma i}^\dagger c_{\gamma' i} 
 \end{equation}
 Zdaj pa recimo da je dipolni moment samo med različnima orbitalama v o.c. in $n_{\gamma i} = \langle\phi_\gamma |\phi_\gamma\rangle c_{\gamma,i}^\dagger c_{\gamma,i}^ {\vphantom{\dagger}}$:
 \begin{equation}
@@ -701,7 +636,7 @@ od tod
 \end{equation}
 da izrazimo tok, naredimo približek, da prispevajo le majhni $\vec{q}\to 0$, zato:
 \begin{equation}
-\epsilon_{a\vec{k}} - \epsilon_{a, \vec{k}+\vec{q}} \simeq - \vec{q} \cdot \vec{\nabla}_{\vec{k}} \epsilon_{\vec{k}+\vec{q}/2}\,,
+\varepsilon_{a, \vec{k}+\vec{q}}- \varepsilon_{a,\vec{k}}   \simeq - \vec{q} \cdot \vec{\nabla}_{\vec{k}} \varepsilon_{\vec{k}+\vec{q}/2}\,,
 \end{equation}
 kar drži točno za proste elektrone in približno za tight binding disperzije. 
 % Note (baje): 
@@ -712,11 +647,11 @@ In general ce ne expandamo:
 \end{align}
 kjer so $\mathbf{C}(\mathbf{q})$ arbitrarna vektorska polja (tokovi brez divergence, magnetizacijski tokovi). Ce pa naredimo ta priblizek pa dobimo za tok v splošnem, indekse zamaknemo za $-\vec{q}$: 
 % \begin{equation}
-% i\vec{q} \cdot \vec{j}(\vec{q}) \simeq i \cdot \left( -e \sum_{\vec{k}} \psi_{\vec{k}}^\dagger \begin{pmatrix} -\vec{q}\cdot\vec{\nabla}_{\vec{k}} \epsilon_{a, \vec{k}+\vec{q}/2} & -i(\vec{q}\cdot\vec{d})(\epsilon_{b, \vec{k}+\vec{q}} - \epsilon_{a\vec{k}}) \\ i(\vec{q}\cdot\vec{d})(\epsilon_{b, \vec{k}+\vec{q}} - \epsilon_{a\vec{k}}) & -\vec{q}\cdot\vec{\nabla}_{\vec{k}} \epsilon_{b, \vec{k}+\vec{q}/2} \end{pmatrix} \psi_{\vec{k}+\vec{q}} \right)
+% i\vec{q} \cdot \vec{j}(\vec{q}) \simeq i \cdot \left( -e \sum_{\vec{k}} \psi_{\vec{k}}^\dagger \begin{pmatrix} -\vec{q}\cdot\vec{\nabla}_{\vec{k}} \varepsilon_{a, \vec{k}+\vec{q}/2} & -i(\vec{q}\cdot\vec{d})(\varepsilon_{b, \vec{k}+\vec{q}} - \varepsilon_{a\vec{k}}) \\ i(\vec{q}\cdot\vec{d})(\varepsilon_{b, \vec{k}+\vec{q}} - \varepsilon_{a\vec{k}}) & -\vec{q}\cdot\vec{\nabla}_{\vec{k}} \varepsilon_{b, \vec{k}+\vec{q}/2} \end{pmatrix} \psi_{\vec{k}+\vec{q}} \right)
 % \end{equation}
 \begin{tcolorbox}
 \begin{equation}
-\vec{j}_e(\vec{q}) \simeq -e \sum_{\vec{k}} \psi_{\vec{k}-\vec{q}}^\dagger \begin{pmatrix} \vec{\nabla}_{\vec{k}} \epsilon_{a,\vec{k}-\vec{q}/2} & i\vec{d}(\epsilon_{a, \vec{k}-\vec{q}} - \epsilon_{b\vec{k}}) \\ i\vec{d}(\epsilon_{b, \vec{k}-\vec{q}} - \epsilon_{a\vec{k}}) & \vec{\nabla}_{\vec{k}} \epsilon_{b,\vec{k}-\vec{q}/2} \end{pmatrix} \psi_{\vec{k}}\,.
+\vec{j}_e(\vec{q}) \simeq -e \sum_{\vec{k}} \psi_{\vec{k}-\vec{q}}^\dagger \begin{pmatrix} \vec{\nabla}_{\vec{k}} \varepsilon_{a,\vec{k}-\vec{q}/2} & i\vec{d}(\varepsilon_{a, \vec{k}-\vec{q}} - \epsilon_{b\vec{k}}) \\ i\vec{d}(\varepsilon_{b, \vec{k}-\vec{q}} - \varepsilon_{a\vec{k}}) & \vec{\nabla}_{\vec{k}} \varepsilon_{b,\vec{k}-\vec{q}/2} \end{pmatrix} \psi_{\vec{k}}\,.
 \end{equation}
 \end{tcolorbox}
 Od tod splošna Hamiltonka v prvem redu:
@@ -764,18 +699,19 @@ dipolni moment je neničeln za liho-sode kombinacije orbital in plane, tega gled
 \begin{equation}
 \vec{d} = \langle \phi_a | \vec{x} | \phi_b \rangle = \int \phi_a^*(\vec{x}) \, \vec{x} \, \phi_b(\vec{x}) \, \dd{\vec{x}}
 \end{equation}
+\subsubsection{Model prostih elektronov in sklopitev s fotoni}
 
 Kaj pa če gledamo namesto tight binding, proste elektrone, torej 
 \begin{equation}
-\epsilon_{\gamma \vec{k}} = \pm \frac{G}{2} \mp 2t (\cos k_x + \cos k_y) \quad \text{za}\quad k_x, k_y \sim 0
+\varepsilon_{\gamma \vec{k}} = \pm \frac{G}{2} \mp 2t (\cos k_x + \cos k_y) \quad \text{za}\quad k_x, k_y \sim 0
 \end{equation}
 od tod
 \begin{equation}
-\epsilon_{\gamma \vec{k}} \approx \pm \frac{G}{2} \mp 2t \left( 1 - \frac{k_x^2}{2} + 1 - \frac{k_y^2}{2} \right) = \pm \left( \frac{G}{2} - 4t \right) \pm t (k_x^2 + k_y^2) = \pm (\epsilon^0 + t \vec{k} \cdot \vec{k})
+\varepsilon_{\gamma \vec{k}} \approx \pm \frac{G}{2} \mp 2t \left( 1 - \frac{k_x^2}{2} + 1 - \frac{k_y^2}{2} \right) = \pm \left( \frac{G}{2} - 4t \right) \pm t (k_x^2 + k_y^2) = \pm (\varepsilon^0 + t \vec{k} \cdot \vec{k})
 \end{equation}
 Torej je Hamiltonka
 \begin{equation}
-H_e = \sum_{\gamma, \vec{k}} \left( \epsilon_{\gamma}^0+ t_\gamma \vec{k}^2 \right) c_{\gamma,\vec{k}}^\dagger c_{\gamma,\vec{k}}
+H_e^{(0)} = \sum_{\gamma, \vec{k}} \left( \varepsilon_{\gamma}^0+ t_\gamma \vec{k}^2 \right) c_{\gamma,\vec{k}}^\dagger c_{\gamma,\vec{k}}
 \end{equation}
 Na drug način lahko poračunamo tok, ker razvijemo
 \begin{equation}
