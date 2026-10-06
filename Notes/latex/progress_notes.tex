@@ -615,14 +615,6 @@ z negativnim argumentom je potem elektronska gostota do dipolnega člena (upošt
 Zdaj poračunamo komutator, da dobimo tok. \textbf{Lahko vzamemo $H_e^0$, ker za local $V$ se cleni z $\Delta_k \to \Delta$ pokrajsajo!!}, načeloma pa (nisem še preveru, z dipolnim členom ne komutira). Delam z vektorji $\psi_k = \begin{pmatrix} c_{a, \vec{k}} & c_{b, \vec{k}}\end{pmatrix}^\mathsf{T}$: 
 
 
-
-% \begin{equation}
-% H_e = \sum_i \left( \epsilon_a^{(0)} c_{ai}^\dagger c_{ai} + \epsilon_b^{(0)} c_{bi}^\dagger c_{bi} \right) - \sum_{\langle i, j \rangle} \left( t_a c_{aj}^\dagger c_{ai} + t_b c_{bj}^\dagger c_{bi} + \text{h.c.} \right) + V \sum_i n_{ai} n_{bi}
-% \end{equation}
-
-% \begin{equation}
-% H_e^0 = \sum_{\vec{k}, \gamma \in \{a,b\}} \varepsilon_{\vec{k}\gamma} c_{\vec{k}\gamma}^\dagger c_{\vec{k}\gamma}
-% \end{equation}
 \begin{equation}
 [H_e^{(0)}, \rho(\vec{q})] =  -e \sum_{\vec{k}, \vec{k'}} \left[ \psi_{\vec{k}}^\dagger \begin{pmatrix} \varepsilon_{a,\vec{k}} & 0 \\ 0 & \varepsilon_{b,\vec{k}} \end{pmatrix} \psi_{\vec{k}}, \psi_{\vec{k'} - \vec{q}}^\dagger \begin{pmatrix} 1 & -i\vec{q}\cdot\vec{d} \\ -i\vec{q}\cdot\vec{d} & 1 \end{pmatrix} \psi_{\vec{k'}} \right]
 \end{equation}
@@ -636,19 +628,14 @@ od tod
 \end{equation}
 da izrazimo tok, naredimo približek, da prispevajo le majhni $\vec{q}\to 0$, zato:
 \begin{equation}
-\varepsilon_{a, \vec{k}+\vec{q}}- \varepsilon_{a,\vec{k}}   \simeq - \vec{q} \cdot \vec{\nabla}_{\vec{k}} \varepsilon_{\vec{k}+\vec{q}/2}\,,
+\varepsilon_{a, \vec{k}+\vec{q}}- \varepsilon_{a,\vec{k}}   \simeq  \vec{q} \cdot \vec{\nabla}_{\vec{k}} \varepsilon_{\vec{k}+\vec{q}/2}\,,
 \end{equation}
 kar drži točno za proste elektrone in približno za tight binding disperzije. 
-% Note (baje): 
-% For any tight-binding dispersion $\varepsilon_{\mathbf{k}}$, the difference $\varepsilon_{\mathbf{k}} - \varepsilon_{\mathbf{k}-\mathbf{q}}$ can always be written exactly (without taking derivatives) as an inner product:$$\varepsilon_{\mathbf{k}} - \varepsilon_{\mathbf{k}-\mathbf{q}} = \mathbf{q} \cdot \boldsymbol{\mathcal{V}}(\mathbf{k}, \mathbf{q})$$where $\boldsymbol{\mathcal{V}}(\mathbf{k}, \mathbf{q})$ is the finite-momentum velocity kernel defined as:$$\boldsymbol{\mathcal{V}}(\mathbf{k}, \mathbf{q}) = \int_0^1 d\lambda \, \boldsymbol{\nabla}_{\mathbf{k}} \varepsilon_{\mathbf{k} - (1-\lambda)\mathbf{q}}$$ ... ce ne expandamo za $\vec{q}\to 0$. 
 In general ce ne expandamo: 
 \begin{align}
   \mathbf{j}_e(\mathbf{q}) = -\frac{e\mathbf{q}}{\Vert{}\mathbf{q}\Vert{}^2} \sum_{\mathbf{k}} \psi_\mathbf{k}^\dagger {M}(\mathbf{k}, \mathbf{q}) \psi_{\mathbf{k}+\mathbf{q}} \;+\; \mathbf{q} \times \mathbf{C}(\mathbf{q})
 \end{align}
 kjer so $\mathbf{C}(\mathbf{q})$ arbitrarna vektorska polja (tokovi brez divergence, magnetizacijski tokovi). Ce pa naredimo ta priblizek pa dobimo za tok v splošnem, indekse zamaknemo za $-\vec{q}$: 
-% \begin{equation}
-% i\vec{q} \cdot \vec{j}(\vec{q}) \simeq i \cdot \left( -e \sum_{\vec{k}} \psi_{\vec{k}}^\dagger \begin{pmatrix} -\vec{q}\cdot\vec{\nabla}_{\vec{k}} \varepsilon_{a, \vec{k}+\vec{q}/2} & -i(\vec{q}\cdot\vec{d})(\varepsilon_{b, \vec{k}+\vec{q}} - \varepsilon_{a\vec{k}}) \\ i(\vec{q}\cdot\vec{d})(\varepsilon_{b, \vec{k}+\vec{q}} - \varepsilon_{a\vec{k}}) & -\vec{q}\cdot\vec{\nabla}_{\vec{k}} \varepsilon_{b, \vec{k}+\vec{q}/2} \end{pmatrix} \psi_{\vec{k}+\vec{q}} \right)
-% \end{equation}
 \begin{tcolorbox}
 \begin{equation}
 \vec{j}_e(\vec{q}) \simeq -e \sum_{\vec{k}} \psi_{\vec{k}-\vec{q}}^\dagger \begin{pmatrix} \vec{\nabla}_{\vec{k}} \varepsilon_{a,\vec{k}-\vec{q}/2} & i\vec{d}(\varepsilon_{a, \vec{k}-\vec{q}} - \epsilon_{b\vec{k}}) \\ i\vec{d}(\varepsilon_{b, \vec{k}-\vec{q}} - \varepsilon_{a\vec{k}}) & \vec{\nabla}_{\vec{k}} \varepsilon_{b,\vec{k}-\vec{q}/2} \end{pmatrix} \psi_{\vec{k}}\,.
@@ -684,7 +671,7 @@ Iz tega imamo pri $z = L/2$ možne sklopitve glede na model ($\vec{d} = d(\cos\t
 \centering
 \begin{tabular}{|l|l|l|l|}
   \hline
-\textbf{Mode} & $\vec{\bm{\epsilon}} \cdot \vec{v}_\gamma\left(\vec{k} + \frac{\vec{q}}{2}\right)$ & $\vec{\bm{\epsilon}} \cdot \vec{d}$, $\vec{d}$ in-plane & $\vec{\bm{\epsilon}} \cdot \vec{d}$, $\vec{d} \parallel \hat{\mathbf{z}}$ \\
+\textbf{Nacin} & $\vec{\bm{\epsilon}} \cdot \vec{v}_\gamma\left(\vec{k} + \frac{\vec{q}}{2}\right)$ & $\vec{\bm{\epsilon}} \cdot \vec{d}$, $\vec{d}$ in plane & $\vec{\bm{\epsilon}} \cdot \vec{d}$, $\vec{d} \parallel \hat{\mathbf{z}}$ \\
   \hline
 
 \textbf{TE} & $2 t_\gamma \left( -\sin\varphi \sin\left(k_x + \frac{q_x}{2}\right) + \cos\varphi \sin\left(k_y + \frac{q_y}{2}\right) \right)$ & $d \sin(\theta - \varphi)$ & $0$ \\
@@ -731,7 +718,56 @@ kar bi dobili tudi iz bolj splošne relacije. V tem primeru dobimo enako kot Cur
 H_{e\gamma}^{(1)} = \frac{e}{m} \sum_{\vec{k}, \vec{q}, \lambda}  \frac{1}{\sqrt{2\mathcal{V} \epsilon_0 \omega_{\vec{q}, \lambda}}} \left( \vec{k} + \frac{\vec{q}}{2} \right) \cdot \bm{\epsilon}_{\vec{q}\lambda} \, \psi_{\vec{k}+\vec{q}}^\dagger \psi_{\vec{k}} \left( a_{\vec{q}\lambda} + a_{-\vec{q}\lambda}^\dagger \right)
 \end{equation}
 \end{tcolorbox}
+\subsubsection{Drugi red sklopitve za t.b.}
+Zacnemo spet:
+\begin{align}
+  H_e^{(0)} = \sum_{\gamma, j} \varepsilon_\gamma^{(0)} c_{\gamma j}^\dagger c_{\gamma j}^{\vphantom{\dagger}}- \sum_{j, \bm{\delta}, \gamma} t_\gamma \left( c_{\gamma j}^\dagger c_{\gamma j + \bm{\delta}} + \text{h.c.} \right)
+\end{align}
+v prisotnosti polja dobi prekrivalni integral fazo: 
+\begin{align}
+  t_\gamma \to t_\gamma e^{i \theta_{j\bm{\delta}}} \quad\quad \theta_{j\bm{\delta}} = e \int_{\vec{R}_j}^{\vec{R}_j + \bm{\delta}} \vec{A}(\vec{r}, t) \cdot d\vec{r}
+\end{align}
+od tod
+\begin{align}
+  H_e^{(0)}[\vec{A}] = \sum_{\gamma, j} \varepsilon_\gamma^{(0)} c_{\gamma j}^\dagger c_{\gamma j}^{\vphantom{\dagger}}- \sum_{j, \bm{\delta}, \gamma} t_\gamma \left( e^{i \theta_{j\bm{\delta}}} c_{\gamma j}^\dagger c_{\gamma j + \bm{\delta}} + e^{-i \theta_{j\bm{\delta}}} c_{\gamma j + \bm{\delta}}^\dagger c_{\gamma j}^{\vphantom{\dagger}}\right)
+\end{align}
+od kjer razvijemo do drugega reda, prvi red bi moral biti isti kot gor (razen dipolov)
+\begin{align}
+  e^{i \theta} = 1 + \underbrace{i \theta}_{\mathcal{O}(e\vec{A})} \underbrace{-\frac{1}{2}\theta^2}_{\mathcal{O}(e^2 A^2)}
+\end{align}
+vstavimo 
+\begin{align}
+  c_{\gamma j}^{\vphantom{\dagger}}= \frac{1}{\sqrt{\mathcal{V}}} \sum_{\vec{k}} e^{i \vec{k} \cdot \vec{R}_j} c_{\gamma \vec{k}}
+\end{align}
+in približek da se polje ne spremeni velko do najbližjih sosedov
+\begin{align}
+  \int_{\vec{R}_j}^{\vec{R}_j + \bm{\delta}} \vec{A}(\vec{r}, t) \cdot d\vec{r} \approx \vec{A}\left(\vec{R}_j + \frac{\bm{\delta}}{2}\right) \cdot \bm{\delta} \quad\quad (\vec{A} \text{\,se ne spremeni veliko znotraj celice+midpoint approx.})
+\end{align}
+računamo 
+\begin{align}
+  H_{e\gamma}^{(2)} &= -\sum_{j, \bm{\delta}, \gamma} t_\gamma \left( -\frac{\theta_{j\bm{\delta}}^2}{2} \right) \left( c_{\gamma j}^\dagger c_{\gamma j + \bm{\delta}} + c_{\gamma j + \bm{\delta}}^\dagger c_{\gamma j}^{\vphantom{\dagger}}\right) = \\ &= \sum_{j, \bm{\delta}, \gamma} t_\gamma \cdot \frac{e^2}{2} \int_{\vec{R}_j}^{\vec{R}_j + \bm{\delta}} \vec{A}(\vec{r}, t) \cdot d\vec{r} \int_{\vec{R}_j}^{\vec{R}_j + \bm{\delta}} \vec{A}(\vec{r}, t) \cdot d\vec{r} \left( c_{\gamma j}^\dagger c_{\gamma j + \bm{\delta}} + \text{h.c.} \right) = \\ &= \sum_{j, \bm{\delta}, \gamma} t_\gamma \frac{e^2}{2} \left( \sum_{\vec{q}, \lambda} \frac{1}{\sqrt{2\varepsilon_0 \mathcal{V} \omega_{\vec{q}\lambda}}} \left( \vec{\varepsilon}_{\vec{q}\lambda} \cdot \bm{\delta} \right) e^{i \vec{q} \cdot \left(\vec{R}_j + \frac{\bm{\delta}}{2}\right)} \left( b_{\vec{q}\lambda} + b_{-\vec{q}\lambda}^\dagger \right) \right) \left( \sum_{\vec{q}', \lambda'} \frac{1}{\sqrt{2\varepsilon_0 \mathcal{V} \omega_{\vec{q}'\lambda'}}} \left( \vec{\varepsilon}_{\vec{q}'\lambda'} \cdot \bm{\delta} \right) e^{i \vec{q}' \cdot \left(\vec{R}_j + \frac{\bm{\delta}}{2}\right)} \left( b_{\vec{q}'\lambda'} + b_{-\vec{q}'\lambda'}^\dagger \right) \right) \\ &\quad \cdot \sum_{\vec{k}, \vec{k}'} \frac{1}{\mathcal{V}} c_{\gamma \vec{k}'}^\dagger c_{\gamma \vec{k}} e^{-i(\vec{k}' - \vec{k}) \cdot \vec{R}_j} \left( e^{i \vec{k} \cdot \bm{\delta}} + e^{i \vec{k}' \cdot \bm{\delta}} \right)
+\end{align}
+ven pade ohranitev momenta za dvofotonske procese
+\begin{align}
+  \sum_j \frac{1}{\mathcal{V}} e^{i \left( \vec{q} + \vec{q}' - \vec{k}' + \vec{k} \right) \cdot \vec{R}_j} = \delta_{\vec{k}',\, \vec{k} + \vec{q} + \vec{q}'}
+\end{align}
+kar da na koncu 
+\begin{align}
+  = \sum_{\substack{\gamma, \vec{k}, \vec{q}, \vec{q}' \\ \lambda, \lambda', \bm{\delta}}} t_\gamma \frac{e^2}{2} \frac{1}{2\varepsilon_0 \mathcal{V} \sqrt{\omega_{\vec{q}\lambda} \omega_{\vec{q}'\lambda'}}} \left( \vec{\varepsilon}_{\vec{q}\lambda} \cdot \bm{\delta} \right) \left( \vec{\varepsilon}_{\vec{q}'\lambda'} \cdot \bm{\delta} \right) \left( b_{\vec{q}\lambda} + b_{-\vec{q}\lambda}^\dagger \right) \left( b_{\vec{q}'\lambda'} + b_{-\vec{q}'\lambda'}^\dagger \right) c_{\gamma, \vec{k} + \vec{q} + \vec{q}'}^\dagger c_{\gamma \vec{k}} \\ \cdot \left( e^{i \vec{k} \cdot \bm{\delta}} + e^{-i (\vec{k} + \vec{q} + \vec{q}') \cdot \bm{\delta}} \right) \cdot e^{i (\vec{q} + \vec{q}') \cdot \frac{\bm{\delta}}{2}}
+\end{align}
+POenostavimo zadnji člen v kosinus:
+\begin{tcolorbox}
+\begin{align}
+  H_{e\gamma}^{(2)} &= \sum_{\substack{\mathbf{k}, \mathbf{q}, \mathbf{q}' \\ \lambda, \lambda'}} \psi_{\mathbf{k}+\mathbf{q}+\mathbf{q}'}^\dagger {M^{\lambda \lambda'}(\mathbf{k}, \mathbf{q}, \mathbf{q}')} \psi_{\mathbf{k}} \cdot (a_{\mathbf{q},\lambda} + a_{-\mathbf{q},\lambda}^\dagger)(a_{\mathbf{q}',\lambda'} + a_{-\mathbf{q}',\lambda'}^\dagger) \\[8pt]
+  M^{\lambda \lambda'}(\mathbf{k}, \mathbf{q}, \mathbf{q}') &=  \sum_{\boldsymbol{\delta}} \frac{e^2} {2\varepsilon_0\mathcal V \sqrt{\omega_{\mathbf q,\lambda}\omega_{\mathbf q',\lambda'}}} (\boldsymbol{\epsilon}_{\mathbf{q},\lambda} \cdot \boldsymbol{\delta}) (\boldsymbol{\epsilon}_{\mathbf{q}',\lambda'} \cdot \boldsymbol{\delta})\cos\left(\left(\mathbf{k} + \frac{\mathbf{q}+\mathbf{q}'}{2}\right) \cdot \boldsymbol{\delta}\right) \begin{pmatrix} t_a & 0 \\ 0 & t_b \end{pmatrix}
+\end{align}
+\end{tcolorbox}
+Za n.n. v square latticu eksplicitno: 
+\begin{align}
+  M^{\lambda\lambda'}(\mathbf k,\mathbf q,\mathbf q') = \frac{e^2} {2\varepsilon_0\mathcal V \sqrt{\omega_{\mathbf q,\lambda}\omega_{\mathbf q',\lambda'}}} \left[ \epsilon_{\mathbf q,\lambda}^{x} \epsilon_{\mathbf q',\lambda'}^{x} \cos\!\left(k_x+\frac{q_x+q_x'}2\right) + \epsilon_{\mathbf q,\lambda}^{y} \epsilon_{\mathbf q',\lambda'}^{y} \cos\!\left(k_y+\frac{q_y+q_y'}2\right) \right] \begin{pmatrix}t_a&0\\0&t_b\end{pmatrix}.
+\end{align}
 
+\textbf{A je to consistent z $\mathcal{O}(e\vec A)?$ Če ja, kako dobimo dipole notri v te elemente, al se sam ne sklapljajo nikoli?}
 \nocite{*}
 \printbibliography
 \end{document} 
