@@ -272,19 +272,19 @@ Uporabimo FT še na celotnem Hamiltonjanu
 \end{align}
 oziroma: 
 \begin{align}
-  H^{\text{MF}} = \sum_k \begin{pmatrix} c_{a,k}^\dagger & c_{b,k}^\dagger \end{pmatrix} \begin{pmatrix} {\epsilon}^H_{a,k} & \Delta^* \\ \Delta & {\epsilon}^H_{b,k} \end{pmatrix} \begin{pmatrix} c_{a,k} \\ c_{b,k} \end{pmatrix} + \text{konst.}\,,
+  H^{\text{MF}} = \sum_k \begin{pmatrix} c_{a,k}^\dagger & c_{b,k}^\dagger \end{pmatrix} \begin{pmatrix} {\varepsilon}^H_{a,k} & \Delta^* \\ \Delta & {\varepsilon}^H_{b,k} \end{pmatrix} \begin{pmatrix} c_{a,k} \\ c_{b,k} \end{pmatrix} + \text{konst.}\,,
 \end{align}
-kjer definiramo Hartree energiji ${\epsilon}^H_{a(b),k} = \varepsilon_{a(b),k} + V n_{b(a)}$. Transformacija v diagonalno  / Bogoljubov bazo je podobna kot pri BCS, le da ne meša kreatorjev in anihilatorjev / ohranja število delcev:
+kjer definiramo Hartree energiji ${\varepsilon}^H_{a(b),k} = \varepsilon_{a(b),k} + V n_{b(a)}$. Transformacija v diagonalno  / Bogoljubov bazo je podobna kot pri BCS, le da ne meša kreatorjev in anihilatorjev / ohranja število delcev:
 \begin{align} \label{EI_uintana_rotacija}
   \begin{pmatrix} c_{a,k} \\ c_{b,k} \end{pmatrix} = \begin{pmatrix} u_k & v_k \\ -v_k & u_k \end{pmatrix} \begin{pmatrix} \alpha_k \\ \beta_k \end{pmatrix}
 \end{align}
 od tod po enakem postopku kot prej dobimo energiji kvazidelcev
 \begin{align}
-E_{\alpha(\beta)}(k) = \frac{{\epsilon}^H_{a,k} + {\epsilon}^H_{b,k}}{2} \pm \sqrt{\left(\frac{{\epsilon}^H_{a,k} - {\epsilon}^H_{b,k}}{2}\right)^2 + \vert{}\Delta\vert{}^2} := \eta_k \pm \sqrt{\xi_k^2 +\Delta^2}
+E_{\alpha(\beta)}(k) = \frac{{\varepsilon}^H_{a,k} + {\varepsilon}^H_{b,k}}{2} \pm \sqrt{\left(\frac{{\varepsilon}^H_{a,k} - {\varepsilon}^H_{b,k}}{2}\right)^2 + \vert{}\Delta\vert{}^2} := \eta_k \pm \sqrt{\xi_k^2 +\Delta^2}
 \end{align}
 Za bookkeeping: 
 \begin{align}
-  \left( \frac{\epsilon_a^H - \epsilon_b^H}{2} \right)& \sin \theta_k + \Delta \cos \theta_k = 0 \implies \tan \theta_k = \frac{-2 \Delta}{\epsilon_a^H - \epsilon_b^H} = \frac{-\Delta}{\xi_k}\\
+  \left( \frac{\varepsilon_a^H - \varepsilon_b^H}{2} \right)& \sin \theta_k + \Delta \cos \theta_k = 0 \implies \tan \theta_k = \frac{-2 \Delta}{\varepsilon_a^H - \varepsilon_b^H} = \frac{-\Delta}{\xi_k}\\
   u_k v_k &= -\frac{\sin \theta_k}{2}\,.
 \end{align}
 Za samousklajeno enačbo zdaj potrebujemo
@@ -298,7 +298,7 @@ od tod
 Opomba, lahko definiramo tudi $n = n_a + n_b = \text{konst.} = 1$ in $n_a-n_b =: m$ od tod sledi
 
 \begin{align}
-  H^{\text{MF}} = \sum_k \left( \left[\varepsilon_{a,k} + \frac{V}{2}n - \frac{V}{2}m\right] c_{a,k}^\dagger c_{a,k} + \left[\varepsilon_{b,k} + \frac{V}{2}n -\frac{V}{2}m\right] c_{b,k}^\dagger c_{b,k} + \Delta^* c_{a,k}^\dagger c_{b,k} + \Delta c_{b,k}^\dagger c_{a,k} \right)
+  H^{\text{MF}} = \sum_k \left( \left[\varepsilon_{a,k} + \frac{V}{2}n - \frac{V}{2}m\right] c_{a,k}^\dagger c_{a,k} + \left[\varepsilon_{b,k} + \frac{V}{2}n +\frac{V}{2}m\right] c_{b,k}^\dagger c_{b,k} + \Delta^* c_{a,k}^\dagger c_{b,k} + \Delta c_{b,k}^\dagger c_{a,k} \right)
 \end{align}
 od koder je v 2D Hartree gap enak: 
 \begin{align}
@@ -322,6 +322,9 @@ Velja še
 \begin{align}
   u_k^2 &= \frac{1}{2}\left(1 + \frac{\xi_k}{\sqrt{\Delta^2 + \xi_k^2}}\right) \\
   v_k^2 &= \frac{1}{2}\left(1 - \frac{\xi_k}{\sqrt{\Delta^2 + \xi_k^2}}\right)
+\end{align}
+\begin{align}
+  m = n_a-n_b = \frac{1}{N}\sum_{\vec{k}} \frac{\xi_\vec{k}}{\sqrt{\xi_\vec{k}^2+\Delta^2}} (f(E_\alpha) - f(E_{\beta}))
 \end{align}
 \subsection{Numerika/psevdokoda}
 
@@ -800,12 +803,12 @@ kar prepišemo v diagonalno bazo za EI s transformacijo \eqref{EI_uintana_rotaci
 \end{align} 
 Torej je (indeks veje, oziroma polarizacije $\lambda$ in vsoto bom spuščal v večini primerov):
 \begin{align}
-  H = \sum_{\substack{\mathbf{k}, \mathbf{q}, \lambda \\ \gamma, \gamma'}} &d_{\gamma,\mathbf{k}+\mathbf{q}}^\dagger {\tilde{M}_{\gamma,\gamma'}(\mathbf{k}, \mathbf{q})} d_{\gamma', \mathbf{k}} \cdot (a_{\mathbf{q},\lambda} + a_{-\mathbf{q},\lambda}^\dagger)  \\[8pt]
-  \tilde{M}(\mathbf{k}, \mathbf{q}) &= U_{\vec k + \vec{q}}^\dagger M(\mathbf{k}, \mathbf{q}) U_{\vec{k}}
+  H = \sum_{\substack{\mathbf{k}, \mathbf{q}, \lambda \\ \gamma, \gamma'}} &d_{\gamma,\mathbf{k}+\mathbf{q}}^\dagger {\widetilde{M}_{\gamma,\gamma'}(\mathbf{k}, \mathbf{q})} d_{\gamma', \mathbf{k}} \cdot (a_{\mathbf{q},\lambda} + a_{-\mathbf{q},\lambda}^\dagger)  \\[8pt]
+  \widetilde{M}(\mathbf{k}, \mathbf{q}) &= U_{\vec k + \vec{q}}^\dagger M(\mathbf{k}, \mathbf{q}) U_{\vec{k}}
 \end{align}
 Izpeljava je z von Neumann enačbo, da dobimo pravilne razširjene resonance, na koncu lahko primejamo s Fermijevim zlatim pravilom. Najprej prepišemo Hamiltonjan v interakcijsko sliko v diagonalni bazi je razvoj
 \begin{align}
-  H_I(t) = \sum_{\substack{\mathbf{k}, \mathbf{q}, \lambda \\ \gamma, \gamma'}} &d_{\gamma,\mathbf{k}+\mathbf{q}}^\dagger {\tilde{M}_{\gamma,\gamma'}(\mathbf{k}, \mathbf{q})} d_{\gamma', \mathbf{k}} \cdot \left(a_{\mathbf{q},\lambda}(t) + a_{-\mathbf{q},\lambda}^\dagger(t)\right) e^{i\Omega t} \\[8pt]
+  H_I(t) = \sum_{\substack{\mathbf{k}, \mathbf{q}, \lambda \\ \gamma, \gamma'}} &d_{\gamma,\mathbf{k}+\mathbf{q}}^\dagger {\widetilde{M}_{\gamma,\gamma'}(\mathbf{k}, \mathbf{q})} d_{\gamma', \mathbf{k}} \cdot \left(a_{\mathbf{q},\lambda}(t) + a_{-\mathbf{q},\lambda}^\dagger(t)\right) e^{i\Omega t} \\[8pt]
   \Omega &= E_{\gamma, \vec{k} + \vec q} - E_{\gamma', \vec k}
 \end{align}
 Sledimo enačbi \eqref{VN-integrated}, kjer zamenjamo $t-s=t'$ in vzamemo $\text{Tr}_S(\hat{n}_{\lambda, \vec p} \bullet)$ na obeh straneh in upoštevamo cikličnost sledi:
@@ -822,7 +825,7 @@ oziroma:
 \end{align}
 Prvi komutator je tako: 
 \begin{align}
-  [n_{\lambda \vec{p}}, H_{I}(t)] = \sum_{\substack{\vec{k}, \vec{q} \\ \gamma, \gamma'}} \tilde{M}_{\gamma \gamma'}{(\vec{k}, \vec{q})} \overbrace{d_{\gamma \vec{k}+\vec{q}}^\dagger d_{\gamma' \vec{k}}}^{S} e^{i \Omega t} \overbrace{\left(a_{\vec{q} \lambda} + a_{-\vec{q} \lambda}^\dagger\right)}^{B} \left(\delta_{\lambda \gamma} \delta_{\vec{p}, \vec{k}+\vec{q}} - \delta_{\lambda \gamma'} \delta_{\vec{p}, \vec{k}}\right)
+  [n_{\lambda \vec{p}}, H_{I}(t)] = \sum_{\substack{\vec{k}, \vec{q} \\ \gamma, \gamma'}} \widetilde{M}_{\gamma \gamma'}{(\vec{k}, \vec{q})} \overbrace{d_{\gamma \vec{k}+\vec{q}}^\dagger d_{\gamma' \vec{k}}}^{S} e^{i \Omega t} \overbrace{\left(a_{\vec{q} \lambda} + a_{-\vec{q} \lambda}^\dagger\right)}^{B} \left(\delta_{\lambda \gamma} \delta_{\vec{p}, \vec{k}+\vec{q}} - \delta_{\lambda \gamma'} \delta_{\vec{p}, \vec{k}}\right)
 \end{align}
 za zunanji komutator nas zanimajo samo operatorji: 
 \begin{align}
@@ -830,7 +833,7 @@ za zunanji komutator nas zanimajo samo operatorji:
 \end{align}  
 oziroma bolj natančno (vzamemo še sled, ki se faktorizira za sistem in kopel)
 \begin{align}
-  \sum_{\substack{{\vec{k}, \vec{q}, \vec{k}', \vec{q}'} \\ {\gamma, \gamma', \omega, \omega'}}}  & \tilde{M}_{\gamma \gamma'}(\vec{k}, \vec{q}) \tilde{M}_{\omega \omega'}(\vec{k}', \vec{q}') \left( \delta_{\lambda \gamma} \delta_{\vec{p}, \vec{k}+\vec{q}} - \delta_{\lambda \gamma'} \delta_{\vec{p}, \vec{k}} \right) \cdot \nonumber \\
+  \sum_{\substack{{\vec{k}, \vec{q}, \vec{k}', \vec{q}'} \\ {\gamma, \gamma', \omega, \omega'}}}  & \widetilde{M}_{\gamma \gamma'}(\vec{k}, \vec{q}) \widetilde{M}_{\omega \omega'}(\vec{k}', \vec{q}') \left( \delta_{\lambda \gamma} \delta_{\vec{p}, \vec{k}+\vec{q}} - \delta_{\lambda \gamma'} \delta_{\vec{p}, \vec{k}} \right) \cdot \nonumber \\
   & \cdot \Bigg[ \left\langle d_{\gamma \vec{k}+\vec{q}}^\dagger d_{\gamma' \vec{k}}  d_{\omega \vec{k}'+\vec{q}'}^\dagger d_{\omega' \vec{k}'} \right\rangle e^{i \Omega t} e^{i \Omega' t'} \left\langle \left(a_{\vec{q} \lambda} + a_{-\vec{q} \lambda}^\dagger\right)(t) \left(a_{\vec{q}' \lambda'} + a_{-\vec{q}' \lambda'}^\dagger\right)(t') \right\rangle - \nonumber \\
   & - \left\langle d_{\omega \vec{k}'+\vec{q}'}^\dagger d_{\omega' \vec{k}'}  d_{\gamma \vec{k}+\vec{q}}^\dagger d_{\gamma' \vec{k}} \right\rangle e^{i \Omega' t'} e^{i \Omega t} \left\langle \left(a_{\vec{q}' \lambda'} + a_{-\vec{q}' \lambda'}^\dagger\right)(t') \left(a_{\vec{q} \lambda} + a_{-\vec{q} \lambda}^\dagger\right)(t) \right\rangle \Bigg]\,,
 \end{align}
@@ -844,7 +847,7 @@ kjer mora veljati $\vec{q}' = -\vec{q}$ in $\lambda=\lambda'$ (note, ta lambda n
 \begin{align}
   \langle d_A^\dagger d_B d_C^\dagger d_D \rangle &= \langle d_A^\dagger d_B \rangle \langle d_C^\dagger d_D \rangle + \langle d_A^\dagger d_D \rangle \langle d_B d_C^\dagger \rangle = \\
   &= {n_A n_C \delta_{AB} \delta_{CD}} + n_A (1 - n_C) \delta_{BC} \delta_{AD} \\
-  &\hookrightarrow \delta_{AB} \mapsto \delta_{\gamma \gamma'} \delta_{\vec{k}+\vec{q}, \vec{k}} = 0 \quad \text{ker se nič ne zgodi razen za } \vec{q} = 0
+  &\hookrightarrow \delta_{AB} \mapsto \delta_{\gamma \gamma'} \delta_{\vec{k}+\vec{q}, \vec{k}} = 0 \quad \text{odpade zaradi razlike delta funkcij}
 \end{align}
 oziroma (prvi člen je nič, ker se nič ne zgodi/ ni sipanje/ga ignoriramo, ker smo fiziki), upoštevamo še $\vec{q}' = -\vec{q}$:
 \begin{align}
@@ -861,15 +864,15 @@ Vse skupaj je treba še integrirati, dodamo regulator, da pole izmaknemo iz osi:
 oziroma skupaj: 
 \begin{align}
   \partial_t n_{\lambda, \vec p} &= -\int_{0}^{t\to \infty} \sum_{\substack{\vec{k}, \vec{q} \\ \gamma, \gamma'}} \left(\delta_{\lambda \gamma} \delta_{\vec{p}, \vec{k}+\vec{q}} - \delta_{\lambda \gamma'} \delta_{\vec{p}, \vec{k}}\right) \cdot \\ 
-  \cdot &\left( n_{\gamma, \vec{k}+\vec{q}} (1 - n_{\gamma', \vec{k}}) \tilde{M}_{\gamma \gamma'}{(\vec{k}, \vec{q})} \tilde{M}_{\gamma' \gamma}(\vec{k}+\vec{q}, -\vec{q}) e^{i \Omega \tau} \left( (N(\omega_{\vec q}) + 1) e^{-i \omega_{\vec q} \tau} + N(\omega_{\vec q}) e^{i \omega_{\vec q} \tau} \right) \right. \\ &\left. - \; n_{\gamma', \vec{k}} (1 - n_{\gamma, \vec{k}+\vec{q}}) \tilde{M}_{\gamma \gamma'}{(\vec{k}, \vec{q})} \tilde{M}_{\gamma' \gamma}{(\vec{k}+\vec{q}, -\vec{q})} e^{i \Omega \tau} \left( (N(\omega_{\vec q}) + 1) e^{i \omega_{\vec q} \tau} + N(\omega_{\vec q}) e^{-i \omega_{\vec q} \tau} \right) \right) \, \dd{\tau}
+  \cdot &\left( n_{\gamma, \vec{k}+\vec{q}} (1 - n_{\gamma', \vec{k}}) \widetilde{M}_{\gamma \gamma'}{(\vec{k}, \vec{q})} \widetilde{M}_{\gamma' \gamma}(\vec{k}+\vec{q}, -\vec{q}) e^{i \Omega \tau} \left( (N(\omega_{\vec q}) + 1) e^{-i \omega_{\vec q} \tau} + N(\omega_{\vec q}) e^{i \omega_{\vec q} \tau} \right) \right. \\ &\left. - \; n_{\gamma', \vec{k}} (1 - n_{\gamma, \vec{k}+\vec{q}}) \widetilde{M}_{\gamma \gamma'}{(\vec{k}, \vec{q})} \widetilde{M}_{\gamma' \gamma}{(\vec{k}+\vec{q}, -\vec{q})} e^{i \Omega \tau} \left( (N(\omega_{\vec q}) + 1) e^{i \omega_{\vec q} \tau} + N(\omega_{\vec q}) e^{-i \omega_{\vec q} \tau} \right) \right) \, \dd{\tau}
 \end{align}
 Iz hermitskosti sledi: 
 \begin{align}
-    \tilde{M}_{\gamma' \gamma}(\vec{k}+\vec{q}, -\vec{q}) = \tilde{M}_{\gamma \gamma'}{(\vec{k}, \vec{q})}^*
+    \widetilde{M}_{\gamma' \gamma}(\vec{k}+\vec{q}, -\vec{q}) = \widetilde{M}_{\gamma' \gamma}{(\vec{k}, \vec{q})}^*
 \end{align}
 ko razpišemo vseh 8 členov z deltami in preimenujemo indekse ostane ($\Omega =  E_{\lambda, \vec p} - E_{\gamma, \vec k}$)
 \begin{align}
-   \partial_t n_{\lambda, \vec p} = -\sum_{\vec{k}, \gamma} \left\vert{} \tilde{M}_{\gamma \lambda} \right\vert{}^2 n_{\lambda \vec{p}} (1 - n_{\gamma \vec{k}}) \left\{ (N_{\vec{p}-\vec{k}} + 1) \left[ D_-(\Omega) + D_+(-\Omega) \right] + N_{\vec{p}-\vec{k}} \left[ D_+(\Omega) + D_-(-\Omega) \right] \right\} + \\ + \sum_{\vec{k}, \gamma} \left\vert{} \tilde{M}_{\lambda \gamma} \right\vert{}^2 (1 - n_{\lambda \vec{p}}) n_{\gamma \vec{k}} \left\{ (N_{\vec{p}-\vec{k}} + 1) \left[ D_+(\Omega) + D_-(-\Omega) \right] + N_{\vec{p}-\vec{k}} \left[ D_-(\Omega) + D_+(-\Omega) \right] \right\} 
+   \partial_t n_{\lambda, \vec p} = -\sum_{\vec{k}, \gamma} \left\vert{} \widetilde{M}_{\gamma \lambda} \right\vert{}^2 n_{\lambda \vec{p}} (1 - n_{\gamma \vec{k}}) \left\{ (N_{\vec{p}-\vec{k}} + 1) \left[ D_-(\Omega) + D_+(-\Omega) \right] + N_{\vec{p}-\vec{k}} \left[ D_+(\Omega) + D_-(-\Omega) \right] \right\} + \\ + \sum_{\vec{k}, \gamma} \left\vert{} \widetilde{M}_{\lambda \gamma} \right\vert{}^2 (1 - n_{\lambda \vec{p}}) n_{\gamma \vec{k}} \left\{ (N_{\vec{p}-\vec{k}} + 1) \left[ D_+(\Omega) + D_-(-\Omega) \right] + N_{\vec{p}-\vec{k}} \left[ D_-(\Omega) + D_+(-\Omega) \right] \right\} 
 \end{align}
 od kjer lahko poenostavimo: 
 \begin{align}
@@ -879,7 +882,7 @@ od kjer lahko poenostavimo:
 oziroma končno:; 
 \begin{tcolorbox}
 \begin{align}
-\partial_t {n}_{\gamma \vec{k}} &= \sum_{\vec{k}', \gamma'} \Gamma_{\gamma' \vec{k}' \to \gamma \vec{k}} n_{\gamma' \vec{k}'} (1 - n_{\gamma \vec{k}}) - \Gamma_{\gamma \vec{k} \to \gamma' \vec{k}'} n_{\gamma \vec{k}} (1 - n_{\gamma' \vec{k}'}) \\ \Gamma_{\gamma' \vec{k}' \to \gamma \vec{k}} &= \left\vert{} \tilde{M}_{\gamma \gamma'}(\vec{k}', \vec{k} -\vec{k}') \right\vert{}^2 \cdot \Big\{ \underbrace{(N(-\Omega) + 1) \mathcal{A}_{\vec{k}-\vec{k}'}(-\Omega)}_{A1} + \underbrace{N(\Omega) \mathcal{A}_{\vec{k}-\vec{k}'}(\Omega)}_{A2} \Big\} \\ \Gamma_{\gamma \vec{k} \to \gamma' \vec{k}'} &= \left\vert{} \tilde{M}_{\gamma \gamma'}(\vec{k}', \vec{k} - \vec{k}') \right\vert{}^2 \cdot \Big\{ \underbrace{(N(\Omega) + 1) \mathcal{A}_{\vec{k}'-\vec{k}}(\Omega)}_{B1} + \underbrace{N(-\Omega) \mathcal{A}_{\vec{k}'-\vec{k}}(-\Omega)}_{B2} \Big\} \\ \Omega &= E_{\gamma \vec{k}} - E_{\gamma' \vec{k}'}, \qquad N(-\Omega) = -1 - N(\Omega)
+\partial_t {n}_{\gamma \vec{k}} &= \sum_{\vec{k}', \gamma'} \Gamma_{\gamma' \vec{k}' \to \gamma \vec{k}} n_{\gamma' \vec{k}'} (1 - n_{\gamma \vec{k}}) - \Gamma_{\gamma \vec{k} \to \gamma' \vec{k}'} n_{\gamma \vec{k}} (1 - n_{\gamma' \vec{k}'}) \\ \Gamma_{\gamma' \vec{k}' \to \gamma \vec{k}} &= \left\vert{} \widetilde{M}_{\gamma \gamma'}(\vec{k}', \vec{k} -\vec{k}') \right\vert{}^2 \cdot \Big\{ \underbrace{(N(-\Omega) + 1) \mathcal{A}_{\vec{k}-\vec{k}'}(-\Omega)}_{A1} + \underbrace{N(\Omega) \mathcal{A}_{\vec{k}-\vec{k}'}(\Omega)}_{A2} \Big\} \\ \Gamma_{\gamma \vec{k} \to \gamma' \vec{k}'} &= \left\vert{} \widetilde{M}_{\gamma \gamma'}(\vec{k}', \vec{k} - \vec{k}') \right\vert{}^2 \cdot \Big\{ \underbrace{(N(\Omega) + 1) \mathcal{A}_{\vec{k}'-\vec{k}}(\Omega)}_{B1} + \underbrace{N(-\Omega) \mathcal{A}_{\vec{k}'-\vec{k}}(-\Omega)}_{B2} \Big\} \\ \Omega &= E_{\gamma \vec{k}} - E_{\gamma' \vec{k}'}, \qquad N(-\Omega) = -1 - N(\Omega)
 \end{align}
 \end{tcolorbox}
 preverimo predznake
@@ -932,7 +935,7 @@ preverimo predznake
       \(\mathrm{B}1\)\par\medskip
       \dg{(v) -- [charged boson] (q)}
          {\vec q=\vec k'-\vec k}
-         {\vec k',\gamma'=f}{\vec k,\gamma=i}{|M|^2}
+         {\vec k',\gamma'}{\vec k,\gamma}{\,|M|^2}
       \[
         \begin{aligned}
           \Omega-\omega_{\vec q}&\simeq0\\
@@ -966,8 +969,141 @@ preverimo predznake
   \end{tabular}
 \end{table}
 
-Tu smo naredili en približek, čeprav dobimo enako kot Curtis. 
+Dobimo enako kot Curtis, čeprav smo fotone obravnavali v približku: za korelatorje oziroma produkte bozonov smo privzeli da imajo točno definirane resonance in dodali regulator na roke. V resnici so fotoni sklopljeni z okolico, kar jim da končno širino v disperziji. Rate matrike lahko še porenostavimo na razlike Lotentzovih vrhov: 
+\begin{align}
+  \Gamma_{\gamma' \vec{k}' \to \gamma \vec{k}} &= | \widetilde{M}_{\gamma \gamma'}(\vec{k}', \vec{k} -\vec{k}') |^2 N(\Omega) \cdot \Big\{\mathcal{A}_{\vec{k}-\vec{k}'}(\Omega) - \mathcal{A}_{\vec{k}-\vec{k}'}(-\Omega) \Big\} \\ \Gamma_{\gamma \vec{k} \to \gamma' \vec{k}'} &= | \widetilde{M}_{\gamma \gamma'}(\vec{k}', \vec{k} - \vec{k}') |^2 (N(\Omega) + 1) \cdot \Big\{ \mathcal{A}_{\vec{k}'-\vec{k}}(\Omega) - \mathcal{A}_{\vec{k}'-\vec{k}}(-\Omega) \Big\} 
+\end{align} 
+od kjer vidimo, da s tem točno zadostimo detaljnemu ravnovesju(?nevem kaj je prevod): 
+\begin{align}
+  \frac{\Gamma_{\gamma' \vec{k}' \to \gamma \vec{k}}}{\Gamma_{\gamma \vec{k} \to \gamma' \vec{k}'}} = \frac{N(\Omega) }{N(\Omega)  +1} = e^{-\Omega /  T}\,.
+\end{align}
+Če vzamemo GGE obliko, za boljšo stabilnost: $n_{\gamma \vec{k}} = 1/(1+\exp(\mu_{\gamma \vec k}))$, potem je 
+\begin{align}
+  \partial_t n_{\gamma \vec{k}} = -n_{\gamma \vec{k}} (1 - n_{\gamma \vec{k}}) \partial_t \mu_{\gamma \vec{k}} = \mathcal{I}_{\gamma \vec{k}}
+\end{align}
+\begin{align}
+  \mathcal{I}_{\gamma \vec{k}} = \sum_{\gamma', \vec{k}'} \left[ \Gamma_{\gamma' \vec{k}' \to \gamma \vec{k}} (1 - n_{\gamma \vec{k}}) n_{\gamma' \vec{k}'} -  \Gamma_{\gamma \vec{k} \to \gamma' \vec{k}'} (1 - n_{\gamma' \vec{k}'}) n_{\gamma \vec{k}} \right]
+\end{align}
+\begin{align}
+  \partial_t \mu_{\gamma \vec{k}} = -\frac{\mathcal{I}_{\gamma \vec{k}}}{n_{\gamma \vec{k}} (1 - n_{\gamma \vec{k}})}
+\end{align}
+oziroma: 
+\begin{align}
+  \partial_t \mu_{\gamma \vec{k}} = -\sum_{\gamma', \vec{k}', b} \Gamma_{\gamma' \vec{k}' \to \gamma \vec{k}}^{b} \frac{1 + e^{\mu_{\gamma \vec{k}}}}{1 + e^{\mu_{\gamma' \vec{k}'}}} - \Gamma_{\gamma \vec{k} \to \gamma' \vec{k}'}^{b} \frac{1 + e^{-\mu_{\gamma \vec{k}}}}{1 + e^{-\mu_{\gamma' \vec{k}'}}}\,,
+\end{align}
+kjer je $\Gamma^{b}=\Gamma(T_b)$. Izraz se poenostavi če upoštevamo še zahtevo po d.b.: 
+\begin{tcolorbox}
+  \begin{align}
+    \partial_t \mu_{\gamma \vec{k}} = \sum_{\gamma' \vec{k}', b} \Gamma_{\gamma' \vec{k}' \to \gamma \vec{k}}^b \frac{1 + e^{\mu_{\gamma \vec{k}}}}{1 + e^{\mu_{\gamma' \vec{k}'}}} \left(e^{\Omega / T_b + \mu_{\gamma' \vec{k}'} - \mu_{\gamma \vec{k}}} - 1\right)
+  \end{align}
+\end{tcolorbox}
+\subsection{Sprememba koordinat}
+Za 2D square lattice mrežo uvedemo: 
+\begin{align}
+s=\cos k_x+\cos k_y,\qquad
+u=\cos k_x-\cos k_y.
+\end{align}
+Obratna transformacija je bijektivna na irreducible trikotniku ($\Gamma -X-M$, oziroma: $\{(k_x,k_y):0\leq k_y\leq k_x\leq\pi\}$):
+\begin{align}
+k_x=\arccos\!\left(\frac{s+u}{2}\right),\qquad
+k_y=\arccos\!\left(\frac{s-u}{2}\right).
+\end{align}
+Z nekaj obračanja dobimo območje kjer sta definirani novi spremenljivki: 
+\begin{align}
+-2\leq s\leq2,\qquad |s|-2\leq u\leq0
+\end{align}
+\begin{align}
+\varepsilon_a(s)=\frac G2-2t_a s,\qquad
+\varepsilon_b(s)=-\frac G2-2t_b s.
+\end{align}
+\begin{align}
+\varepsilon_a^H(s)
+&=\frac G2-2t_a s+\frac V2(n-m),\\
+\varepsilon_b^H(s)
+&=-\frac G2-2t_b s+\frac V2(n+m).
+\end{align}
+\begin{align}
+\eta(s)
+&=\frac{\varepsilon_a^H(s)+\varepsilon_b^H(s)}2
+=\frac{Vn}{2}-(t_a+t_b)s,\\
+\xi(s)
+&=\frac{\varepsilon_a^H(s)-\varepsilon_b^H(s)}2
+=\frac{G-Vm}{2}-(t_a-t_b)s.
+\end{align}
 
+\begin{align}
+E_{\alpha,\beta}(s,u)=
+\frac{Vn}{2}-(t_a+t_b)s
+\ \pm\
+\sqrt{
+\left[\frac{G-Vm}{2}-(t_a-t_b)s\right]^2+|\Delta|^2
+}.
+\end{align}
+\begin{align}
+u_{\vec k} \to u^2(s)
+&={\frac12\left(1+\frac{\xi(s)}{\sqrt{\xi^2(s)+\Delta^2}}\right)},\\
+v_{\vec k} \to v^2(s)
+&={\frac12\left(1-\frac{\xi(s)}{\sqrt{\xi^2(s)+\Delta^2}}\right)},\\
+u_{\vec k}v_{\vec k} \to u(s)v(s)
+&=-\frac{\Delta}{2\sqrt{\xi^2(s)+\Delta^2}}.
+\end{align}
+Za integrale/fazne vsote po 1. B.C. je Jakobijan
+\begin{align}
+\left|\frac{\partial(s,u)}{\partial(k_x,k_y)}\right|
+=2\sin k_x\sin k_y.
+\end{align}
+Za intergal po 1. B.C. lahko v najbolj simetričnem primeru (za funckijo $F(g\vec{k}) = F(\vec{k})\,,\forall g\in C_{4v}$) pišemo (upoštevamo integral po trikotniku $\cdot 8$)
+\begin{align}
+\langle F\rangle_{\mathrm{B.C.}}
+=\frac{1}{(2\pi)^2}\int_{\mathrm{B.C.}}d^2k\,F(\vec k) =\frac1{\pi^2}
+\int_{-2}^{2}ds\int_{|s|-2}^{0}du\,
+\frac{F(s,u)}
+{\sqrt{1-\frac{(s+u)^2}{4}}\,
+ \sqrt{1-\frac{(s-u)^2}{4}}}.
+\end{align}
+Velikokrat je $F(s, u) = F(s)$, takrat velja: 
+\begin{align}
+  \pi^2  g(s)= \int_{\vert{}s\vert{}-2}^{0} du \frac{1}{\sqrt{1 - \frac{(s+u)^2}{4}} \sqrt{1 - \frac{(s-u)^2}{4}}} = \frac{4}{2+\vert{}s\vert{}} K\left( \frac{2-\vert{}s\vert{}}{2+\vert{}s\vert{}} \right) 
+\end{align}
+\begin{align}
+  K(k) = \int_{0}^{\pi/2} \frac{d\theta}{\sqrt{1 - k^2 \sin^2\theta}}
+\end{align}
+okoli $s \approx 0:$
+\begin{align}
+  \pi^2 g(s) \approx (2-\vert{}s\vert{}) \cdot \frac{1}{2} \ln\left(\frac{8}{\vert{}s\vert{}}\right) \approx \ln\left(\frac{8}{\vert{}s\vert{}}\right)
+\end{align}
+\begin{align}
+  \langle F \rangle_{\text{B.C.}} = \int_{-2}^{2} g(s) \cdot F(s) \, ds \quad ; \quad g(s) = \frac{1}{\pi^2} \frac{4}{2+\vert{}s\vert{}} K\left( \frac{2-\vert{}s\vert{}}{2+\vert{}s\vert{}} \right)
+\end{align}
+V termičnem primeru velja: 
+\begin{align}
+\Delta
+&=V\left\langle
+\frac{\Delta}{2\sqrt{\xi^2(s)+\Delta^2}}[f_\beta(s)-f_\alpha(s)]
+\right\rangle_{\mathrm{B.C.}},\\
+m
+&=\left\langle
+\frac{\xi(s)}{\sqrt{\xi^2(s)+\Delta^2}}[f_\alpha(s)-f_\beta(s)]
+\right\rangle_{\mathrm{B.C.}},\\
+n
+&=\left\langle f_\alpha(s)+f_\beta(s)\right\rangle_{\mathrm{B.C.}}.
+\end{align}
+Za najbolj splošen primer je integral enak:
+\begin{tcolorbox}
+\begin{align}
+\langle F(\vec{k})\rangle_{\mathrm{B.C.}} =
+&=\frac1{8\pi^2} \sum_{g\in C_{4v}}
+\int_{-2}^{2}ds\int_{|s|-2}^{0}du\,
+\frac{F(g\vec{k}(s,u))}
+{\sqrt{1-\frac{(s+u)^2}{4}}\,
+ \sqrt{1-\frac{(s-u)^2}{4}}}.
+\end{align}
+\end{tcolorbox} 
+Za netermični primer pa je rahla komplikacija z $f_\gamma(s)\mapsto n_\gamma(s, u)$. Prepisati moramo sipalni integral  $\mathcal{I}_{\gamma \vec{k}}$ na 
+
+\begin{align}
+  \partial_t\mu_\gamma(s,u)=\frac1{\pi^2}\sum_{\gamma'}\int\!ds'\!\int\!du'\,J(s',u')\sum_bW^b\,N_b(\Omega)\,\frac{1+e^{\mu_{\gamma}(s, u)}}{1+e^{\mu_{\gamma'}(s', u')}}\Big[e^{\Omega/T_b-\mu_{\gamma}(s, u)+\mu_{\gamma'}(s', u')}-1\Big]
+\end{align}
 \nocite{*}
 \printbibliography
 \end{document} 
