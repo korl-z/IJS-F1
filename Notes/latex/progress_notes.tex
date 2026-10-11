@@ -478,6 +478,13 @@ $\chi_{ij} = \langle C_{i} C_{j} \rangle - \langle C_{i} \rangle \langle C_{j} \
 \subsection{Osnovni modeli kopeli}
 
 \subsection{Limita neskončne temperature}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.5\textwidth]{figures/Gap_V_Tinf_prod_baths.pdf}
+    \centering
+    \caption{Gap pri $T_1\to \infty$ in $T_2\to 0$.}
+\label{pic1}
+\end{figure}
 \subsection{Fononske sklopitve}
 Najprej pogledamo, kako modificiran (Peierls tip) hopping integral in modificiran orbital energy vplivata na sklopitev. Model spremenimo: orbitali znotraj o.c. sta na enakem položaju in se deformirata vedno v isto smer, torej $\vec{u}_{a,i}=\vec{u}_{b,i}=\vec{u}_{i}$. Coulombski potencial se zaradi deformacije ne spremeni veliko. Hamiltonka za nedeformiran kristal ostane enaka, višje člene pa obravnavamo perturbativno: 
 \begin{align}
@@ -884,11 +891,11 @@ oziroma končno:;
 \begin{align}
 \partial_t {n}_{\gamma \vec{k}} &= \sum_{\vec{k}', \gamma'} \Gamma_{\gamma' \vec{k}' \to \gamma \vec{k}} n_{\gamma' \vec{k}'} (1 - n_{\gamma \vec{k}}) - \Gamma_{\gamma \vec{k} \to \gamma' \vec{k}'} n_{\gamma \vec{k}} (1 - n_{\gamma' \vec{k}'}) \\ \Gamma_{\gamma' \vec{k}' \to \gamma \vec{k}} &= \sum_{\lambda} \left\vert{} \tilde{M}^{\lambda}_{\gamma \gamma'}(\vec{k}', \vec{k} -\vec{k}') \right\vert{}^2 \cdot \Big\{ (N_\lambda(-\Omega) + 1) \mathcal{A}_{\vec{k}-\vec{k}', \lambda}(-\Omega) + N_\lambda(\Omega) \mathcal{A}_{\vec{k}-\vec{k}', \lambda}(\Omega) \Big\} \\ \Gamma_{\gamma \vec{k} \to \gamma' \vec{k}'} &= \sum_{\lambda} \left\vert{} \tilde{M}^{\lambda}_{\gamma \gamma'}(\vec{k}', \vec{k} - \vec{k}') \right\vert{}^2 \cdot \Big\{ (N_\lambda(\Omega) + 1) \mathcal{A}_{\vec{k}'-\vec{k}, \lambda}(\Omega) + N_\lambda(-\Omega) \mathcal{A}_{\vec{k}'-\vec{k}, \lambda}(-\Omega) \Big\} \\ \Omega &= E_{\gamma \vec{k}} - E_{\gamma' \vec{k}'}, \qquad N(-\Omega) = -1 - N(\Omega)
 \end{align}
-\end{tcolorbox}
-preverimo predznake
+\end{tcolorbox} \noindent
+preverimo predznake v tabeli \ref{tabela_feynman}.
 
-\begin{table}[ht]
-  \centering
+\begin{table}[ht] 
+  \centering  
   \setlength{\tabcolsep}{8pt}
   \begin{tabular}{|c|c|}
     \hline
@@ -967,6 +974,8 @@ preverimo predznake
     \\
     \hline
   \end{tabular}
+  \caption{Feynman diagrami za vse štiri procese (iz in v fiskno stanje $\gamma, \vec k$).}
+  \label{tabela_feynman}
 \end{table}
 
 Dobimo enako kot Curtis, čeprav smo fotone obravnavali v približku: za korelatorje oziroma produkte bozonov smo privzeli da imajo točno definirane resonance in dodali regulator na roke. V resnici so fotoni sklopljeni z okolico, kar jim da končno širino v disperziji. Rate matrike lahko še porenostavimo na razlike Lotentzovih vrhov: 
@@ -997,7 +1006,7 @@ kjer je $\Gamma^{b}=\Gamma(T_b)$. Izraz se poenostavi če upoštevamo še zahtev
     \partial_t \mu_{\gamma \vec{k}} = \sum_{\gamma' \vec{k}', b} \Gamma_{\gamma' \vec{k}' \to \gamma \vec{k}}^b \frac{1 + e^{\mu_{\gamma \vec{k}}}}{1 + e^{\mu_{\gamma' \vec{k}'}}} \left(e^{\Omega / T_b + \mu_{\gamma' \vec{k}'} - \mu_{\gamma \vec{k}}} - 1\right)
   \end{align}
 \end{tcolorbox}
-\subsection{Sprememba koordinat}
+\subsection{Sprememba koordinat} 
 Za 2D square lattice mrežo uvedemo: 
 \begin{align}
 s=\cos k_x+\cos k_y,\qquad
@@ -1120,10 +1129,11 @@ kjer
 če je $\Gamma$ popolnoma simetrična na vse operacije vsaj vemo, da je $\mu_\gamma(s, u) = \mu_\gamma(s, -u)$, ne določa pa to odvisnosti od $u$. Recimo, da fiksiramo $\omega_\vec{q} = \sqrt{\omega_0^2+c^2q^2}$. Ta je invariantna na $C_{4v}$,  tudi $\Omega= \Omega(s)$ je, zato je $\mathcal{A}_\vec{q}(\Omega)$ invariantna. Enako velja za Bose faktorje. 
 
 \section{blabla}
+konkretna implementacija/racun za verteks za fotone: 
 % k: final momentum, k': initial momentum, q = k - k' wrapped to the first BZ, a_0 = 1
 \begin{align}
 \mathbf{q} &= q(\cos\varphi,\sin\varphi), \qquad
-\varphi = \operatorname{atan2}(q_y,q_x)\ (\varphi=0 \text{ at } \mathbf{q}=0), \qquad
+\varphi = \operatorname{atan2}(q_y,q_x)\ (\varphi=0 \text{pri} \mathbf{q}=0), \qquad
 \omega_{\mathbf{q}} = \sqrt{\omega_0^2 + c^2 q^2},\\
 s_{\mathbf{k}} &= \cos k_x + \cos k_y, \qquad
 \varepsilon_{a,\mathbf{k}} = \tfrac{G}{2} - 2t_a s_{\mathbf{k}}, \qquad
@@ -1213,103 +1223,190 @@ N(\Omega)\,\frac{8\gamma\,\omega_{\mathbf{q}}\,\Omega}
 {\left[(\Omega-\omega_{\mathbf{q}})^2+\gamma^2\right]\left[(\Omega+\omega_{\mathbf{q}})^2+\gamma^2\right]} .
 \end{equation}
 
-\section{blabla2}
-States and parametrisation. $i=(\gamma,\mathbf k)$ with $\gamma\in\{\alpha,\beta\}$, $N$ grid points, weights $w_i=w_{\mathbf k}$, $\sum_{\mathbf k}w_{\mathbf k}=1$.
+% \section{blabla2}
+% States and parametrisation. $i=(\gamma,\mathbf k)$ with $\gamma\in\{\alpha,\beta\}$, $N$ grid points, weights $w_i=w_{\mathbf k}$, $\sum_{\mathbf k}w_{\mathbf k}=1$.
 
-$$n_i=\frac{1}{1+e^{\mu_i}},\qquad 1-n_i=\frac{1}{1+e^{-\mu_i}},\qquad \frac{\partial n_i}{\partial\mu_i}=-n_i(1-n_i).$$
+% $$n_i=\frac{1}{1+e^{\mu_i}},\qquad 1-n_i=\frac{1}{1+e^{-\mu_i}},\qquad \frac{\partial n_i}{\partial\mu_i}=-n_i(1-n_i).$$
 
-Mean field at given $(d,m)$ (\_mf, unchanged; $h$ is the Hartree parameter p.h):
+% Mean field at given $(d,m)$ (\_mf, unchanged; $h$ is the Hartree parameter p.h):
 
-$$
-\tilde\varepsilon_{a}=\varepsilon_{a}+h\,\frac{n_0-m}{2}-\frac h2,\qquad
-\tilde\varepsilon_{b}=\varepsilon_{b}+h\,\frac{n_0+m}{2}-\frac h2,
-$$
-$$
-\xi_{\mathbf k}=\tfrac12(\tilde\varepsilon_a-\tilde\varepsilon_b),\quad
-E_{\mathbf k}=\sqrt{\xi_{\mathbf k}^2+d^2},\quad
-E_{\alpha/\beta,\mathbf k}=\tfrac12(\tilde\varepsilon_a+\tilde\varepsilon_b)\pm E_{\mathbf k},
-$$
-$$
-u_{\mathbf k}^2=\frac12\Big(1+\frac{\xi_{\mathbf k}}{E_{\mathbf k}}\Big),\quad
-v_{\mathbf k}^2=\frac12\Big(1-\frac{\xi_{\mathbf k}}{E_{\mathbf k}}\Big),\quad
-u_{\mathbf k}v_{\mathbf k}=\frac{d}{2E_{\mathbf k}}.
-$$
+% $$
+% \tilde\varepsilon_{a}=\varepsilon_{a}+h\,\frac{n_0-m}{2}-\frac h2,\qquad
+% \tilde\varepsilon_{b}=\varepsilon_{b}+h\,\frac{n_0+m}{2}-\frac h2,
+% $$
+% $$
+% \xi_{\mathbf k}=\tfrac12(\tilde\varepsilon_a-\tilde\varepsilon_b),\quad
+% E_{\mathbf k}=\sqrt{\xi_{\mathbf k}^2+d^2},\quad
+% E_{\alpha/\beta,\mathbf k}=\tfrac12(\tilde\varepsilon_a+\tilde\varepsilon_b)\pm E_{\mathbf k},
+% $$
+% $$
+% u_{\mathbf k}^2=\frac12\Big(1+\frac{\xi_{\mathbf k}}{E_{\mathbf k}}\Big),\quad
+% v_{\mathbf k}^2=\frac12\Big(1-\frac{\xi_{\mathbf k}}{E_{\mathbf k}}\Big),\quad
+% u_{\mathbf k}v_{\mathbf k}=\frac{d}{2E_{\mathbf k}}.
+% $$
 
-Rates. $R_{ij}(d,m)=\sum_b\Gamma^{(b)}_{j\to i}$ is the output of `\_rates` at the current $(d,m)$; for the photon baths this is eq. 186. $R_{ii}=0$.
+% Rates. $R_{ij}(d,m)=\sum_b\Gamma^{(b)}_{j\to i}$ is the output of `\_rates` at the current $(d,m)$; for the photon baths this is eq. 186. $R_{ii}=0$.
 
-Kinetic equation and its form in $\mu$ (eq. 193 summed over baths):
+% Kinetic equation and its form in $\mu$ (eq. 193 summed over baths):
 
-$$
-\dot n_i=(1-n_i)\,a_i-n_i\,b_i,\qquad
-a_i=\sum_j R_{ij}\,w_j\,n_j,\qquad
-b_i=\sum_j R_{ji}\,w_j\,(1-n_j),
-$$
-$$\dot\mu_i=-\frac{\dot n_i}{n_i(1-n_i)}=\frac{b_i}{1-n_i}-\frac{a_i}{n_i}\equiv G_i .$$
+% $$
+% \dot n_i=(1-n_i)\,a_i-n_i\,b_i,\qquad
+% a_i=\sum_j R_{ij}\,w_j\,n_j,\qquad
+% b_i=\sum_j R_{ji}\,w_j\,(1-n_j),
+% $$
+% $$\dot\mu_i=-\frac{\dot n_i}{n_i(1-n_i)}=\frac{b_i}{1-n_i}-\frac{a_i}{n_i}\equiv G_i .$$
 
-Unknowns and residual. $z=(\mu_1,\dots,\mu_{2N},\,d,\,m,\,\kappa)\in\mathbb R^{2N+3}$, with $V$ = p.v:
+% Unknowns and residual. $z=(\mu_1,\dots,\mu_{2N},\,d,\,m,\,\kappa)\in\mathbb R^{2N+3}$, with $V$ = p.v:
 
-$$
-\begin{aligned}
-F_i&=G_i+\kappa,\qquad i=1,\dots,2N,\\
-F_d&=d-V\sum_{\mathbf k}w_{\mathbf k}\,u_{\mathbf k}v_{\mathbf k}\,(n_{\beta\mathbf k}-n_{\alpha\mathbf k}),\\
-F_m&=m-\sum_{\mathbf k}w_{\mathbf k}\,(u_{\mathbf k}^2-v_{\mathbf k}^2)\,(n_{\alpha\mathbf k}-n_{\beta\mathbf k}),\\
-F_n&=\sum_{\mathbf k}w_{\mathbf k}\,(n_{\alpha\mathbf k}+n_{\beta\mathbf k})-n_0 .
-\end{aligned}
-$$
+% $$
+% \begin{aligned}
+% F_i&=G_i+\kappa,\qquad i=1,\dots,2N,\\
+% F_d&=d-V\sum_{\mathbf k}w_{\mathbf k}\,u_{\mathbf k}v_{\mathbf k}\,(n_{\beta\mathbf k}-n_{\alpha\mathbf k}),\\
+% F_m&=m-\sum_{\mathbf k}w_{\mathbf k}\,(u_{\mathbf k}^2-v_{\mathbf k}^2)\,(n_{\alpha\mathbf k}-n_{\beta\mathbf k}),\\
+% F_n&=\sum_{\mathbf k}w_{\mathbf k}\,(n_{\alpha\mathbf k}+n_{\beta\mathbf k})-n_0 .
+% \end{aligned}
+% $$
 
-Why $\kappa$. The rates conserve the particle number for every $z$:
+% Why $\kappa$. The rates conserve the particle number for every $z$:
 
-$$
-\sum_i w_i\,n_i(1-n_i)\,G_i=-\sum_i w_i\,\dot n_i
-=-\sum_{ij}w_iw_j\big[(1-n_i)R_{ij}n_j-n_iR_{ji}(1-n_j)\big]=0 .
-$$
+% $$
+% \sum_i w_i\,n_i(1-n_i)\,G_i=-\sum_i w_i\,\dot n_i
+% =-\sum_{ij}w_iw_j\big[(1-n_i)R_{ij}n_j-n_iR_{ji}(1-n_j)\big]=0 .
+% $$
 
-So the $2N$ balance equations hold only $2N-1$ independent conditions, and the system without $\kappa$ has $2N+3$ equations for $2N+2$ unknowns. Adding $\kappa$ makes it square. Multiplying $F_i=0$ by $w_in_i(1-n_i)$ and summing gives $\kappa\sum_i w_in_i(1-n_i)=0$, so $\kappa=0$ at the solution and the physical equations are unchanged.
+% So the $2N$ balance equations hold only $2N-1$ independent conditions, and the system without $\kappa$ has $2N+3$ equations for $2N+2$ unknowns. Adding $\kappa$ makes it square. Multiplying $F_i=0$ by $w_in_i(1-n_i)$ and summing gives $\kappa\sum_i w_in_i(1-n_i)=0$, so $\kappa=0$ at the solution and the physical equations are unchanged.
 
-Jacobian. With $s_j=w_j\,n_j(1-n_j)$:
+% Jacobian. With $s_j=w_j\,n_j(1-n_j)$:
 
-$$
-\frac{\partial F_i}{\partial\mu_j}
-=s_j\Big[\frac{R_{ji}}{1-n_i}+\frac{R_{ij}}{n_i}\Big]
--\delta_{ij}\Big[\frac{b_i\,n_i}{1-n_i}+\frac{a_i\,(1-n_i)}{n_i}\Big],
-$$
-$$
-\frac{\partial F_d}{\partial\mu_{\alpha\mathbf k}}=-V u_{\mathbf k}v_{\mathbf k}\,s_{\alpha\mathbf k},\qquad
-\frac{\partial F_d}{\partial\mu_{\beta\mathbf k}}=+V u_{\mathbf k}v_{\mathbf k}\,s_{\beta\mathbf k},
-$$
-$$
-\frac{\partial F_m}{\partial\mu_{\alpha\mathbf k}}=+(u_{\mathbf k}^2-v_{\mathbf k}^2)\,s_{\alpha\mathbf k},\qquad
-\frac{\partial F_m}{\partial\mu_{\beta\mathbf k}}=-(u_{\mathbf k}^2-v_{\mathbf k}^2)\,s_{\beta\mathbf k},\qquad
-\frac{\partial F_n}{\partial\mu_j}=-s_j,
-$$
-$$
-\frac{\partial F}{\partial\kappa}=(1,\dots,1,0,0,0)^{T},\qquad
-\frac{\partial F}{\partial x}\approx\frac{F(z+\eta\,e_x)-F(z-\eta\,e_x)}{2\eta},\quad
-\eta=10^{-6}\max(|x|,0.1),\quad x\in\{d,m\}.
-$$
+% $$
+% \frac{\partial F_i}{\partial\mu_j}
+% =s_j\Big[\frac{R_{ji}}{1-n_i}+\frac{R_{ij}}{n_i}\Big]
+% -\delta_{ij}\Big[\frac{b_i\,n_i}{1-n_i}+\frac{a_i\,(1-n_i)}{n_i}\Big],
+% $$
+% $$
+% \frac{\partial F_d}{\partial\mu_{\alpha\mathbf k}}=-V u_{\mathbf k}v_{\mathbf k}\,s_{\alpha\mathbf k},\qquad
+% \frac{\partial F_d}{\partial\mu_{\beta\mathbf k}}=+V u_{\mathbf k}v_{\mathbf k}\,s_{\beta\mathbf k},
+% $$
+% $$
+% \frac{\partial F_m}{\partial\mu_{\alpha\mathbf k}}=+(u_{\mathbf k}^2-v_{\mathbf k}^2)\,s_{\alpha\mathbf k},\qquad
+% \frac{\partial F_m}{\partial\mu_{\beta\mathbf k}}=-(u_{\mathbf k}^2-v_{\mathbf k}^2)\,s_{\beta\mathbf k},\qquad
+% \frac{\partial F_n}{\partial\mu_j}=-s_j,
+% $$
+% $$
+% \frac{\partial F}{\partial\kappa}=(1,\dots,1,0,0,0)^{T},\qquad
+% \frac{\partial F}{\partial x}\approx\frac{F(z+\eta\,e_x)-F(z-\eta\,e_x)}{2\eta},\quad
+% \eta=10^{-6}\max(|x|,0.1),\quad x\in\{d,m\}.
+% $$
 
-The finite differences in $d$ and $m$ include the change of $E$, $u$, $v$ and of the whole rate matrix.
+% The finite differences in $d$ and $m$ include the change of $E$, $u$, $v$ and of the whole rate matrix.
 
-Scaling and linear solve. $C=\mathrm{diag}(c_1,\dots,c_{2N},1,1,1)$ with
+% Scaling and linear solve. $C=\mathrm{diag}(c_1,\dots,c_{2N},1,1,1)$ with
 
-$$
-c_i=\Big(\frac{a_i}{n_i}+\frac{b_i}{1-n_i}\Big)^{-1},\qquad
-c_i\,G_i=\frac{n_ib_i-(1-n_i)a_i}{n_ib_i+(1-n_i)a_i}\in[-1,1],
-$$
-$$(CJ)\,\delta z=-CF,\qquad \mathrm{err}=\max_i|c_iF_i| .$$
+% $$
+% c_i=\Big(\frac{a_i}{n_i}+\frac{b_i}{1-n_i}\Big)^{-1},\qquad
+% c_i\,G_i=\frac{n_ib_i-(1-n_i)a_i}{n_ib_i+(1-n_i)a_i}\in[-1,1],
+% $$
+% $$(CJ)\,\delta z=-CF,\qquad \mathrm{err}=\max_i|c_iF_i| .$$
 
-A scaled balance row is the relative mismatch of out and in flow, so states with very small rates count the same as the others.
+% A scaled balance row is the relative mismatch of out and in flow, so states with very small rates count the same as the others.
 
-Step. $\lambda_0=\min\!\big(1,\ \mathrm{cap}/\max_i|\delta\mu_i|\big)$, then $\lambda$ is halved until
+% Step. $\lambda_0=\min\!\big(1,\ \mathrm{cap}/\max_i|\delta\mu_i|\big)$, then $\lambda$ is halved until
 
-$$\|C(z)\,F(z+\lambda\,\delta z)\|^2<(1-10^{-4}\lambda)\,\|C(z)\,F(z)\|^2 ,\qquad z\leftarrow z+\lambda\,\delta z .$$
+% $$\|C(z)\,F(z+\lambda\,\delta z)\|^2<(1-10^{-4}\lambda)\,\|C(z)\,F(z)\|^2 ,\qquad z\leftarrow z+\lambda\,\delta z .$$
 
-The loop stops with ok=True when $\mathrm{err}<\mathrm{tol}$, and with ok=False after nmax iterations or when $\lambda<10^{-6}$.
+% The loop stops with ok=True when $\mathrm{err}<\mathrm{tol}$, and with ok=False after nmax iterations or when $\lambda<10^{-6}$.
 
-Start and back-transform. $\mu_i^{(0)}=\ln\frac{1-n_i}{n_i}$ and $\kappa^{(0)}=0$. At the end $n_i=1/(1+e^{\mu_i})$ goes to sol.n, $\dot n_i$ at the converged $(d,m)$ to sol.cur, and $\mu_i$ to sol.eta.
+% Start and back-transform. $\mu_i^{(0)}=\ln\frac{1-n_i}{n_i}$ and $\kappa^{(0)}=0$. At the end $n_i=1/(1+e^{\mu_i})$ goes to sol.n, $\dot n_i$ at the converged $(d,m)$ to sol.cur, and $\mu_i$ to sol.eta.
 
-\section{Blabla3-bath vizualizacije}
+\section{Blabla2-bath vizualizacije}
+Vsi nasledni ploti so v tocki $T_1=1.2 T_c, T_2 = 0.2 T_c$ in uporablajo fotonski verteks, kot opisano zgoraj. 
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/absM2_d=0.pdf}
+    \centering
+    \caption{Verteks pri $\vec d=0$ za $\vec{p}_0 =(0,0)$ za obe kopeli z disperzijo: $\omega_\vec{q}={\sqrt{\omega_0^2+c^2q^2}}$, $c=10, \omega_0=2.2$, indeks gor je indeks kopeli (za obe je tu enaka disperzija).}
+\label{pic1}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/absM2_d=2.pdf}
+    \centering
+    \caption{Verteks pri $\vec d=(2, 0, 0)$ v $x$ smeri za $\vec{p}_0 =(0,0)$ za obe kopeli z disperzijo: $\omega_\vec{q}={\sqrt{\omega_0^2+c^2q^2}}$, $c=10, \omega_0=2.2$. Dipol zlomi $C_{4v} \to C_{2v}$ simetrijo.}
+\label{pic1}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/bath_components.pdf}
+    \centering
+    \caption{Komponente faktorjev za kopeli pri $\omega_\vec{q}={\sqrt{\omega_0^2+c^2q^2}}$, $c=10, \omega_0=2.2$ (majhni $q$ prehodi).}
+\label{pic1}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/Gamma_d=0.pdf}
+    \centering
+    \caption{Končni transfer rate pri $\omega_\vec{q}={\sqrt{\omega_0^2+c^2q^2}}$, $c=10, \omega_0=2.2$, $\vec{d} = (0, 0, 0)$.}
+\label{pic1}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/Gamma_d=2.pdf}
+    \centering
+    \caption{Končni transfer rate pri $\omega_\vec{q}={\sqrt{\omega_0^2+c^2q^2}}$, $c=10, \omega_0=2.2$, $\vec{d} = 2(1, 0, 0)$.}
+\label{pic1}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.49\textwidth]{figures/GamXM_path_bath_d=0.pdf}
+    \includegraphics[width=0.49\textwidth]{figures/GamXM_path_bath_d=2.pdf}
+    \centering
+    \caption{Komponente faktorjev za kopeli pri $\omega_\vec{q}={\sqrt{\omega_0^2+c^2q^2}}$, $c=10, \omega_0=2.2$ (majhni $q$ prehodi).}
+\label{pic1}
+\end{figure}
 
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.49\textwidth]{figures/bz_d=0.pdf}
+    \includegraphics[width=0.49\textwidth]{figures/occ_E_d=0.pdf}
+    \centering
+    \caption{Komponente faktorjev za kopeli pri $\omega_\vec{q}={\sqrt{\omega_0^2+c^2q^2}}$, $c=10, \omega_0=2.2$ (majhni $q$ prehodi).}
+\label{pic1}
+\end{figure}
+
+
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.49\textwidth]{figures/bz_d=2.pdf}
+    \includegraphics[width=0.49\textwidth]{figures/occ_E_d=2.pdf}
+    \centering
+    \caption{Komponente faktorjev za kopeli pri $\omega_\vec{q}={\sqrt{\omega_0^2+c^2q^2}}$, $c=10, \omega_0=2.2$ (majhni $q$ prehodi).}
+\label{pic1}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.49\textwidth]{figures/bz_d=0=1p6.pdf}
+    \includegraphics[width=0.49\textwidth]{figures/occ_E_d=0_c=1p6.pdf}
+    \centering
+    \caption{Komponente faktorjev za kopeli pri mixed disperzijah: $c=1.0$, $\omega_0^{(2)}=2.2$,  $\omega_0^{(1)}=0.1$ in  $\vec{d} = 2(1, 0, 0)$ zdaj zlomi simetrijo v $n(s)\to n(s, u)$, zgleda kar $C_{2v}$.}
+\label{pic1}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/bath_components_mixed.pdf}
+    \centering
+    \caption{Komponente faktorjev za kopeli pri $c=1.0$, $\omega_0^{(1)}=2.2$,  $\omega_0^{(2)}=0.1$ in  $\vec{d} = 2(1, 0, 0)$ .}
+\label{pic1}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.65\textwidth]{figures/GamXM_path_bath_d=2_mixed.pdf}
+    \centering
+    \caption{Mixed disperzije: $c=1.0$, $\omega_0^{(1)}=2.2$,  $\omega_0^{(2)}=0.1$ in  $\vec{d} = 2(1, 0, 0)$.}
+\label{pic1}
+\end{figure}
+\FloatBarrier
 \nocite{*}
 \printbibliography
 \end{document} 

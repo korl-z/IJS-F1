@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import matplotlib.pyplot as plt
 
 import colormaps as cmaps
 import numpy as np
@@ -222,14 +223,14 @@ def plot_dispersion(pt, bd, st, mu):
         q.layout((0, 0, 1, 0.86))
 
 
-def plot_energy(pt, st, sf, t1, t2, mu, d0):
+def plot_energy(pt, st, sf, t1, t2, mu, d0, path = None):
     """NESS zasedenosti vs E"""
     en = (np.asarray(st.st.e) - mu) / d0
     ef = (np.asarray(sf.st.e) - mu) / d0
     nn = np.asarray(st.n)
     x = np.linspace(0.5 * min(en.min(), ef.min()), 0.5 * max(en.max(), ef.max()), 600)
 
-    with pt.figure(name="occupations_energy", h=0.68) as q:
+    with pt.figure(name="occupations_energy", h=0.45) as q:
         a = q.ax
         a.plot(x, fd_t(x * d0, t1), color=SET1_LIST[0], ls="--", lw=1.0,
                label=r"$f_{\mathrm{FD}}(E,T_1)$")
@@ -246,6 +247,9 @@ def plot_energy(pt, st, sf, t1, t2, mu, d0):
                   ylim=(0.0, 1.0))
         add_legend(a, top=True, ncol=3, fontsize=7)
         q.layout((0, 0, 1, 0.84))
+
+        if path is not None: 
+            plt.savefig(path, bbox_inches="tight")
 
 
 def plot_xi(pt, bd, p, eq, st, sf, t1, t2, d0):
@@ -281,7 +285,7 @@ def plot_xi(pt, bd, p, eq, st, sf, t1, t2, d0):
         q.layout((0, 0, 1, 0.84))
 
 
-def plot_bz(pt, bd, st):
+def plot_bz(pt, bd, st, path=None):
     """2d cmap stanj"""
     kg = np.asarray(bd.k).reshape(bd.shape + (bd.dim,))
     kx = k_edges(kg[:, 0, 0] / np.pi)
@@ -316,6 +320,8 @@ def plot_bz(pt, bd, st):
         q.ax[1].set_aspect("equal")
         q.colorbar(im1, r"$n_{\lambda\mathbf{k}}$", ax=q.ax[-1],
                    external=True)
+        if path is not None: 
+            plt.savefig(path, bbox_inches="tight")
 
 
 @ex.automain
