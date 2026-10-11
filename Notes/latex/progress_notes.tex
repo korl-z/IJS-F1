@@ -239,7 +239,7 @@ Pri izolatorju za minimalni model vzamemo dve orbitali ($a, b$) model tesne vezi
 \end{align}
 najprej diagonaliziramo vsako orbitalo posebej, kar da gole disperzije (vezavni energiji nastavimo na $\pm G/2$) (delamo v dveh dimenzijah in mrežna konstanta $a_0=1$): 
 \begin{align} \label{free el tb}
-  \varepsilon_{a(b),k} = \pm \frac{G}{2} - 2 t_{a(b)}(\cos(k_x) + \cos(k_y))\,,
+  \varepsilon_{a(b),\vec k} = \pm \frac{G}{2} - 2 t_{a(b)}(\cos(k_x) + \cos(k_y))\,,
 \end{align}
 v tem primeru je najmanjša razdalja med pasovoma $G_0 = G - 4 (t_a -t_b)$ oziroma $G_0=G - 8t_a$, če je $t_b = -t_a$. Za interakcijo spet naredimo približek povprečnega polja: 
 \begin{align}
@@ -882,7 +882,7 @@ od kjer lahko poenostavimo:
 oziroma končno:; 
 \begin{tcolorbox}
 \begin{align}
-\partial_t {n}_{\gamma \vec{k}} &= \sum_{\vec{k}', \gamma'} \Gamma_{\gamma' \vec{k}' \to \gamma \vec{k}} n_{\gamma' \vec{k}'} (1 - n_{\gamma \vec{k}}) - \Gamma_{\gamma \vec{k} \to \gamma' \vec{k}'} n_{\gamma \vec{k}} (1 - n_{\gamma' \vec{k}'}) \\ \Gamma_{\gamma' \vec{k}' \to \gamma \vec{k}} &= \left\vert{} \widetilde{M}_{\gamma \gamma'}(\vec{k}', \vec{k} -\vec{k}') \right\vert{}^2 \cdot \Big\{ \underbrace{(N(-\Omega) + 1) \mathcal{A}_{\vec{k}-\vec{k}'}(-\Omega)}_{A1} + \underbrace{N(\Omega) \mathcal{A}_{\vec{k}-\vec{k}'}(\Omega)}_{A2} \Big\} \\ \Gamma_{\gamma \vec{k} \to \gamma' \vec{k}'} &= \left\vert{} \widetilde{M}_{\gamma \gamma'}(\vec{k}', \vec{k} - \vec{k}') \right\vert{}^2 \cdot \Big\{ \underbrace{(N(\Omega) + 1) \mathcal{A}_{\vec{k}'-\vec{k}}(\Omega)}_{B1} + \underbrace{N(-\Omega) \mathcal{A}_{\vec{k}'-\vec{k}}(-\Omega)}_{B2} \Big\} \\ \Omega &= E_{\gamma \vec{k}} - E_{\gamma' \vec{k}'}, \qquad N(-\Omega) = -1 - N(\Omega)
+\partial_t {n}_{\gamma \vec{k}} &= \sum_{\vec{k}', \gamma'} \Gamma_{\gamma' \vec{k}' \to \gamma \vec{k}} n_{\gamma' \vec{k}'} (1 - n_{\gamma \vec{k}}) - \Gamma_{\gamma \vec{k} \to \gamma' \vec{k}'} n_{\gamma \vec{k}} (1 - n_{\gamma' \vec{k}'}) \\ \Gamma_{\gamma' \vec{k}' \to \gamma \vec{k}} &= \sum_{\lambda} \left\vert{} \tilde{M}^{\lambda}_{\gamma \gamma'}(\vec{k}', \vec{k} -\vec{k}') \right\vert{}^2 \cdot \Big\{ (N_\lambda(-\Omega) + 1) \mathcal{A}_{\vec{k}-\vec{k}', \lambda}(-\Omega) + N_\lambda(\Omega) \mathcal{A}_{\vec{k}-\vec{k}', \lambda}(\Omega) \Big\} \\ \Gamma_{\gamma \vec{k} \to \gamma' \vec{k}'} &= \sum_{\lambda} \left\vert{} \tilde{M}^{\lambda}_{\gamma \gamma'}(\vec{k}', \vec{k} - \vec{k}') \right\vert{}^2 \cdot \Big\{ (N_\lambda(\Omega) + 1) \mathcal{A}_{\vec{k}'-\vec{k}, \lambda}(\Omega) + N_\lambda(-\Omega) \mathcal{A}_{\vec{k}'-\vec{k}, \lambda}(-\Omega) \Big\} \\ \Omega &= E_{\gamma \vec{k}} - E_{\gamma' \vec{k}'}, \qquad N(-\Omega) = -1 - N(\Omega)
 \end{align}
 \end{tcolorbox}
 preverimo predznake
@@ -1005,8 +1005,7 @@ u=\cos k_x-\cos k_y.
 \end{align}
 Obratna transformacija je bijektivna na irreducible trikotniku ($\Gamma -X-M$, oziroma: $\{(k_x,k_y):0\leq k_y\leq k_x\leq\pi\}$):
 \begin{align}
-k_x=\arccos\!\left(\frac{s+u}{2}\right),\qquad
-k_y=\arccos\!\left(\frac{s-u}{2}\right).
+  \vec{k}(s,u) = \left(\arccos\!\left(\frac{s+u}{2}\right), \arccos\!\left(\frac{s-u}{2}\right)\right)^\mathsf{T}
 \end{align}
 Z nekaj obračanja dobimo območje kjer sta definirani novi spremenljivki: 
 \begin{align}
@@ -1089,21 +1088,228 @@ n
 &=\left\langle f_\alpha(s)+f_\beta(s)\right\rangle_{\mathrm{B.C.}}.
 \end{align}
 Za najbolj splošen primer je integral enak:
-\begin{tcolorbox}
 \begin{align}
 \langle F(\vec{k})\rangle_{\mathrm{B.C.}} =
 &=\frac1{8\pi^2} \sum_{g\in C_{4v}}
 \int_{-2}^{2}ds\int_{|s|-2}^{0}du\,
-\frac{F(g\vec{k}(s,u))}
+\frac{F(g\vec{k}(s, u))}
 {\sqrt{1-\frac{(s+u)^2}{4}}\,
- \sqrt{1-\frac{(s-u)^2}{4}}}.
+ \sqrt{1-\frac{(s-u)^2}{4}}}\,.
 \end{align}
-\end{tcolorbox} 
-Za netermični primer pa je rahla komplikacija z $f_\gamma(s)\mapsto n_\gamma(s, u)$. Prepisati moramo sipalni integral  $\mathcal{I}_{\gamma \vec{k}}$ na 
+Najprej opazimo da je za $g \in C_{4v}$ spremeljivka $s$ in vse količine, ki so samo funkcije $s$ invariantna, spremeljivka $u$ pa se transfromira kot $u \to u\,, g=\{E, C_2, \sigma_v, \sigma_{v'}\}$ in $u \to -u$ za ostale 4 elemente. Torej, če je $F(s, u)$ soda v $u$ je invariantna, v splošnem pa je:
+\begin{align}
+  \sum_{g\in C_{4v}} F(g\vec{k}) = 4 F(s, u) + 4F(s, -u)\,.
+\end{align}
+zato je v splošnem: 
+\begin{tcolorbox}
+  \begin{align}
+    \langle F(\vec{k})\rangle_{\mathrm{B.C.}} =\frac1{2\pi^2} \int_{-2}^{2}ds\int_{|s|-2}^{0}du\, \frac{F(s, u) + F(s, -u)} {\sqrt{1-\frac{(s+u)^2}{4}}\,  \sqrt{1-\frac{(s-u)^2}{4}}}\,.
+  \end{align}
+\end{tcolorbox}
+Za netermični primer je rahla komplikacija z $f_\gamma(s)\mapsto n_\gamma(s, u)$. Prepisati moramo sipalni integral  $\mathcal{I}_{\gamma \vec{k}}$ na nove spremenljivke. 
+\begin{align}
+\partial_t \mu_{\gamma \vec{k}} &= \sum_{\gamma', b} \frac{1}{2\pi^2} \int_{-2}^{2}ds'\int_{|s|-2}^{0}du' \, J(s', u') \sum_{i=1}^{2} \left[ {\Gamma}_{\gamma' \vec{k}'_i \to \gamma \vec{k}}^b \frac{1 + e^{\mu_{\gamma \vec{k}}}}{1 + e^{\mu_{\gamma' \vec{k}'_i}}} \left(e^{\Omega / T_b + \mu_{\gamma' \vec{k}'_i} - \mu_{\gamma \vec{k}}} - 1\right) \right] \\
+{\Gamma}_{\gamma' \vec{k}'_i \to \gamma \vec{k}}^b &= \vert{}\widetilde{M}_{\gamma \gamma'}(\vec{k}'_i, \vec{k} - \vec{k}'_i)\vert{}^2 N(\Omega) \cdot \Big\{\mathcal{A}_{\vec{k} - \vec{k}'_i}(\Omega) - \mathcal{A}_{\vec{k} - \vec{k}'_i}(-\Omega)\Big\} \\
+\vec{k}'_1 &= \vec{k}'(s', u')\,,\quad \vec{k}'_2 = \vec{k}'(s', -u')
+\end{align}
+kjer 
+\begin{align}
+  \vec{k}'_1 &= \left( k_{x1}', \, k_{y1}' \right) = \left( \arccos\left(\frac{s' + u'}{2}\right), \, \arccos\left(\frac{s' - u'}{2}\right) \right) \\
+  \vec{k}'_2 &= \left( k_{x2}', \, k_{y2}' \right) = \left( \arccos\left(\frac{s' - u'}{2}\right), \, \arccos\left(\frac{s' + u'}{2}\right) \right)
+\end{align}
+če je $\Gamma$ popolnoma simetrična na vse operacije vsaj vemo, da je $\mu_\gamma(s, u) = \mu_\gamma(s, -u)$, ne določa pa to odvisnosti od $u$. Recimo, da fiksiramo $\omega_\vec{q} = \sqrt{\omega_0^2+c^2q^2}$. Ta je invariantna na $C_{4v}$,  tudi $\Omega= \Omega(s)$ je, zato je $\mathcal{A}_\vec{q}(\Omega)$ invariantna. Enako velja za Bose faktorje. 
+
+\section{blabla}
+% k: final momentum, k': initial momentum, q = k - k' wrapped to the first BZ, a_0 = 1
+\begin{align}
+\mathbf{q} &= q(\cos\varphi,\sin\varphi), \qquad
+\varphi = \operatorname{atan2}(q_y,q_x)\ (\varphi=0 \text{ at } \mathbf{q}=0), \qquad
+\omega_{\mathbf{q}} = \sqrt{\omega_0^2 + c^2 q^2},\\
+s_{\mathbf{k}} &= \cos k_x + \cos k_y, \qquad
+\varepsilon_{a,\mathbf{k}} = \tfrac{G}{2} - 2t_a s_{\mathbf{k}}, \qquad
+\varepsilon_{b,\mathbf{k}} = -\tfrac{G}{2} - 2t_b s_{\mathbf{k}} .
+\end{align}
+% velocity of band gamma = a, b from eq. 21, a_0 = 1
+\begin{equation}
+\mathbf{v}_{\gamma}(\mathbf{p}) = \nabla_{\mathbf{p}}\,\varepsilon_{\gamma,\mathbf{p}}
+= \nabla_{\mathbf{p}}\left[\pm\tfrac{G}{2} - 2t_\gamma(\cos p_x + \cos p_y)\right]
+= 2t_\gamma\,(\sin p_x,\ \sin p_y) .
+\end{equation}
+
+% evaluated at the midpoint p = k' + q/2 (eq. 125)
+\begin{equation}
+\mathbf{v}_{\gamma}\!\left(\mathbf{k}'+\tfrac{\mathbf{q}}{2}\right) = 2t_\gamma\,(h_x,\ h_y), \qquad
+h_x = \sin\!\left(k'_x + \tfrac{q_x}{2}\right), \quad
+h_y = \sin\!\left(k'_y + \tfrac{q_y}{2}\right) .
+\end{equation}
+
+% so the diagonal elements of eq. 125 are
+\begin{equation}
+\boldsymbol{\epsilon}_{\lambda}\cdot\mathbf{v}_{\gamma}\!\left(\mathbf{k}'+\tfrac{\mathbf{q}}{2}\right)
+= 2t_\gamma\,X_\lambda, \qquad
+X_\lambda = \boldsymbol{\epsilon}_{\lambda}\cdot(h_x,\ h_y) .
+\end{equation}
+% polarizations at z = L/2 and dipole along x
+\begin{align}
+\boldsymbol{\epsilon}_{\mathrm{TE}} &= (-\sin\varphi,\ \cos\varphi), &
+\boldsymbol{\epsilon}_{\mathrm{TM}} &= \frac{\omega_0}{\omega_{\mathbf{q}}}(\cos\varphi,\ \sin\varphi), &
+\mathbf{d} &= d\,(1,0).
+\end{align}
+
+% scalar projections, with h_x = sin(k'_x + q_x/2), h_y = sin(k'_y + q_y/2)
+\begin{align}
+X_{\mathrm{TE}} &= -\sin\varphi\, h_x + \cos\varphi\, h_y, &
+X_{\mathrm{TM}} &= \frac{\omega_0}{\omega_{\mathbf{q}}}\left(\cos\varphi\, h_x + \sin\varphi\, h_y\right),\\
+P_{\mathrm{TE}} &= -d\sin\varphi, &
+P_{\mathrm{TM}} &= \frac{\omega_0}{\omega_{\mathbf{q}}}\, d\cos\varphi,
+\end{align}
+\begin{align}
+\Delta_{ab} &= \varepsilon_{a,\mathbf{k}} - \varepsilon_{b,\mathbf{k}'} = G - 2t_a s_{\mathbf{k}} + 2t_b s_{\mathbf{k}'}, &
+\Delta_{ba} &= \varepsilon_{b,\mathbf{k}} - \varepsilon_{a,\mathbf{k}'} = -G - 2t_b s_{\mathbf{k}} + 2t_a s_{\mathbf{k}'} .
+\end{align}
+
+% orbital vertex (eq. 125), g_q^2 = A / omega_q with A = amp
+\begin{equation}
+M^{\lambda}(\mathbf{k}',\mathbf{q}) = g_{\mathbf{q}}
+\begin{pmatrix}
+2t_a X_\lambda & i P_\lambda \Delta_{ab}\\
+i P_\lambda \Delta_{ba} & 2t_b X_\lambda
+\end{pmatrix},
+\qquad g_{\mathbf{q}}^2 = \frac{\mathcal{A}}{\omega_{\mathbf{q}}} .
+\end{equation}
+
+% rotation (eq. 32, 157); u, v at k and u', v' at k'
+\begin{equation}
+\widetilde{M}^{\lambda} = U_{\mathbf{k}}^{T} M^{\lambda} U_{\mathbf{k}'}, \qquad
+U_{\mathbf{k}} = \begin{pmatrix} u & v\\ -v & u \end{pmatrix}, \qquad
+u = \sqrt{\tfrac12\left(1+\tfrac{\xi_{\mathbf{k}}}{E_{\mathbf{k}}}\right)}, \quad
+v = \operatorname{sgn}(\Delta)\sqrt{\tfrac12\left(1-\tfrac{\xi_{\mathbf{k}}}{E_{\mathbf{k}}}\right)} .
+\end{equation}
 
 \begin{align}
-  \partial_t\mu_\gamma(s,u)=\frac1{\pi^2}\sum_{\gamma'}\int\!ds'\!\int\!du'\,J(s',u')\sum_bW^b\,N_b(\Omega)\,\frac{1+e^{\mu_{\gamma}(s, u)}}{1+e^{\mu_{\gamma'}(s', u')}}\Big[e^{\Omega/T_b-\mu_{\gamma}(s, u)+\mu_{\gamma'}(s', u')}-1\Big]
+\widetilde{M}^{\lambda}_{\alpha\alpha} &= g_{\mathbf{q}}\left[ X_\lambda\,(2t_a uu' + 2t_b vv') - i P_\lambda\,(uv'\Delta_{ab} + vu'\Delta_{ba}) \right],\\
+\widetilde{M}^{\lambda}_{\alpha\beta} &= g_{\mathbf{q}}\left[ X_\lambda\,(2t_a uv' - 2t_b vu') + i P_\lambda\,(uu'\Delta_{ab} - vv'\Delta_{ba}) \right],\\
+\widetilde{M}^{\lambda}_{\beta\alpha} &= g_{\mathbf{q}}\left[ X_\lambda\,(2t_a vu' - 2t_b uv') + i P_\lambda\,(uu'\Delta_{ba} - vv'\Delta_{ab}) \right],\\
+\widetilde{M}^{\lambda}_{\beta\beta} &= g_{\mathbf{q}}\left[ X_\lambda\,(2t_a vv' + 2t_b uu') + i P_\lambda\,(vu'\Delta_{ab} + uv'\Delta_{ba}) \right].
 \end{align}
+
+% the velocity part is real and the dipole part imaginary, so there is no cross term
+\begin{align}
+\sum_{\lambda}\left|\widetilde{M}^{\lambda}_{\gamma\gamma'}\right|^2
+&= \frac{\mathcal{A}}{\omega_{\mathbf{q}}}\left[
+\left(X_{\mathrm{TE}}^2 + X_{\mathrm{TM}}^2\right) C_{\gamma\gamma'}^2
++ \left(\sin^2\varphi + \frac{\omega_0^2}{\omega_{\mathbf{q}}^2}\cos^2\varphi\right) D_{\gamma\gamma'}^2 \right],\\
+C_{\alpha\alpha} &= 2t_a uu' + 2t_b vv', & D_{\alpha\alpha} &= d\,(uv'\Delta_{ab} + vu'\Delta_{ba}),\\
+C_{\alpha\beta} &= 2t_a uv' - 2t_b vu', & D_{\alpha\beta} &= d\,(uu'\Delta_{ab} - vv'\Delta_{ba}),\\
+C_{\beta\alpha} &= 2t_a vu' - 2t_b uv', & D_{\beta\alpha} &= d\,(uu'\Delta_{ba} - vv'\Delta_{ab}),\\
+C_{\beta\beta} &= 2t_a vv' + 2t_b uu', & D_{\beta\beta} &= d\,(vu'\Delta_{ab} + uv'\Delta_{ba}).
+\end{align}
+
+% rate (eq. 186), Omega = E_{gamma k} - E_{gamma' k'}
+\begin{equation}
+\Gamma_{\gamma'\mathbf{k}'\to\gamma\mathbf{k}}
+= \sum_{\lambda}\left|\widetilde{M}^{\lambda}_{\gamma\gamma'}\right|^2
+N(\Omega)\,\frac{8\gamma\,\omega_{\mathbf{q}}\,\Omega}
+{\left[(\Omega-\omega_{\mathbf{q}})^2+\gamma^2\right]\left[(\Omega+\omega_{\mathbf{q}})^2+\gamma^2\right]} .
+\end{equation}
+
+\section{blabla2}
+States and parametrisation. $i=(\gamma,\mathbf k)$ with $\gamma\in\{\alpha,\beta\}$, $N$ grid points, weights $w_i=w_{\mathbf k}$, $\sum_{\mathbf k}w_{\mathbf k}=1$.
+
+$$n_i=\frac{1}{1+e^{\mu_i}},\qquad 1-n_i=\frac{1}{1+e^{-\mu_i}},\qquad \frac{\partial n_i}{\partial\mu_i}=-n_i(1-n_i).$$
+
+Mean field at given $(d,m)$ (\_mf, unchanged; $h$ is the Hartree parameter p.h):
+
+$$
+\tilde\varepsilon_{a}=\varepsilon_{a}+h\,\frac{n_0-m}{2}-\frac h2,\qquad
+\tilde\varepsilon_{b}=\varepsilon_{b}+h\,\frac{n_0+m}{2}-\frac h2,
+$$
+$$
+\xi_{\mathbf k}=\tfrac12(\tilde\varepsilon_a-\tilde\varepsilon_b),\quad
+E_{\mathbf k}=\sqrt{\xi_{\mathbf k}^2+d^2},\quad
+E_{\alpha/\beta,\mathbf k}=\tfrac12(\tilde\varepsilon_a+\tilde\varepsilon_b)\pm E_{\mathbf k},
+$$
+$$
+u_{\mathbf k}^2=\frac12\Big(1+\frac{\xi_{\mathbf k}}{E_{\mathbf k}}\Big),\quad
+v_{\mathbf k}^2=\frac12\Big(1-\frac{\xi_{\mathbf k}}{E_{\mathbf k}}\Big),\quad
+u_{\mathbf k}v_{\mathbf k}=\frac{d}{2E_{\mathbf k}}.
+$$
+
+Rates. $R_{ij}(d,m)=\sum_b\Gamma^{(b)}_{j\to i}$ is the output of `\_rates` at the current $(d,m)$; for the photon baths this is eq. 186. $R_{ii}=0$.
+
+Kinetic equation and its form in $\mu$ (eq. 193 summed over baths):
+
+$$
+\dot n_i=(1-n_i)\,a_i-n_i\,b_i,\qquad
+a_i=\sum_j R_{ij}\,w_j\,n_j,\qquad
+b_i=\sum_j R_{ji}\,w_j\,(1-n_j),
+$$
+$$\dot\mu_i=-\frac{\dot n_i}{n_i(1-n_i)}=\frac{b_i}{1-n_i}-\frac{a_i}{n_i}\equiv G_i .$$
+
+Unknowns and residual. $z=(\mu_1,\dots,\mu_{2N},\,d,\,m,\,\kappa)\in\mathbb R^{2N+3}$, with $V$ = p.v:
+
+$$
+\begin{aligned}
+F_i&=G_i+\kappa,\qquad i=1,\dots,2N,\\
+F_d&=d-V\sum_{\mathbf k}w_{\mathbf k}\,u_{\mathbf k}v_{\mathbf k}\,(n_{\beta\mathbf k}-n_{\alpha\mathbf k}),\\
+F_m&=m-\sum_{\mathbf k}w_{\mathbf k}\,(u_{\mathbf k}^2-v_{\mathbf k}^2)\,(n_{\alpha\mathbf k}-n_{\beta\mathbf k}),\\
+F_n&=\sum_{\mathbf k}w_{\mathbf k}\,(n_{\alpha\mathbf k}+n_{\beta\mathbf k})-n_0 .
+\end{aligned}
+$$
+
+Why $\kappa$. The rates conserve the particle number for every $z$:
+
+$$
+\sum_i w_i\,n_i(1-n_i)\,G_i=-\sum_i w_i\,\dot n_i
+=-\sum_{ij}w_iw_j\big[(1-n_i)R_{ij}n_j-n_iR_{ji}(1-n_j)\big]=0 .
+$$
+
+So the $2N$ balance equations hold only $2N-1$ independent conditions, and the system without $\kappa$ has $2N+3$ equations for $2N+2$ unknowns. Adding $\kappa$ makes it square. Multiplying $F_i=0$ by $w_in_i(1-n_i)$ and summing gives $\kappa\sum_i w_in_i(1-n_i)=0$, so $\kappa=0$ at the solution and the physical equations are unchanged.
+
+Jacobian. With $s_j=w_j\,n_j(1-n_j)$:
+
+$$
+\frac{\partial F_i}{\partial\mu_j}
+=s_j\Big[\frac{R_{ji}}{1-n_i}+\frac{R_{ij}}{n_i}\Big]
+-\delta_{ij}\Big[\frac{b_i\,n_i}{1-n_i}+\frac{a_i\,(1-n_i)}{n_i}\Big],
+$$
+$$
+\frac{\partial F_d}{\partial\mu_{\alpha\mathbf k}}=-V u_{\mathbf k}v_{\mathbf k}\,s_{\alpha\mathbf k},\qquad
+\frac{\partial F_d}{\partial\mu_{\beta\mathbf k}}=+V u_{\mathbf k}v_{\mathbf k}\,s_{\beta\mathbf k},
+$$
+$$
+\frac{\partial F_m}{\partial\mu_{\alpha\mathbf k}}=+(u_{\mathbf k}^2-v_{\mathbf k}^2)\,s_{\alpha\mathbf k},\qquad
+\frac{\partial F_m}{\partial\mu_{\beta\mathbf k}}=-(u_{\mathbf k}^2-v_{\mathbf k}^2)\,s_{\beta\mathbf k},\qquad
+\frac{\partial F_n}{\partial\mu_j}=-s_j,
+$$
+$$
+\frac{\partial F}{\partial\kappa}=(1,\dots,1,0,0,0)^{T},\qquad
+\frac{\partial F}{\partial x}\approx\frac{F(z+\eta\,e_x)-F(z-\eta\,e_x)}{2\eta},\quad
+\eta=10^{-6}\max(|x|,0.1),\quad x\in\{d,m\}.
+$$
+
+The finite differences in $d$ and $m$ include the change of $E$, $u$, $v$ and of the whole rate matrix.
+
+Scaling and linear solve. $C=\mathrm{diag}(c_1,\dots,c_{2N},1,1,1)$ with
+
+$$
+c_i=\Big(\frac{a_i}{n_i}+\frac{b_i}{1-n_i}\Big)^{-1},\qquad
+c_i\,G_i=\frac{n_ib_i-(1-n_i)a_i}{n_ib_i+(1-n_i)a_i}\in[-1,1],
+$$
+$$(CJ)\,\delta z=-CF,\qquad \mathrm{err}=\max_i|c_iF_i| .$$
+
+A scaled balance row is the relative mismatch of out and in flow, so states with very small rates count the same as the others.
+
+Step. $\lambda_0=\min\!\big(1,\ \mathrm{cap}/\max_i|\delta\mu_i|\big)$, then $\lambda$ is halved until
+
+$$\|C(z)\,F(z+\lambda\,\delta z)\|^2<(1-10^{-4}\lambda)\,\|C(z)\,F(z)\|^2 ,\qquad z\leftarrow z+\lambda\,\delta z .$$
+
+The loop stops with ok=True when $\mathrm{err}<\mathrm{tol}$, and with ok=False after nmax iterations or when $\lambda<10^{-6}$.
+
+Start and back-transform. $\mu_i^{(0)}=\ln\frac{1-n_i}{n_i}$ and $\kappa^{(0)}=0$. At the end $n_i=1/(1+e^{\mu_i})$ goes to sol.n, $\dot n_i$ at the converged $(d,m)$ to sol.cur, and $\mu_i$ to sol.eta.
+
+\section{Blabla3-bath vizualizacije}
+
 \nocite{*}
 \printbibliography
 \end{document} 

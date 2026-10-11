@@ -1,5 +1,5 @@
 from __future__ import annotations
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import partial
 from typing import Any, Callable, Iterable, NamedTuple
 import numpy as np
@@ -858,6 +858,117 @@ def solve_fixed(
     return _result(bd, p, n, d, m, dn, erj, it, float(it), ok, hs)
 
 
+@partial(jax.jit, static_argnames=("rf",))
+def _newt_sys(ea, eb, w, pv, pn, ph, bp, rf, z):
+    """Newton residual f(z), df/dmu and the row scale; z = (mu, d, m, kap).
+
+    Rows: 2N balance rows b / (1 - n) - a / n + kap, then gap, imbalance, filling.
+    """
+    nk = w.size
+    mu, d, m, kap = z[:2 * nk], z[2 * nk], z[2 * nk + 1], z[2 * nk + 2]
+    st = _mf(ea, eb, pn, ph, d, m)
+    r = _rates(st, bp, rf)
+    n, h = jax.nn.sigmoid(-mu), jax.nn.sigmoid(mu)
+    ww = jnp.tile(w, 2)
+    a = r @ (ww * n)
+    b = r.T @ (ww * h)
+    tg = _targets(st, n.reshape(2, -1), w, pv)
+    f = jnp.concatenate((b / h - a / n + kap,
+                         jnp.stack((d - tg.d, m - tg.m, tg.n - pn))))
+
+    # analytic mu columns; s = -w dn/dmu
+    s = ww * n * h
+    jb = (r.T / h[:, None] + r / n[:, None]) * s - jnp.diag(b * n / h + a * h / n)
+    sg = jnp.repeat(jnp.asarray([-1.0, 1.0]), nk)
+    uv = jnp.tile(st.u * st.v, 2)
+    x = jnp.tile(st.u * st.u - st.v * st.v, 2)
+    jf = jnp.stack((pv * sg * uv * s, -sg * x * s, -s))
+    sc = jnp.concatenate((1.0 / (a / n + b / h), jnp.ones(3)))
+    return f, jnp.concatenate((jb, jf)), sc
+
+
+def solve_newton(
+    bd: eu.Bands,
+    p: eu.MFPars,
+    n: Any,
+    bs: Iterable[Bath],
+    d: float = 0.2,
+    m: float = 0.0,
+    mu: Any = None,
+    tol: float = 1.0e-10,
+    nmax: int = 50,
+    cap: float = 10.0,
+    prog: bool = True,
+) -> eu.OpenSol:
+    """Steady state by Newton iteration in mu, with n = 1 / (1 + exp(mu)).
+
+    Unknowns are mu of all 2N states, d, m and one multiplier kap for the
+    filling. The start is n (or mu, if given), d, m. cap limits the change of
+    mu per step. sol.eta holds mu, sol.err the scaled residual; hist['t'] and
+    sol.time are iteration counts.
+    """
+    n = _init_n(bd, p, n, d, m, tol, nmax, 1)
+    ea, eb, w, pv, pn, ph = _pars(bd, p)
+    bp, rf = _baths(bs)
+    nm = 2 * bd.size
+    if mu is None:
+        nc = jnp.clip(n, 1.0e-300, 1.0 - 1.0e-16)
+        mu = jnp.log1p(-nc) - jnp.log(nc)
+    z = jnp.concatenate((jnp.asarray(mu, dtype=F32).reshape(-1),
+                         jnp.asarray([d, m, 0.0], dtype=F32)))
+
+    def sys(y):
+        return _newt_sys(ea, eb, w, pv, pn, ph, bp, rf, y)
+
+    hs = {q: [] for q in ("it", "t", "err", "d", "m", "step")}
+    ok, er = False, np.inf
+    bar = tqdm(range(int(nmax) + 1), desc="Newton EI JAX", disable=not prog)
+    for it in bar:
+        f, jm, sc = sys(z)
+        er = float(jnp.max(jnp.abs(sc * f)))
+        if not np.isfinite(er):
+            raise RuntimeError("nonfinite residual in Newton iteration")
+        hs["it"].append(it)
+        hs["t"].append(float(it))
+        hs["err"].append(er)
+        hs["d"].append(float(z[nm]))
+        hs["m"].append(float(z[nm + 1]))
+        if prog:
+            bar.set_postfix(err=f"{er:.2e}", d=f"{hs['d'][-1]:.5f}", m=f"{hs['m'][-1]:.5f}")
+        if er < tol or it == nmax:
+            ok = er < tol
+            break
+
+        # d and m columns by central differences, kap column
+        cols = [jm]
+        for j in (nm, nm + 1):
+            hh = 1.0e-6 * max(abs(float(z[j])), 0.1)
+            e = hh * (jnp.arange(nm + 3) == j)
+            cols.append(((sys(z + e)[0] - sys(z - e)[0]) / (2.0 * hh))[:, None])
+        cols.append((jnp.arange(nm + 3) < nm).astype(F32)[:, None])
+        dz = jnp.linalg.solve(sc[:, None] * jnp.concatenate(cols, axis=1), -sc * f)
+
+        # capped step with backtracking on the scaled residual
+        s = min(1.0, cap / max(float(jnp.max(jnp.abs(dz[:nm]))), 1.0e-300))
+        f0 = float(jnp.sum(jnp.square(sc * f)))
+        while s > 1.0e-6:
+            f1 = float(jnp.sum(jnp.square(sc * sys(z + s * dz)[0])))
+            if np.isfinite(f1) and f1 < (1.0 - 1.0e-4 * s) * f0:
+                break
+            s *= 0.5
+        if s <= 1.0e-6:
+            break
+        z = z + s * dz
+        hs["step"].append(s)
+    bar.close()
+
+    mu, d, m = z[:nm], z[nm], z[nm + 1]
+    n = jax.nn.sigmoid(-mu).reshape(2, -1)
+    dn = _cur_mat(n, w, _rates_jit(_mf(ea, eb, pn, ph, d, m), bp, rf))
+    sol = _result(bd, p, n, d, m, dn, er, it, float(it), ok, hs)
+    return replace(sol, eta=np.asarray(mu, dtype=np.float64).reshape(2, -1))
+
+
 __all__ = [
     "Bath",
     "JState",
@@ -878,4 +989,5 @@ __all__ = [
     "lim_step",
     "solve_open",
     "solve_fixed",
+    "solve_newton",
 ]

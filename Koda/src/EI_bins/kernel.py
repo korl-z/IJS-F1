@@ -23,6 +23,16 @@ class Cells(NamedTuple):
     xes: np.ndarray  # u^2 - v^2 at the sub nodes
     ies: np.ndarray  # 1 / (2 E) at the sub nodes
     nb: int = 0  # shells per sector block (Sectors), 0 for plain shells
+    wa: np.ndarray = None  # alpha moments of (U, H0 U, D U), (ns, 6, 6)
+    wb: np.ndarray = None  # beta moments of (U, H0 U, D U)
+
+
+# photon coherence: C1 = U^T D U', C2 = (H0 U)^T sx U' - U^T sx (H0 U')
+S1 = np.zeros((6, 6))
+S1[0, 4] = S1[1, 5] = 1.0
+S2 = np.zeros((6, 6))
+S2[2, 1] = S2[3, 0] = 1.0
+S2[0, 3] = S2[1, 2] = -1.0
 
 
 def _qp(s, band, mf, d, m):
@@ -59,7 +69,17 @@ def cells(sh, band, mf, d, m, hmin=1e-12):
     ma = np.stack((np.stack((a, -c), -1), np.stack((-c, b), -1)), -2)
     mb = np.stack((np.stack((b, c), -1), np.stack((c, a), -1)), -2)
     ie = np.where(ok, 0.5 / ep, 0.0)
-    return Cells(e, hw, ma, mb, es, uv, xr, ie, getattr(sh, "nb", 0))
+    # orbital vectors with bare energies and hoppings, for the photon vertex
+    u = np.sqrt(0.5 * (1.0 + xr))
+    v = np.copysign(np.sqrt(0.5 * (1.0 - xr)), d)
+    ea, eb = band.bare(sh.ss)
+    ws6 = []
+    for qa, qb in ((u, -v), (v, u)):
+        z = np.stack((qa, qb, ea * qa, eb * qb,
+                      2.0 * band.ta * qa, 2.0 * band.tb * qb), -1)
+        ws6.append(np.sum(sh.ws[..., None, None] * z[..., :, None] * z[..., None, :],
+                          axis=-3))
+    return Cells(e, hw, ma, mb, es, uv, xr, ie, getattr(sh, "nb", 0), *ws6)
 
 
 def gge_coef(cl):
@@ -207,11 +227,10 @@ def delta_brk(xp, le, om, t):
 
 
 def spec_line(xp, e, om, gam):
-    """Damped oscillator line of width gam at om, normalized on e > 0."""
-    z = 2.0 * xp.arctan(om / gam) / PI
+    """Line [A(e) - A(-e)] / (2 pi) of eq. 186, width gam at om, e > 0."""
     d1 = (e - om) ** 2 + gam**2
     d2 = (e + om) ** 2 + gam**2
-    return xp.where(e > 0.0, 4.0 * gam * e * om / (PI * d1 * d2 * z), 0.0)
+    return xp.where(e > 0.0, 4.0 * gam * e * om / (PI * d1 * d2), 0.0)
 
 
 def _spec_nodes(xp, x, ha, hb, cmin, om, gam):
@@ -240,8 +259,7 @@ def _spec_nodes(xp, x, ha, hb, cmin, om, gam):
     u = xp.where(broad, ub, un)
     wq = xp.where(broad, wb, wn)
     e = om + gam * xp.tan(PI * (u - 0.5))
-    z = 2.0 * xp.arctan(om / gam) / PI
-    br = 4.0 * e * om / (z * ((e + om) ** 2 + gam**2))  # B / Cauchy density
+    br = 4.0 * e * om / ((e + om) ** 2 + gam**2)  # B / Cauchy density
     L = line_xp(xp, x[..., None] - e, ha[..., None], hb[..., None], cmin)
     return e, wq * br * L
 
@@ -310,14 +328,14 @@ def rates(cl, baths, kerns):
     if nb and nb < nc:
         # sectors: energies and coherence live on the shells, the pair
         # factors are computed there and spread to all sector pairs
-        e, hw, m2 = cl.e[:, :nb].reshape(-1), cl.hw[:, :nb].reshape(-1), (cl.ma[:nb], cl.mb[:nb])
+        e, hw, m2 = cl.e[:, :nb].reshape(-1), cl.hw[:, :nb].reshape(-1), (cl.wa[:nb], cl.wb[:nb])
         fi = np.arange(2 * nc)
         g = (fi // nc) * nb + (fi % nc) % nb
 
         def ex(z):
             return z[np.ix_(g, g)]
     else:
-        e, hw, m2 = cl.e.reshape(-1), cl.hw.reshape(-1), (cl.ma, cl.mb)
+        e, hw, m2 = cl.e.reshape(-1), cl.hw.reshape(-1), (cl.wa, cl.wb)
 
         def ex(z):
             return z
@@ -332,12 +350,12 @@ def rates(cl, baths, kerns):
         t = bt.t if bt.t > 0 else np.inf
         tmin[(id(kn), bt.gam)] = min(tmin.get((id(kn), bt.gam), np.inf), t)
     for bt, kn in zip(baths, kerns):
-        if bt.c not in cohs:
-            cm = bt.cm
-            cohs[bt.c] = np.block([[coh2(m2[i], m2[j], cm) for j in range(2)]
-                                   for i in range(2)])
+        if not cohs:
+            for q, sm in enumerate((S1, S2)):
+                cohs[q] = np.block([[coh2(m2[i], m2[j], sm) for j in range(2)]
+                                    for i in range(2)])
         cmin = max(cf, kn.dw, bt.eta)  # line box width: cell, bin or eta
-        p = np.zeros_like(xf)
+        p, pd = np.zeros_like(xf), np.zeros_like(xf)
         for m in range(kn.om.size):
             key = (id(kn), m, bt.gam, bt.eta)
             if key not in geo:
@@ -345,11 +363,12 @@ def rates(cl, baths, kerns):
                 geo[key] = (spec_geo(np, x, ha, hb, cmin, kn.om[m], bt.gam,
                                      tmin[(id(kn), bt.gam)])
                             if bt.gam > 0 else delta_geo(np, x, ha, hb, cmin, kn.om[m]))
-                tiles[key] = np.tile(kn.A[m], (2, 2))
+                tiles[key] = np.tile(kn.A[m], (2, 2)), np.tile(kn.D[m], (2, 2))
             br = (spec_brk(np, geo[key], bt.t) if bt.gam > 0
                   else delta_brk(np, geo[key], kn.om[m], bt.t))
-            p += tiles[key] * ex(br)
-        p *= 2.0 * np.pi * bt.amp * ex(cohs[bt.c])
+            p += tiles[key][0] * ex(br)
+            pd += tiles[key][1] * ex(br)
+        p = 2.0 * np.pi * bt.amp * (ex(cohs[0]) * p + bt.dip**2 * ex(cohs[1]) * pd)
         if bt.t > 0:
             up = p.T * np.exp(np.minimum(xf, 0.0) / bt.t)
         else:

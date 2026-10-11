@@ -288,12 +288,20 @@ def plot_bz(pt, bd, st):
     ky = k_edges(kg[0, :, 1] / np.pi)
     nf = np.asarray(st.n).reshape((2,) + bd.shape)
 
+    XX, YY = np.meshgrid(kx, ky, indexing="xy")
+    Z = np.cos(XX * np.pi) + np.cos(YY * np.pi)
+    levels = np.arange(-2.0, 2.001, 0.2)
+
     with pt.figure(name="occupations_bz", shape=(1, 2), h=0.62,
                    sharex=True, sharey=True) as q:
         im0 = color_map(q.ax[0], kx, ky, nf[0].T, cmap=cmaps.lipari,
                         vmin=0.0, vmax=1.0)
         im1 = color_map(q.ax[1], kx, ky, nf[1].T, cmap=cmaps.lipari,
                         vmin=0.0, vmax=1.0)
+        
+        q.ax[0].contour(XX, YY, Z, levels=levels, colors="white", linewidths=0.6, alpha=0.5)
+        q.ax[1].contour(XX, YY, Z, levels=levels, colors="white", linewidths=0.6, alpha=0.5)
+
         q.ax[0].text(0.05, 0.93, r"$n_{\alpha\mathbf{k}}$",
                      transform=q.ax[0].transAxes, ha="left", va="top", color="white")
         q.ax[1].text(0.05, 0.93, r"$n_{\beta\mathbf{k}}$",

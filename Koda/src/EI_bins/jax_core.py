@@ -6,7 +6,7 @@ import jax.numpy as jnp
 from jax import lax
 from jax.nn import sigmoid
 
-from .kernel import delta_brk, delta_geo, spec_brk, spec_geo
+from .kernel import S1, S2, delta_brk, delta_geo, spec_brk, spec_geo
 
 jax.config.update("jax_enable_x64", True)
 
@@ -19,13 +19,15 @@ def make_core(pb):
     ws = jnp.asarray(sh.ws)
     w = jnp.asarray(sh.w)
     wt = jnp.asarray(pb.wt)
-    cs = tuple(jnp.asarray(b.cm) for b in pb.baths)
+    cs = (jnp.asarray(S1), jnp.asarray(S2))
+    dip2 = tuple(b.dip**2 for b in pb.baths)
     amps = tuple(2.0 * np.pi * b.amp for b in pb.baths)
     # baths with the same kernel and line width share the geometric part
     kg = {}
     for i, (b, kn) in enumerate(zip(pb.baths, pb.A)):
         kg.setdefault((id(kn), b.gam, b.eta), (kn, b.gam, b.eta, []))[3].append(i)
-    bdat = tuple((jnp.tile(jnp.asarray(kn.A), (1, 2, 2)), jnp.asarray(kn.om),
+    bdat = tuple((jnp.tile(jnp.asarray(kn.A), (1, 2, 2)),
+                  jnp.tile(jnp.asarray(kn.D), (1, 2, 2)), jnp.asarray(kn.om),
                   max(float(kn.dw), float(et)), float(g), tuple(ix))
                  for kn, g, et, ix in kg.values())
     N, nc, nth = pb.wt.size, pb.nc, pb.nth
@@ -73,10 +75,20 @@ def make_core(pb):
         ma = jnp.stack((jnp.stack((a, -c), -1), jnp.stack((-c, b), -1)), -2)
         mb = jnp.stack((jnp.stack((b, c), -1), jnp.stack((c, a), -1)), -2)
         ie = jnp.where(ok, 0.5 / ep, 0.0)
-        return e, hw, ma, mb, es, uv, xr, ie
+        # moments of (U, H0 U, D U) for the photon vertex, as in kernel.cells
+        u = jnp.sqrt(0.5 * (1.0 + xr))
+        v = jnp.copysign(jnp.sqrt(0.5 * (1.0 - xr)), d)
+
+        def mom(qa, qb):
+            z = jnp.stack((qa, qb, ea * qa, eb * qb,
+                           2.0 * bd.ta * qa, 2.0 * bd.tb * qb), -1)
+            return jnp.sum(ws[..., None, None] * z[..., :, None] * z[..., None, :],
+                           axis=-3)
+
+        return e, hw, ma, mb, es, uv, xr, ie, mom(u, -v), mom(v, u)
 
     def rate(cl, ts):
-        e, hw, ma, mb = cl[:4]
+        e, hw, ma, mb = cl[0], cl[1], cl[8], cl[9]
         if sec:
             e, hw, ma, mb = e[:, :nb], hw[:, :nb], ma[:nb], mb[:nb]
         e, hw = e.reshape(-1), hw.reshape(-1)
@@ -85,32 +97,39 @@ def make_core(pb):
         ha, hb = hw[:, None], hw[None, :]
         cf = jnp.max(hw)
         mats = (ma, mb)
-        # frequency bin sums of A_m times the line bracket, one per bath
+        # frequency bin sums of A_m, D_m times the line bracket, per bath
         pp = [None] * len(amps)
-        for A3, om, dw, gam, ix in bdat:
+        for A3, D3, om, dw, gam, ix in bdat:
             cmin = jnp.maximum(cf, dw)
 
-            def body(k, acc, A3=A3, om=om, gam=gam, ix=ix, cmin=cmin):
+            def body(k, acc, A3=A3, D3=D3, om=om, gam=gam, ix=ix, cmin=cmin):
                 if gam > 0.0:
                     geo = spec_geo(jnp, x, ha, hb, cmin, om[k], gam)
                     brs = [spec_brk(jnp, geo, ts[i]) for i in ix]
                 else:
                     le = delta_geo(jnp, x, ha, hb, cmin, om[k])
                     brs = [delta_brk(jnp, le, om[k], ts[i]) for i in ix]
-                return tuple(a + A3[k] * ex(br) for a, br in zip(acc, brs))
+                brs = [ex(br) for br in brs]
+                return tuple((a + A3[k] * br, b + D3[k] * br)
+                             for (a, b), br in zip(acc, brs))
 
             acc = lax.fori_loop(0, om.shape[0], body,
-                                tuple(jnp.zeros_like(xf) for _ in ix))
+                                tuple((jnp.zeros_like(xf), jnp.zeros_like(xf))
+                                      for _ in ix))
             for i, a in zip(ix, acc):
                 pp[i] = a
-        K = jnp.zeros_like(xf)
-        for i, (cm, amp) in enumerate(zip(cs, amps)):
+        # coherence blocks of the velocity and the dipole part
+        cb = []
+        for cm in cs:
             blocks = []
             for mi in mats:
                 a = jnp.einsum('ab,iac,cd->ibd', cm, mi, cm)
                 blocks.append(jnp.concatenate(
                     [jnp.einsum('ibd,jbd->ij', a, mj) for mj in mats], axis=1))
-            p = amp * ex(jnp.concatenate(blocks, axis=0)) * pp[i]
+            cb.append(ex(jnp.concatenate(blocks, axis=0)))
+        K = jnp.zeros_like(xf)
+        for i, amp in enumerate(amps):
+            p = amp * (cb[0] * pp[i][0] + dip2[i] * cb[1] * pp[i][1])
             t = ts[i]
             up = jnp.where(t > 0.0, p.T * jnp.exp(jnp.minimum(xf, 0.0) /
                                                   jnp.maximum(t, 1e-300)), 0.0)

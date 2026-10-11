@@ -67,11 +67,15 @@ class Shells:
 
 @dataclass(frozen=True)
 class Sectors:
-    """Shells split into nt sectors of tau = |t| / (2 - |s|), t = cos kx - cos ky.
+    """Shells split into nt sectors of tau = t / (2 - |s|), t = cos kx - cos ky.
 
-    tau = 0 is the diagonal kx = ky, tau = 1 the line through the saddle
-    points (pi, 0), (0, pi). Flat cell index c = a nb + I (sector a, shell I),
-    so the s neighbours of a cell are adjacent inside each sector block.
+    tau = 0 is the diagonal kx = ky, tau = -1 and +1 are the lines through
+    the saddle points (0, pi) and (pi, 0). t is signed, because a dipole
+    along x makes kx and ky inequivalent; (s, t) labels the four momenta
+    (+-kx, +-ky). nt is odd, so that t = 0 lies inside the middle sector.
+    Flat cell index c = a nb + I (sector a, shell I), so the s neighbours of
+    a cell are adjacent inside each sector block; sector nt - 1 - a is the
+    kx <-> ky image of sector a.
     Energies depend on s only: sc, ss, ws of a cell are those of its shell.
     """
 
@@ -98,8 +102,8 @@ class Sectors:
         cx, cy = np.asarray(cx), np.asarray(cy)
         s, t = cx + cy, cx - cy
         i = np.clip(np.searchsorted(self.se, s, side="right") - 1, 0, self.nb - 1)
-        tau = np.abs(t) / np.maximum(2.0 - np.abs(s), 1e-300)
-        a = np.minimum((tau * self.nt).astype(int), self.nt - 1)
+        tau = 0.5 + 0.5 * t / np.maximum(2.0 - np.abs(s), 1e-300)
+        a = np.clip((tau * self.nt).astype(int), 0, self.nt - 1)
         return a * self.nb + i
 
 
@@ -148,14 +152,16 @@ def make_shells(ns, nsub=4, nq=200):
 def make_sectors(ns, nt, nsub=4, nq=200, nk=2048):
     """Shells of make_shells(ns, nsub) split into nt equal sectors in tau.
 
-    The exact sub interval weights of the shells are split between the
-    sectors by the area fractions on a uniform nk x nk grid of the reduced
-    quadrant [0, pi]^2 (kx, ky uniform there), so sums over the sectors of a
-    shell stay exact. nt = 1 reproduces make_shells.
+    tau = t / (2 - |s|) in [-1, 1] is signed, nt must be odd. The exact sub
+    interval weights of the shells are split between the sectors by the area
+    fractions on a uniform nk x nk grid of the reduced quadrant [0, pi]^2
+    (kx, ky uniform there), so sums over the sectors of a shell stay exact
+    and the weights are symmetric under t -> -t. nt = 1 reproduces
+    make_shells.
     """
     nt = int(nt)
-    if nt < 1:
-        raise ValueError("nt must be at least 1")
+    if nt < 1 or nt % 2 == 0:
+        raise ValueError("nt must be odd and at least 1")
     base = make_shells(ns, nsub, nq)
     nb = base.ns
     fe = np.linspace(-2.0, 2.0, nb * nsub + 1)
@@ -163,10 +169,11 @@ def make_sectors(ns, nt, nsub=4, nq=200, nk=2048):
     s = c[:, None] + c[None, :]
     t = c[:, None] - c[None, :]
     sub = np.clip(np.searchsorted(fe, s, side="right") - 1, 0, nb * nsub - 1)
-    tau = np.abs(t) / np.maximum(2.0 - np.abs(s), 1e-300)
-    a = np.minimum((tau * nt).astype(int), nt - 1)
+    tau = 0.5 + 0.5 * t / np.maximum(2.0 - np.abs(s), 1e-300)
+    a = np.clip((tau * nt).astype(int), 0, nt - 1)
     cnt = np.bincount((sub * nt + a).ravel(), minlength=nb * nsub * nt)
     cnt = cnt.reshape(nb * nsub, nt).astype(float)
+    cnt = 0.5 * (cnt + cnt[:, ::-1])  # exact kx <-> ky symmetry
     tot = cnt.sum(axis=1, keepdims=True)
     # sub intervals missed by the grid are split evenly
     frac = np.where(tot > 0, cnt / np.where(tot > 0, tot, 1.0), 1.0 / nt)

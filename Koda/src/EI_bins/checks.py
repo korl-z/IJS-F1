@@ -8,7 +8,7 @@ from scipy.optimize import brentq, root
 from scipy.special import expit
 
 from .eq import solve_eq
-from .geom import Kern, _phi, _phis, auto_L, kernels
+from .geom import QF, Kern, _kf, _phis, auto_L, kernels
 from .kernel import cells, rates
 from .solve import solve_ness
 
@@ -36,7 +36,8 @@ def check_iso(sh, band, mf, baths, sol, A=None, cache=None):
     """Within shell anisotropy left out by the closure n(k) = n(s(k)).
 
     One Jacobi step of the k resolved rate equations from the shell NESS sol:
-    every fine grid state k keeps the momentum structure of |g(k - p)|^2 and
+    every fine grid state k keeps the momentum structure of the velocity
+    and the dipole part of the photon vertex and
     the factors (coherence, line, Bose) of its cell pair, which gives the
     local multiplier mu(k) = log(G_out(k) / G_in(k)). Returns (2, ns) arrays:
     rel. spread of G_in + G_out ('gam'), spread of mu(k) - mu_I ('dmu') and
@@ -52,29 +53,35 @@ def check_iso(sh, band, mf, baths, sol, A=None, cache=None):
     k = -np.pi + 2 * np.pi * (np.arange(L) + 0.5) / L
     lab = sh.label(np.cos(k)[:, None], np.cos(k)[None, :])
     gin, gout = np.zeros((2, L, L)), np.zeros((2, L, L))
+    kf = _kf(k)
     for b, kb in zip(baths, kn):
-        if b.disp == "constant":
-            phi = _phi(L, b.lam, b.qd, 4)[None] / b.w0
-        else:
-            phi = _phis(b, L, 4, kb.dw * (1.0 + 1e-9))[0]
+        zz = np.zeros_like(kb.A[:1])
+        cf = []
+        for m in range(kb.om.size):
+            # pair factors of bin m: velocity and dipole rate over their kernels
+            sl = slice(m, m + 1)
+            kv = rates(cl, (b,), (Kern(kb.A[sl], kb.om[sl], kb.dw, zz),))
+            kd = rates(cl, (b,), (Kern(zz, kb.om[sl], kb.dw, kb.D[sl]),))
+            av, ad = np.tile(kb.A[m], (2, 2)), np.tile(kb.D[m], (2, 2))
+            cf.append((np.where(ad > 0, kd / np.where(ad > 0, ad, 1.0), 0.0),
+                       np.where(av > 0, kv / np.where(av > 0, av, 1.0), 0.0)))
+        for jq in range(QF):
+            phi = _phis(b, L, 4, kb.dw * (1.0 + 1e-9) if kb.dw > 0 else 1.0, jq)[0]
             if phi.shape[0] != kb.om.size:
                 raise ValueError("frequency bins differ from the kernel")
-        for m in range(kb.om.size):
-            # pair factor of bin m: cell pair rate over its kernel entry
-            K = rates(cl, (b,), (Kern(kb.A[m:m + 1], kb.om[m:m + 1], kb.dw),))
-            at = np.tile(kb.A[m], (2, 2))
-            cf = np.where(at > 0, K / np.where(at > 0, at, 1.0), 0.0)
-            fp = sfft.rfft2(phi[m], workers=-1)
-            for j in range(ns):
-                # r(k) = sum_{q in cell j} |g(k - q)|^2 / amp / L^2
-                chi = sfft.rfft2((lab == j).astype(float), workers=-1)
-                r = sfft.irfft2(fp * chi, s=(L, L), workers=-1) / L**2
-                for nu in range(2):
-                    jj = nu * ns + j
-                    for mu in range(2):
-                        ii = mu * ns + lab
-                        gin[mu] += cf[ii, jj] * n[jj] * r
-                        gout[mu] += cf[jj, ii] * p[jj] * r
+            for m in range(kb.om.size):
+                fp = sfft.rfft2(phi[m], workers=-1)
+                c = cf[m][min(jq, 1)]
+                for j in range(ns):
+                    # r(k) = sum_{p in cell j} of field jq at (p, k - p) / L^2
+                    chi = sfft.rfft2((lab == j) * kf[jq], workers=-1)
+                    r = sfft.irfft2(fp * chi, s=(L, L), workers=-1) / L**2
+                    for nu in range(2):
+                        jj = nu * ns + j
+                        for mu in range(2):
+                            ii = mu * ns + lab
+                            gin[mu] += c[ii, jj] * n[jj] * r
+                            gout[mu] += c[jj, ii] * p[jj] * r
 
     lf = lab.ravel()
     out = {key: np.full((2, ns), np.nan) for key in ("gam", "dmu", "dn")}

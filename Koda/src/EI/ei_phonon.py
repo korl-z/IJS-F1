@@ -17,13 +17,12 @@ class PhononBath:
     t: float
     k: Any
     cs: float
-    ktf: float
     eta: float
+    gap: float
+    ta: float
+    tb: float
+    dip: float
     amp: float = 1.0
-    caa: float = 1.0
-    cab: float = 0.0
-    cba: float = 0.0
-    cbb: float = 1.0
     qd: float = np.pi
     a0: float = 1.0
     nang: int = 128
@@ -32,7 +31,7 @@ class PhononBath:
     disp: str = "acoustic"
     w0: float = 1.0
     length: float = 1.0
-    ew: float = 1.0e-3
+    gam: float = 1.0e-3
 
     eh: float = 0.05
     em: float = 12.0
@@ -40,26 +39,23 @@ class PhononBath:
     def __post_init__(self):
         k = np.array(self.k, dtype=float, copy=True)
         z = np.asarray((
-            self.t, self.cs, self.ktf, self.eta,
-            self.amp, self.caa, self.cab, self.cba, self.cbb, self.qd,
+            self.t, self.cs, self.eta,
+            self.amp, self.gap, self.ta, self.tb, self.dip, self.qd,
             self.a0, self.w0, self.length,
-            self.ew, self.eh, self.em,
+            self.gam, self.eh, self.em,
         ))
 
         if not np.isrealobj(z) or not np.isfinite(z).all():
             raise ValueError("bath parameters must be finite and real")
 
-        if min(
-            self.cs, self.ktf, self.eta, self.qd,
-            self.a0, self.w0, self.length,
-            self.eh, self.em,) <= 0:
+        if min(self.eta, self.qd, self.a0, self.eh, self.em) <= 0:
             raise ValueError("positive bath scales required")
 
-        if self.ew < 0 or self.t < 0 or self.amp < 0:
-            raise ValueError("t, amp and ew must be nonnegative")
+        if min(self.cs, self.w0, self.gam, self.t, self.amp) < 0:
+            raise ValueError("cs, w0, gam, t and amp must be nonnegative")
 
-        if self.disp not in ("constant", "acoustic", "gapped"):
-            raise ValueError("invalid phonon dispersion")
+        if self.cs == 0.0 and self.w0 == 0.0:
+            raise ValueError("cs and w0 cannot both be zero")
         
         qmax = np.sqrt(2.0) * np.pi / self.a0
         if self.qd > qmax * (1.0 + 1.0e-12):
@@ -79,17 +75,21 @@ class Pack(NamedTuple):
     eh: Any
     em: Any
 
+# def omega_q(q, b):
+#     q = jnp.asarray(q, dtype=F)
+
+#     if b.disp == "constant":
+#         return jnp.full_like(q, b.w0)
+
+#     if b.disp == "acoustic":
+#         return b.cs * q
+
+#     wg = 2.0 * jnp.pi / b.length
+#     return jnp.sqrt(wg * wg + (b.cs * q)**2)
+
 def omega_q(q, b):
     q = jnp.asarray(q, dtype=F)
-
-    if b.disp == "constant":
-        return jnp.full_like(q, b.w0)
-
-    if b.disp == "acoustic":
-        return b.cs * q
-
-    wg = 2.0 * jnp.pi / b.length
-    return jnp.sqrt(wg * wg + (b.cs * q)**2)
+    return jnp.hypot(b.w0, b.cs * q)
 
 @lru_cache(maxsize=8)
 def _tab(nx, ny, na, eta, qd, per, nq):
@@ -163,9 +163,12 @@ def pack(bs, nq=512):
             "cached kernels require a uniform Cartesian BZ grid"
         )
 
-    dc = {"constant": 0, "acoustic": 1, "gapped": 2}
 
-    pa = [(q.t, q.cs, q.ktf, q.eta, q.amp, q.caa, q.cab, q.cba, q.cbb, q.qd, dc[q.disp], q.w0, q.length, q.ew) for q in bs]
+    pa = [
+        (q.t, q.cs, q.eta, q.amp,
+         q.ta, q.tb, q.dip, q.gap, q.qd, q.w0, q.gam)
+        for q in bs
+    ]
 
     tb = [_tab(nx, ny, int(q.nang), float(q.eta), float(q.qd), float(per), nq) for q in bs]
 
@@ -177,8 +180,8 @@ def pack(bs, nq=512):
     for q, z in zip(bs, tb):
         qr = np.linspace(0.0, q.qd, nq)
 
-        if q.disp == "constant":
-            den = (qr * qr + q.ktf * q.ktf)**2
+        if q.cs == 0.0:
+            den = 1.0
             f = qr**3 / (q.w0 * den)
             v = np.trapezoid(z * f[None, None, :], qr, axis=-1)
         else:
@@ -192,22 +195,36 @@ def _wrap_q(q, per):
     return jnp.mod(q + 0.5 * per, per) - 0.5 * per
 
 def g_mat(st, b, k, p, q):
-    """G[nu, mu] for one phonon momentum."""
+    """Vertex M~[pol, nu, mu] of eqs. 125, 157 for final index k, source index p.
+
+    q is the photon momentum k - p in the first BZ. pol 0 is TE (eq. 128),
+    pol 1 is TM (eq. 129); nu is the final band, mu the source band.
+    The rates use sum_pol |M~[pol, nu, mu]|^2.
+    """
     q = jnp.asarray(q, dtype=F)
+    kk = jnp.asarray(b.k, dtype=F)
+    kf, ki = kk[k], kk[p]
     qm = jnp.linalg.norm(q)
-    om = omega_q(qm, b)
+    os = jnp.maximum(omega_q(qm, b), F(1.0e-30))
+    g = jnp.where(qm <= b.qd, jnp.sqrt(b.amp / os), 0.0)
 
-    sg = jnp.where(q[0] != 0, jnp.sign(q[0]), jnp.sign(q[1]))
+    ph = jnp.arctan2(q[1], q[0])
+    cp, sn = jnp.cos(ph), jnp.sin(ph)
+    ep = jnp.stack((jnp.stack((-sn, cp)), (b.w0 / os) * jnp.stack((cp, sn))))
 
-    den = qm**2 + b.ktf**2
-    g = (sg * jnp.sqrt(b.amp) * qm / jnp.sqrt(jnp.maximum(om, F(1.0e-30))) / den) ##removed imaginary unit
+    xv = ep @ (b.a0 * jnp.sin(b.a0 * (ki + 0.5 * q)))
+    pv = b.dip * ep[:, 0]
 
-    g = jnp.where((qm > 0.0) & (qm <= b.qd), g, 0.0)
+    sf = jnp.sum(jnp.cos(b.a0 * kf))
+    si = jnp.sum(jnp.cos(b.a0 * ki))
+    eab = b.gap - 2.0 * b.ta * sf + 2.0 * b.tb * si
+    eba = -b.gap - 2.0 * b.tb * sf + 2.0 * b.ta * si
 
-    qb = jnp.pi / b.a0
-    ma = ((jnp.abs(q[0]) <= qb) & (jnp.abs(q[1]) <= qb) & (qm <= b.qd))
-    g = jnp.where(ma, g, 0.0)
-    
+    mm = jnp.stack((
+        jnp.stack((2.0 * b.ta * xv, 1j * pv * eab), axis=-1),
+        jnp.stack((1j * pv * eba, 2.0 * b.tb * xv), axis=-1),
+    ), axis=-2)
+
     uk = jnp.array([
         [st.u[k], st.v[k]],
         [-st.v[k], st.u[k]],
@@ -217,8 +234,7 @@ def g_mat(st, b, k, p, q):
         [-st.v[p], st.u[p]],
     ])
 
-    c = jnp.array([[b.caa, b.cab], [b.cba, b.cbb],], dtype=F,)
-    return g * (uk.T @ c @ up)
+    return g * jnp.einsum("ba,lbc,cd->lad", uk, mm, up)
 
 
 def _shell(dx, dy, q, i, bp):
@@ -227,7 +243,7 @@ def _shell(dx, dy, q, i, bp):
     ix = jnp.rint(dx * nx / bp.per).astype(jnp.int32) % nx
     iy = jnp.rint(dy * ny / bp.per).astype(jnp.int32) % ny
 
-    z = jnp.clip(q * (nq - 1) / bp.b[i, 9], 0.0, nq - 1)
+    z = jnp.clip(q * (nq - 1) / bp.b[i, 8], 0.0, nq - 1)
     iz = jnp.minimum(z.astype(jnp.int32), nq - 2)
     f = z - iz
 
@@ -250,27 +266,21 @@ def _bose(w, t):
     return jnp.where(t > 0.0, n, 0.0)
 
 
-def _delta_e(x, ew):
-    return ew / (jnp.pi * (x * x + ew * ew))
+def _delta_e(x, gam):
+    return gam / (jnp.pi * (x * x + gam * gam))
 
 
-def _spec_e(w, w0, ew):
-    d1 = (w - w0)**2 + ew**2
-    d2 = (w + w0)**2 + ew**2
+def _spec_e(w, w0, gam):
+    d1 = (w - w0)**2 + gam**2
+    d2 = (w + w0)**2 + gam**2
 
-    zn = 2.0 * jnp.arctan(w0 / ew) / jnp.pi
-    zn = jnp.maximum(zn, F(1.0e-30))
-
-    sp = (4.0 * ew * w * w0 / (jnp.pi * d1 * d2 * zn))
+    sp = 8.0 * gam * w * w0 / (d1 * d2)
 
     return jnp.where(w0 > 0.0, sp, F(0.0))
 
 
-def _spec_s(w0, ew):
-    zn = 2.0 * jnp.arctan(w0 / ew) / jnp.pi
-    zn = jnp.maximum(zn, F(1.0e-30))
-
-    sl = (4.0 * ew * w0 / (jnp.pi * (w0 * w0 + ew * ew)**2 * zn))
+def _spec_s(w0, gam):
+    sl = 8.0 * gam * w0 / ((w0 * w0 + gam * gam)**2)
 
     return jnp.where(w0 > 0.0, sl, F(0.0))
 
@@ -284,7 +294,7 @@ def _disc_e(w, w0, h):
     zn = jnp.where(w0 < h, r * (F(2.0) - r), F(1.0))
     zn = jnp.maximum(zn, F(1.0e-30))
 
-    sp = (_hat(w - w0, h) - _hat(w + w0, h)) / zn
+    sp = F(2.0) * jnp.pi * (_hat(w - w0, h) - _hat(w + w0, h)) / zn
 
     return jnp.where(w0 > 0.0, jnp.maximum(sp, F(0.0)), F(0.0))
 
@@ -294,8 +304,8 @@ def _disc_s(w0, h):
     return _disc_e(z, w0, h) / z
 
 
-def _line(w, w0, ew, bp):
-    ep = jnp.where(ew > 0.0, ew, bp.eh)
+def _line(w, w0, gam, bp):
+    ep = jnp.where(gam > 0.0, gam, bp.eh)
 
     sb = _spec_e(w, w0, ep)
     lb = _spec_s(w0, ep)
@@ -303,8 +313,8 @@ def _line(w, w0, ew, bp):
     sd = _disc_e(w, w0, bp.eh)
     ld = _disc_s(w0, bp.eh)
 
-    sp = jnp.where(ew > 0.0, sb, sd)
-    sl = jnp.where(ew > 0.0, lb, ld)
+    sp = jnp.where(gam > 0.0, sb, sd)
+    sl = jnp.where(gam > 0.0, lb, ld)
 
     ok = w <= bp.em
     sp = jnp.where(ok, sp, jnp.nan)
@@ -356,23 +366,36 @@ def _pair(x, y, bp):
     xa = x[:, 2, None] * y[None, :, 1]
     bb = x[:, 2, None] * y[None, :, 2]
 
+    # photon vertex geometry, eqs. 125, 128, 129 (dipole along x)
+    a0 = 2.0 * jnp.pi / bp.per
+    ph = jnp.arctan2(qy, qx)
+    cp, sn = jnp.cos(ph), jnp.sin(ph)
+    hx = a0 * jnp.sin(a0 * (y[None, :, 3] + 0.5 * qx))
+    hy = a0 * jnp.sin(a0 * (y[None, :, 4] + 0.5 * qy))
+    xt, xm = (-sn * hx + cp * hy)**2, (cp * hx + sn * hy)**2
+    si = jnp.cos(a0 * x[:, 3, None]) + jnp.cos(a0 * x[:, 4, None])
+    sj = jnp.cos(a0 * y[None, :, 3]) + jnp.cos(a0 * y[None, :, 4])
+
     def body(i, rr):
-        (t, cs, ktf, eta,amp, caa, cab, cba, cbb, qd, kind, w0, ll, ew) = bp.b[i]
+        (t, cs, eta, amp, ta, tb, dip, gap, qd, w0, gam) = bp.b[i]
+        om = jnp.hypot(w0, cs * qm)
+        os = jnp.maximum(om, F(1.0e-30))
+        r2 = jnp.square(w0 / os)
 
-        wg = F(2.0) * jnp.pi / ll
+        # bare band differences ea(k) - eb(k') and eb(k) - ea(k')
+        eab = gap - 2.0 * ta * si + 2.0 * tb * sj
+        eba = -gap - 2.0 * tb * si + 2.0 * ta * sj
+        c1 = 2.0 * (ta * aa + tb * bb)
+        c2 = dip * (eab * ax + eba * xa)
+        af = ((xt + r2 * xm) * jnp.square(c1)
+              + (sn * sn + r2 * cp * cp) * jnp.square(c2))
 
-        om = jnp.where(kind == 0, w0, jnp.where(kind == 1, cs * qm, jnp.hypot(wg, cs * qm)))
+        g2 = amp * af / os
 
-        gv = (caa * aa + cab * ax + cba * xa + cbb * bb)
-        af = jnp.square(gv)
-        den = (qm * qm + ktf * ktf)**2
+        ok = qm <= qd
+        gm = jnp.where(ok, g2, F(0.0))
 
-        g2 = (amp * af * qm * qm / (jnp.maximum(om, F(1.0e-30)) * den))
-
-        ok = (qm > 0.0) & (qm <= qd)
-        gm = F(2.0) * jnp.pi * jnp.where(ok, g2, F(0.0))
-
-        sp, sl = _line(w, om, ew, bp)
+        sp, sl = _line(w, om, gam, bp)
         ab, em = _therm(sp, sl, w, t)
 
         r1 = gm * jnp.where(de < 0.0, em, ab)

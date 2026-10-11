@@ -30,22 +30,23 @@ for _ in range(40):
 tc = 0.5 * (lo + hi)
 print(f"d0 = {d0:.6f}, Tc = {tc:.6f}")
 
-# Einstein phonons, same geometry for both baths
-w0 = 2.1
-c = ((1.0, 2.0), (2.0, 1.0))
+# photon baths, same geometry for both; keys as in open_system.bath.pars
+w0 = 2.2
+bq = dict(amp=1.0, dip=2.0, cs=1.6, w0=w0, gam=0.15, eta=0.1)
 sh = eb.make_shells(eb.auto_ns(bd, min(d0, tc, w0)))
-A = eb.pair_kernel(sh, lam=0.01, qd=4.44288, cache="kernels")
 print("ns =", sh.ns)
 
 
 def baths(t1, t2=0.5 * tc):
-    return [eb.Phonon(t1, 1.0, w0, 0.01, 4.44288, c, name="bath_1"),
-            eb.Phonon(t2, 1.0, w0, 0.01, 4.44288, c, name="bath_2")]
+    return [eb.from_cfg(t1, bq, name="bath_1"), eb.from_cfg(t2, bq, name="bath_2")]
+
+
+A = eb.kernels(sh, bd, baths(tc), cache="kernels")
 
 
 
 
-print("T1 = T2 check:", check_db(sh, bd, mf, baths(0.5 * tc)[0], A, 0.5 * tc))
+print("T1 = T2 check:", check_db(sh, bd, mf, baths(0.5 * tc)[0], A[0], 0.5 * tc))
 
 ts = time.perf_counter()
 # # s = eb.solve_ness(sh, bd, mf, baths(1.0 * tc), A=A)
