@@ -35,6 +35,7 @@ class PhononBath:
 
     eh: float = 0.05
     em: float = 12.0
+    nsub: int = 16  # 0: line at the grid points, > 0: pair cell average
 
     def __post_init__(self):
         k = np.array(self.k, dtype=float, copy=True)
@@ -56,6 +57,11 @@ class PhononBath:
 
         if self.cs == 0.0 and self.w0 == 0.0:
             raise ValueError("cs and w0 cannot both be zero")
+
+        if self.nsub < 0 or int(self.nsub) != self.nsub:
+            raise ValueError("nsub must be a nonnegative integer")
+        if self.nsub > 0 and self.gam <= 0.0:
+            raise ValueError("the cell average needs gam > 0")
         
         qmax = np.sqrt(2.0) * np.pi / self.a0
         if self.qd > qmax * (1.0 + 1.0e-12):
@@ -74,6 +80,8 @@ class Pack(NamedTuple):
     eg: Any
     eh: Any
     em: Any
+    lt: Any = None  # cell averaged line tables (bath, 3, nx, ny, nw), or None
+    dw: Any = None  # energy step of lt
 
 # def omega_q(q, b):
 #     q = jnp.asarray(q, dtype=F)
@@ -130,6 +138,43 @@ def _tab(nx, ny, na, eta, qd, per, nq):
     return z
 
 
+@lru_cache(maxsize=8)
+def _ltab(nx, ny, per, cs, w0, gam, qd, nsub, dw, nw):
+    """Pair cell average of P_c(q) [A(w) - A(-w)] / (w_q w), c = xx, yy, xy.
+
+    For every grid transfer q_n the average runs over q_n + dq with the tent
+    weight (1 - |dq_x| / dkx)(1 - |dq_y| / dky), which is the distribution of
+    k - p for k and p uniform in their two cells. Pxx = sin^2 + r2 cos^2,
+    Pyy = cos^2 + r2 sin^2, Pxy = 2 sin cos (r2 - 1), r2 = (w0 / w_q)^2.
+    The line over w is regular at w = 0, so its value there is the slope.
+    """
+    dkx, dky = per / nx, per / ny
+    qx0 = np.mod(np.arange(nx) * dkx + 0.5 * per, per) - 0.5 * per
+    qy0 = np.mod(np.arange(ny) * dky + 0.5 * per, per) - 0.5 * per
+    t = 2.0 * ((np.arange(nsub) + 0.5) / nsub - 0.5)  # tent nodes in [-1, 1]
+    wt = 1.0 - np.abs(t)
+    wt = wt / wt.sum()
+    w = dw * np.arange(nw)
+    z = np.zeros((3, nx, ny, nw))
+    for tx, ax in zip(t, wt):
+        for ty, ay in zip(t, wt):
+            qx = np.mod(qx0 + tx * dkx + 0.5 * per, per)[:, None] - 0.5 * per
+            qy = np.mod(qy0 + ty * dky + 0.5 * per, per)[None, :] - 0.5 * per
+            qm = np.hypot(qx, qy)
+            ph = np.arctan2(qy, qx)
+            cp, sn = np.cos(ph), np.sin(ph)
+            om = np.hypot(w0, cs * qm)
+            r2 = (w0 / om) ** 2
+            ok = (qm <= qd) * (ax * ay)
+            pc = np.stack((sn * sn + r2 * cp * cp, cp * cp + r2 * sn * sn,
+                           2.0 * sn * cp * (r2 - 1.0))) * ok
+            om = om[..., None]
+            ln = 8.0 * gam / (((w - om) ** 2 + gam**2) * ((w + om) ** 2 + gam**2))
+            z += pc[..., None] * ln[None]
+    z.setflags(write=False)
+    return z
+
+
 def pack(bs, nq=512):
     bs = tuple(bs)
 
@@ -145,10 +190,11 @@ def pack(bs, nq=512):
         or q.nang != b.nang
         or q.eh != b.eh
         or q.em != b.em
+        or q.nsub != b.nsub
         or not np.array_equal(q.k, b.k)
         for q in bs
     ):
-        raise ValueError("baths must share k, a0 and nang")
+        raise ValueError("baths must share k, a0, nang, eh, em and nsub")
 
     per = 2 * np.pi / b.a0
     kx, ky = np.unique(b.k[:, 0]), np.unique(b.k[:, 1])
@@ -189,7 +235,17 @@ def pack(bs, nq=512):
 
         fb.append(v)
 
-    return Pack(jnp.asarray(b.k, dtype=F), jnp.asarray(pa, dtype=F), F(per), jnp.asarray(np.stack(tb), dtype=F), jnp.asarray(np.stack(fb), dtype=F), jnp.asarray(eg, dtype=F), F(b.eh), F(eg[-1]))
+    lt, dw = None, None
+    if b.nsub > 0:
+        # energy step a fraction of the narrowest line, up to em
+        dw = min(q.gam for q in bs) / 8.0
+        nw = int(np.ceil(b.em / dw)) + 2
+        lt = jnp.asarray(np.stack([
+            _ltab(nx, ny, float(per), float(q.cs), float(q.w0), float(q.gam),
+                  float(q.qd), int(q.nsub), float(dw), nw) for q in bs]), dtype=F)
+        dw = F(dw)
+
+    return Pack(jnp.asarray(b.k, dtype=F), jnp.asarray(pa, dtype=F), F(per), jnp.asarray(np.stack(tb), dtype=F), jnp.asarray(np.stack(fb), dtype=F), jnp.asarray(eg, dtype=F), F(b.eh), F(eg[-1]), lt, dw)
 
 def _wrap_q(q, per):
     return jnp.mod(q + 0.5 * per, per) - 0.5 * per
@@ -376,6 +432,15 @@ def _pair(x, y, bp):
     si = jnp.cos(a0 * x[:, 3, None]) + jnp.cos(a0 * x[:, 4, None])
     sj = jnp.cos(a0 * y[None, :, 3]) + jnp.cos(a0 * y[None, :, 4])
 
+    if bp.lt is not None:
+        # cell averaged line: grid index of q and linear interpolation in w
+        nx, ny, nw = bp.lt.shape[2:]
+        ix = jnp.rint(qx * nx / bp.per).astype(jnp.int32) % nx
+        iy = jnp.rint(qy * ny / bp.per).astype(jnp.int32) % ny
+        z = jnp.clip(w / bp.dw, 0.0, nw - 1.0)
+        iw = jnp.minimum(z.astype(jnp.int32), nw - 2)
+        fw = z - iw
+
     def body(i, rr):
         (t, cs, eta, amp, ta, tb, dip, gap, qd, w0, gam) = bp.b[i]
         om = jnp.hypot(w0, cs * qm)
@@ -395,7 +460,16 @@ def _pair(x, y, bp):
         ok = qm <= qd
         gm = jnp.where(ok, g2, F(0.0))
 
-        sp, sl = _line(w, om, gam, bp)
+        if bp.lt is None:
+            sp, sl = _line(w, om, gam, bp)
+        else:
+            # vertex with P(q) and the line averaged over the cell pair
+            tt = bp.lt[i]
+            tv = (1.0 - fw) * tt[:, ix, iy, iw] + fw * tt[:, ix, iy, iw + 1]
+            sl = amp * ((hx * hx * tv[0] + hy * hy * tv[1] + hx * hy * tv[2])
+                        * jnp.square(c1) + tv[0] * jnp.square(c2))
+            sl = jnp.where(w <= bp.em, sl, jnp.nan)
+            sp, gm = sl * w, F(1.0)
         ab, em = _therm(sp, sl, w, t)
 
         r1 = gm * jnp.where(de < 0.0, em, ab)

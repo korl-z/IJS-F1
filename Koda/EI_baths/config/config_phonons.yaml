@@ -1,6 +1,6 @@
 model:
   nk:
-    scan: 60
+    scan: 30
     reference: 50
 
   band:
@@ -11,7 +11,7 @@ model:
       tb: -1.0
 
   mean_field:
-    v: 4.4
+    v: 7.8
     n: 1.0
     uh: null
 
@@ -63,13 +63,14 @@ open_system:
       cs: 10.0
       w0: 2.2
       gam: 0.15
-      eta: 0.1
+      eta: 1.0
 
       qd: 4.4428829381583662470158809900606936986146216893756902230853956069
-      nang: 128
+      nang: 16
 
       em: 17.6
-      eh: 0.1
+      eh: 0.5
+      nsub: 16
 
   solve:
     dt: 0.03 

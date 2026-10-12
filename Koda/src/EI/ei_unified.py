@@ -292,7 +292,7 @@ def solve_eq(
     chk: int = 20,
     prog: bool = True,
 ) -> EqSol:
-    """navaden equlibrium solver, ok za init pogoje, hiter"""
+    """navaden equlibrium solver, ok za init pogoje, hiter, ne zacni z d=0, ker se zatakne"""
     ad, am = map(float, mix)  # mixture update parameteri
     hs = {"it": [], "err": [], "d": [], "m": [], "mu": []}  # history slovar
     ok = False
