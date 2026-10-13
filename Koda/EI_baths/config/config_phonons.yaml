@@ -1,16 +1,16 @@
 model:
   nk:
-    scan: 30
+    scan: 50
     reference: 50
 
   band:
     name: tb_2d
-    pars:
+    pars: &band
       gap: 2.0
       ta: 1.0
       tb: -1.0
 
-  mean_field:
+  mean_field: &mf
     v: 7.8
     n: 1.0
     uh: null
@@ -53,27 +53,19 @@ open_system:
   bath:
     rate: PhononBath
     pars:
-      amp: 1.0
+      <<: [*band, *mf]   # gap, ta, tb and v, n, uh (zadnji trije za settanje em)
 
+      amp: 1.0
       dip: 2.0
-      gap: 2.0
-      ta: 1.0
-      tb: -1.0
 
       cs: 10.0
       w0: 2.2
       gam: 0.15
-      eta: 1.0
 
-      qd: 4.4428829381583662470158809900606936986146216893756902230853956069
-      nang: 16
-
-      em: 17.6
-      eh: 0.5
-      nsub: 16
+      nsub: 32   # 0: line at the grid points, > 0: avg., idealno nsub>= 4pi cs /(gam * nk) 
 
   solve:
-    dt: 0.03 
+    dt: 0.03
     td: 100.
     tm: 100.
     tol: 1.0e-6

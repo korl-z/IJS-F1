@@ -10,7 +10,8 @@ import numpy as np
 import yaml
 from matplotlib.cm import ScalarMappable
 from matplotlib.collections import LineCollection
-from matplotlib.colors import Normalize
+from matplotlib.colors import Normalize, LogNorm
+from labellines import labelLine, labelLines
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
 
@@ -230,71 +231,99 @@ def plot_energy(pt, st, sf, t1, t2, mu, d0, path = None):
     nn = np.asarray(st.n)
     x = np.linspace(0.5 * min(en.min(), ef.min()), 0.5 * max(en.max(), ef.max()), 600)
 
-    with pt.figure(name="occupations_energy", h=0.45) as q:
+    with pt.figure(name="occupations_energy", h=0.6) as q:
         a = q.ax
-        a.plot(x, fd_t(x * d0, t1), color=SET1_LIST[0], ls="--", lw=1.0,
-               label=r"$f_{\mathrm{FD}}(E,T_1)$")
-        a.plot(x, fd_t(x * d0, t2), color=SET1_LIST[1], ls="--", lw=1.0,
-               label=r"$f_{\mathrm{FD}}(E,T_2)$")
-        a.plot(x, fd(sf.beta * x * d0), color=SET1_LIST[4], lw=1.4,
-               label=r"$f_{\mathrm{FD}}(E,T_{\mathrm{eff}})$")
-        a.scatter(en[0], nn[0], color=SET1_LIST[2], s=3, alpha=0.55,
+        l1, = a.plot(x, fd_t(x * d0, t1), color="k", ls="--", lw=0.6)
+        l2, = a.plot(x, fd_t(x * d0, t2), color="k", ls="--", lw=0.6)
+        a.plot(x, fd(sf.beta * x * d0), color="hotpink", lw=1.1, alpha=0.8,
+               label=r"$f(E,T_{\mathrm{eff}})$", zorder=0)
+        a.scatter(en[0], nn[0], color=SET1_LIST[1], s=3, alpha=0.55,
                   edgecolors="none", label=r"$n_{\alpha\mathbf{k}}^{\mathrm{NESS}}$")
-        a.scatter(en[1], nn[1], color=SET1_LIST[3], s=3, alpha=0.55,
+        a.scatter(en[1], nn[1], color=SET1_LIST[2], s=3, alpha=0.55,
                   edgecolors="none", label=r"$n_{\beta\mathbf{k}}^{\mathrm{NESS}}$")
-        a.axvline(0.0, color="0.65", ls=":", lw=0.7)
         format_ax(a, x=x, xlabel=r"$(E-V/2)/\Delta_0$", ylabel=r"$n$",
                   ylim=(0.0, 1.0))
-        add_legend(a, top=True, ncol=3, fontsize=7)
+        add_legend(a, ncol=1, fontsize=7)
         q.layout((0, 0, 1, 0.84))
 
+        labelLine(l1, x=.4*x[-1], label=r"$T_1$", yoffset=0.05, fontsize=7, backgroundcolor="none", outline_width=0)
+        labelLine(l2, x=.4*x[-1], label=r"$T_2$", yoffset=0.05, fontsize=7, backgroundcolor="none", outline_width=0)
         if path is not None: 
             plt.savefig(path, bbox_inches="tight")
 
+def bath_mix(bd, st, bs):
+    """delez kopeli 1 v NESS"""
+    y = np.asarray(st.n).reshape(-1)
+    w = np.tile(np.asarray(bd.w), 2)
+    lam = []
+    for b in bs:
+        r = np.asarray(ej.dense_rates(st.st, [b]))
+        lam.append(r @ (w * y) + r.T @ (w * (1.0 - y)))
+    l1, l2 = lam
+    return (l1 / (l1 + l2)).reshape(np.shape(st.n))
 
-def plot_xi(pt, bd, p, eq, st, sf, t1, t2, d0):
+def bath_rate(bd, st, bs):
+    """skupna relaksacijska hitrost"""
+    y = np.asarray(st.n).reshape(-1)
+    w = np.tile(np.asarray(bd.w), 2)
+    lam = 0.0
+    for b in bs:
+        r = np.asarray(ej.dense_rates(st.st, [b]))
+        lam = lam + r @ (w * y) + r.T @ (w * (1.0 - y))
+    return lam.reshape(np.shape(st.n))
+
+
+def plot_xi(pt, bd, p, eq, st, sf, bs, t1, t2, d0, path=None):
     """NESS okupacije vs xi"""
-    es = {**eq["solve"], "prog": False}
-    s1 = eu.solve_eq(bd, p, t=t1, d=max(d0, 1.0e-3), m=st.m, **es)
-    s2 = eu.solve_eq(bd, p, t=t2, d=max(d0, 1.0e-3), m=st.m, **es)
     eh = np.stack((np.asarray(st.st.eah), np.asarray(st.st.ebh)))
     hf = np.stack((np.asarray(sf.st.eah), np.asarray(sf.st.ebh)))
     xn = np.abs(0.5 * (eh[0] - eh[1])) / d0
     xf = np.abs(0.5 * (hf[0] - hf[1])) / d0
     x = np.linspace(0.0, max(xn.max(), xf.max()), 600)
-    q1 = np.sqrt((x * d0)**2 + s1.d**2)
-    q2 = np.sqrt((x * d0)**2 + s2.d**2)
-    qf = np.sqrt((x * d0)**2 + sf.d**2)
+
+    lb = bath_rate(bd, st, bs)
+    nr = LogNorm(vmin=lb.min(), vmax=lb.max())
     nn = np.asarray(st.n)
 
-    with pt.figure(name="occupations_xi", h=0.68) as q:
+    wb = bath_mix(bd, st, bs)
+    with pt.figure(name="occupations_xi", h=0.6) as q:
         a = q.ax
-        a.plot(x, fd_t(q1, t1), color=SET1_LIST[0], ls="--", lw=1.0,
-               label=r"$f_{\mathrm{FD}}(\xi,T_1)$")
-        a.plot(x, fd_t(q2, t2), color=SET1_LIST[1], ls="--", lw=1.0,
-               label=r"$f_{\mathrm{FD}}(\xi,T_2)$")
-        a.plot(x, fd(sf.beta * qf), color=SET1_LIST[4], lw=1.4,
-               label=r"$f_{\mathrm{FD}}(\xi,T_{\mathrm{eff}})$")
-        a.scatter(xn, nn[0], color=SET1_LIST[2], s=3, alpha=0.5,
-                  edgecolors="none", label=r"$n_{\alpha\mathbf{k}}^{\mathrm{NESS}}$")
-        a.scatter(xn, 1.0 - nn[1], color=SET1_LIST[3], s=3, alpha=0.5,
-                  edgecolors="none", label=r"$1-n_{\beta\mathbf{k}}^{\mathrm{NESS}}$")
+        l1, = a.plot(x, fd_t(x * d0, t1), color="k", ls="--", lw=0.6)
+        l2, = a.plot(x, fd_t(x * d0, t2), color="k", ls="--", lw=0.6)
+        a.plot(x, fd(sf.beta * x * d0), color="hotpink", lw=1.1, alpha=0.8,
+                label=r"$f(E,T_{\mathrm{eff}})$", zorder=0)
+        sc = a.scatter(xn, nn[0], c=lb[0], cmap=cmaps.gem.cut(0.2, "right"),
+                norm=nr, s=3, marker="o",
+                edgecolors="none",
+                label=r"$n_{\alpha\mathbf{k}}^{\mathrm{NESS}}$")
+        a.scatter(xn, 1.0 - nn[1], c=lb[1], cmap=cmaps.gem.cut(0.2, "right"),
+                norm=nr, s=4, marker="^",
+                edgecolors="none",
+                label=r"$1-n_{\beta\mathbf{k}}^{\mathrm{NESS}}$")
+        # cbar = q.fig.colorbar(sc, ax=a)
+        # cbar.set_label("relativen coupling", rotation=90, labelpad=5)
         format_ax(a, x=x, xlabel=r"$|\xi_{\mathbf{k}}|/\Delta_0$",
-                  ylabel=r"$n_{\mathrm{ex}}$", ylim=(0.0, 0.52))
+                  ylabel=r"$n$", ylim=(0.0, 0.52))
         add_legend(a, top=False, ncol=1, fontsize=7)
-        q.layout((0, 0, 1, 0.84))
 
+        labelLine(l1, x=.4*x[-1], label=r"$T_1$", yoffset=0.05, fontsize=7, backgroundcolor="none", outline_width=0)
+        labelLine(l2, x=.4*x[-1], label=r"$T_2$", yoffset=0.05, fontsize=7, backgroundcolor="none", outline_width=0)
+        q.layout((0, 0, 1, 0.84))
+        if path is not None: 
+            plt.savefig(path, bbox_inches="tight")
 
 def plot_bz(pt, bd, st, path=None):
     """2d cmap stanj"""
     kg = np.asarray(bd.k).reshape(bd.shape + (bd.dim,))
-    kx = k_edges(kg[:, 0, 0] / np.pi)
-    ky = k_edges(kg[0, :, 1] / np.pi)
+    kx = k_edges(np.r_[kg[:, 0, 0], -kg[0, 0, 0]] / np.pi)
+    ky = k_edges(np.r_[kg[0, :, 1], -kg[0, 0, 1]] / np.pi)
     nf = np.asarray(st.n).reshape((2,) + bd.shape)
+    nf = np.pad(nf, ((0, 0), (0, 1), (0, 1)), mode="wrap")
+    kf = np.linspace(kx[0], kx[-1], 401)
 
-    XX, YY = np.meshgrid(kx, ky, indexing="xy")
+    XX, YY = np.meshgrid(kf, kf, indexing="xy")
     Z = np.cos(XX * np.pi) + np.cos(YY * np.pi)
-    levels = np.arange(-2.0, 2.001, 0.2)
+    levels = np.arange(-2.0, 2.001, 0.22)
 
     with pt.figure(name="occupations_bz", shape=(1, 2), h=0.62,
                    sharex=True, sharey=True) as q:
@@ -303,8 +332,8 @@ def plot_bz(pt, bd, st, path=None):
         im1 = color_map(q.ax[1], kx, ky, nf[1].T, cmap=cmaps.lipari,
                         vmin=0.0, vmax=1.0)
         
-        q.ax[0].contour(XX, YY, Z, levels=levels, colors="white", linewidths=0.6, alpha=0.5)
-        q.ax[1].contour(XX, YY, Z, levels=levels, colors="white", linewidths=0.6, alpha=0.5)
+        q.ax[0].contour(XX, YY, Z, levels=levels, colors="white", linewidths=0.6, alpha=0.4)
+        q.ax[1].contour(XX, YY, Z, levels=levels, colors="white", linewidths=0.6, alpha=0.4)
 
         q.ax[0].text(0.05, 0.93, r"$n_{\alpha\mathbf{k}}$",
                      transform=q.ax[0].transAxes, ha="left", va="top", color="white")

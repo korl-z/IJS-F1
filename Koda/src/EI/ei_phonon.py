@@ -3,7 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, NamedTuple
 from functools import lru_cache
-from tqdm.auto import tqdm
 
 import numpy as np
 import jax
@@ -17,39 +16,44 @@ class PhononBath:
     t: float
     k: Any
     cs: float
-    eta: float
     gap: float
     ta: float
     tb: float
     dip: float
     amp: float = 1.0
-    qd: float = np.pi
+    qd: float = 4.4428829381583662470158809900606936986146216893756902230853956069
     a0: float = 1.0
-    nang: int = 128
     name: str = "phonon"
 
-    disp: str = "acoustic"
     w0: float = 1.0
-    length: float = 1.0
     gam: float = 1.0e-3
 
-    eh: float = 0.05
-    em: float = 12.0
+    eh: float = 0.05  # hat line width, used only for gam = 0
+    em: float | None = None  # largest |Omega|; None: bound from gap, ta, tb, v, n
     nsub: int = 16  # 0: line at the grid points, > 0: pair cell average
+
+    v: float | None = None  # mean field V, only for the default em
+    n: float = 1.0  # filling, only for the default em
+    uh: float | None = None  # Hartree U if not V, only for the default em
 
     def __post_init__(self):
         k = np.array(self.k, dtype=float, copy=True)
+        if self.em is None:
+            if self.v is None:
+                raise ValueError("give em, or v (and n, uh) for the default em")
+            object.__setattr__(self, "em", em_bound(
+                self.gap, self.ta, self.tb, self.v, self.n, self.uh))
         z = np.asarray((
-            self.t, self.cs, self.eta,
+            self.t, self.cs,
             self.amp, self.gap, self.ta, self.tb, self.dip, self.qd,
-            self.a0, self.w0, self.length,
+            self.a0, self.w0,
             self.gam, self.eh, self.em,
         ))
 
         if not np.isrealobj(z) or not np.isfinite(z).all():
             raise ValueError("bath parameters must be finite and real")
 
-        if min(self.eta, self.qd, self.a0, self.eh, self.em) <= 0:
+        if min(self.qd, self.a0, self.eh, self.em) <= 0:
             raise ValueError("positive bath scales required")
 
         if min(self.cs, self.w0, self.gam, self.t, self.amp) < 0:
@@ -71,72 +75,31 @@ class PhononBath:
         object.__setattr__(self, "k", k)
 
 
+def em_bound(gap, ta, tb, v, n=1.0, uh=None, mar=0.1):
+    """max|E_i - E_j| forall d, m, plus margin just in case.
+
+    E =  -(ta + tb) s +- sqrt(xi^2 + d^2) ,
+    xi = G / 2 - (ta - tb) s - h m / 2, |s| <= 2, |m| <= min(n, 2 - n)
+    |d| <= V / 2 (|u v| <= 1/2), h = V ce nimamo uh.
+    """
+    h = v if uh is None else uh
+    xm = abs(gap) / 2 + 2 * abs(ta - tb) + abs(h) * min(n, 2 - n) / 2
+    return (1 + mar) * (4 * abs(ta + tb) + 2 * np.hypot(xm, abs(v) / 2))
+
+
 class Pack(NamedTuple):
     k: Any
-    b: Any
+    b: Any  # rows (t, cs, amp, ta, tb, dip, gap, qd, w0, gam)
     per: Any
-    tab: Any
-    flat: Any
-    eg: Any
     eh: Any
     em: Any
     lt: Any = None  # cell averaged line tables (bath, 3, nx, ny, nw), or None
     dw: Any = None  # energy step of lt
 
-# def omega_q(q, b):
-#     q = jnp.asarray(q, dtype=F)
-
-#     if b.disp == "constant":
-#         return jnp.full_like(q, b.w0)
-
-#     if b.disp == "acoustic":
-#         return b.cs * q
-
-#     wg = 2.0 * jnp.pi / b.length
-#     return jnp.sqrt(wg * wg + (b.cs * q)**2)
 
 def omega_q(q, b):
     q = jnp.asarray(q, dtype=F)
     return jnp.hypot(b.w0, b.cs * q)
-
-@lru_cache(maxsize=8)
-def _tab(nx, ny, na, eta, qd, per, nq):
-    dx = (np.arange(nx) * per / nx)[:, None, None]
-    dy = (np.arange(ny) * per / ny)[None, :, None]
-    qr = np.linspace(0.0, qd, nq)[None, None, :]
-
-    a = 2 * np.pi * eta / per
-    r = np.exp(-a)
-    c = -np.expm1(-2 * a) / per
-    h = np.expm1(-a)**2
-    qb = 0.5 * per
-
-    def lor(x):
-        return c / (
-            h + 4 * r * np.sin(np.pi * x / per)**2
-        )
-
-    z = np.zeros((nx, ny, nq))
-    th = (np.arange(na // 2) + 0.5) * (2 * np.pi / na)
-
-    for v in tqdm(th, desc="Phonon kernel table", leave=False):
-        qx = qr * np.cos(v)
-        qy = qr * np.sin(v)
-
-        ma = (np.abs(qx) <= qb) & (np.abs(qy) <= qb)
-
-        z += ma * lor(dx - qx) * lor(dy - qy)
-        z += ma * lor(dx + qx) * lor(dy + qy)
-
-    z *= 2 * np.pi / na
-
-    ix = (-np.arange(nx)) % nx
-    iy = (-np.arange(ny)) % ny
-    z = 0.5 * (z + z[ix][:, iy])
-
-    z.setflags(write=False)
-    return z
-
 
 @lru_cache(maxsize=8)
 def _ltab(nx, ny, per, cs, w0, gam, qd, nsub, dw, nw):
@@ -175,26 +138,23 @@ def _ltab(nx, ny, per, cs, w0, gam, qd, nsub, dw, nw):
     return z
 
 
-def pack(bs, nq=512):
+def pack(bs):
     bs = tuple(bs)
 
     if not bs:
         raise ValueError("at least one phonon bath is required")
-    if nq < 2:
-        raise ValueError("nq must be at least 2")
 
     b = bs[0]
 
     if any(
         q.a0 != b.a0
-        or q.nang != b.nang
         or q.eh != b.eh
         or q.em != b.em
         or q.nsub != b.nsub
         or not np.array_equal(q.k, b.k)
         for q in bs
     ):
-        raise ValueError("baths must share k, a0, nang, eh, em and nsub")
+        raise ValueError("baths must share k, a0, eh, em and nsub")
 
     per = 2 * np.pi / b.a0
     kx, ky = np.unique(b.k[:, 0]), np.unique(b.k[:, 1])
@@ -211,29 +171,10 @@ def pack(bs, nq=512):
 
 
     pa = [
-        (q.t, q.cs, q.eta, q.amp,
+        (q.t, q.cs, q.amp,
          q.ta, q.tb, q.dip, q.gap, q.qd, q.w0, q.gam)
         for q in bs
     ]
-
-    tb = [_tab(nx, ny, int(q.nang), float(q.eta), float(q.qd), float(per), nq) for q in bs]
-
-    fb = []
-
-    ne = int(np.ceil(b.em / b.eh))
-    eg = b.eh * np.arange(ne + 1, dtype=float)
-
-    for q, z in zip(bs, tb):
-        qr = np.linspace(0.0, q.qd, nq)
-
-        if q.cs == 0.0:
-            den = 1.0
-            f = qr**3 / (q.w0 * den)
-            v = np.trapezoid(z * f[None, None, :], qr, axis=-1)
-        else:
-            v = np.zeros((nx, ny), dtype=float)
-
-        fb.append(v)
 
     lt, dw = None, None
     if b.nsub > 0:
@@ -245,7 +186,8 @@ def pack(bs, nq=512):
                   float(q.qd), int(q.nsub), float(dw), nw) for q in bs]), dtype=F)
         dw = F(dw)
 
-    return Pack(jnp.asarray(b.k, dtype=F), jnp.asarray(pa, dtype=F), F(per), jnp.asarray(np.stack(tb), dtype=F), jnp.asarray(np.stack(fb), dtype=F), jnp.asarray(eg, dtype=F), F(b.eh), F(eg[-1]), lt, dw)
+    return Pack(jnp.asarray(b.k, dtype=F), jnp.asarray(pa, dtype=F), F(per),
+                F(b.eh), F(b.em), lt, dw)
 
 def _wrap_q(q, per):
     return jnp.mod(q + 0.5 * per, per) - 0.5 * per
@@ -293,52 +235,21 @@ def g_mat(st, b, k, p, q):
     return g * jnp.einsum("ba,lbc,cd->lad", uk, mm, up)
 
 
-def _shell(dx, dy, q, i, bp):
-    """Lookup the momentum difference and interpolate in phonon magnitude."""
-    nx, ny, nq = bp.tab.shape[1:]
-    ix = jnp.rint(dx * nx / bp.per).astype(jnp.int32) % nx
-    iy = jnp.rint(dy * ny / bp.per).astype(jnp.int32) % ny
-
-    z = jnp.clip(q * (nq - 1) / bp.b[i, 8], 0.0, nq - 1)
-    iz = jnp.minimum(z.astype(jnp.int32), nq - 2)
-    f = z - iz
-
-    a = bp.tab[i, ix, iy, iz]
-    b = bp.tab[i, ix, iy, iz + 1]
-    return (1.0 - f) * a + f * b
-
-def _flat_shell(dx, dy, i, bp):
-    nx, ny = bp.flat.shape[1:]
-
-    ix = jnp.rint(dx * nx / bp.per).astype(jnp.int32) % nx
-    iy = jnp.rint(dy * ny / bp.per).astype(jnp.int32) % ny
-
-    return bp.flat[i, ix, iy]
-
-
 def _bose(w, t):
     x = w / jnp.where(t > 0.0, t, 1.0)
     n = 1.0 / jnp.maximum(jnp.expm1(x), F(1.0e-30))
     return jnp.where(t > 0.0, n, 0.0)
 
 
-def _delta_e(x, gam):
-    return gam / (jnp.pi * (x * x + gam * gam))
-
-
 def _spec_e(w, w0, gam):
     d1 = (w - w0)**2 + gam**2
     d2 = (w + w0)**2 + gam**2
 
-    sp = 8.0 * gam * w * w0 / (d1 * d2)
-
-    return jnp.where(w0 > 0.0, sp, F(0.0))
+    return 8.0 * gam * w * w0 / (d1 * d2)
 
 
 def _spec_s(w0, gam):
-    sl = 8.0 * gam * w0 / ((w0 * w0 + gam * gam)**2)
-
-    return jnp.where(w0 > 0.0, sl, F(0.0))
+    return 8.0 * gam * w0 / ((w0 * w0 + gam * gam)**2)
 
 
 def _hat(x, h):
@@ -392,14 +303,6 @@ def _therm(sp, sl, w, t):
     em = ab + sp
     return ab, em
 
-def _bose2(w, t):
-    """w**2 * N(w), including the exact zero-energy and T=0 limits."""
-    x = w / jnp.where(t > 0, t, 1.0)
-    den = jnp.where(x > 0, -jnp.expm1(-x), 1.0)
-    wn = jnp.where(x > 0, w * jnp.exp(-x) / den, t)
-    return jnp.where(t > 0, w * wn, 0.0)
-
-
 def _data(st, bp):
     if bp.k.shape[0] != st.e.shape[1]:
         raise ValueError("bath k must follow the state momentum grid")
@@ -422,7 +325,7 @@ def _pair(x, y, bp):
     xa = x[:, 2, None] * y[None, :, 1]
     bb = x[:, 2, None] * y[None, :, 2]
 
-    # photon vertex geometry, eqs. 125, 128, 129 (dipole along x)
+    # photon vertex
     a0 = 2.0 * jnp.pi / bp.per
     ph = jnp.arctan2(qy, qx)
     cp, sn = jnp.cos(ph), jnp.sin(ph)
@@ -442,7 +345,7 @@ def _pair(x, y, bp):
         fw = z - iw
 
     def body(i, rr):
-        (t, cs, eta, amp, ta, tb, dip, gap, qd, w0, gam) = bp.b[i]
+        (t, cs, amp, ta, tb, dip, gap, qd, w0, gam) = bp.b[i]
         om = jnp.hypot(w0, cs * qm)
         os = jnp.maximum(om, F(1.0e-30))
         r2 = jnp.square(w0 / os)
