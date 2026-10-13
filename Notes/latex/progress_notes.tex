@@ -1128,7 +1128,7 @@ kjer
 \end{align}
 če je $\Gamma$ popolnoma simetrična na vse operacije vsaj vemo, da je $\mu_\gamma(s, u) = \mu_\gamma(s, -u)$, ne določa pa to odvisnosti od $u$. Recimo, da fiksiramo $\omega_\vec{q} = \sqrt{\omega_0^2+c^2q^2}$. Ta je invariantna na $C_{4v}$,  tudi $\Omega= \Omega(s)$ je, zato je $\mathcal{A}_\vec{q}(\Omega)$ invariantna. Enako velja za Bose faktorje. 
 
-\section{blabla}
+\section{Konkretna implementacija za sklopitev s fotoni}
 konkretna implementacija/racun za verteks za fotone: 
 % k: final momentum, k': initial momentum, q = k - k' wrapped to the first BZ, a_0 = 1
 \begin{align}
@@ -1318,8 +1318,8 @@ N(\Omega)\,\frac{8\gamma\,\omega_{\mathbf{q}}\,\Omega}
 
 % Start and back-transform. $\mu_i^{(0)}=\ln\frac{1-n_i}{n_i}$ and $\kappa^{(0)}=0$. At the end $n_i=1/(1+e^{\mu_i})$ goes to sol.n, $\dot n_i$ at the converged $(d,m)$ to sol.cur, and $\mu_i$ to sol.eta.
 
-\section{Blabla2-bath vizualizacije}
-Vsi nasledni ploti so v tocki $T_1=1.2 T_c, T_2 = 0.2 T_c$ in uporablajo fotonski verteks, kot opisano zgoraj, $\vec{q}=\vec{k}-\vec{p}_0$. 
+\section{Vizualizacije kopeli za fotone}
+Vsi naslednji grafi so v tocki $T_1=1.2 T_c, T_2 = 0.2 T_c$ in uporabjlajo fotonski verteks, kot opisano zgoraj, $\vec{q}=\vec{k}-\vec{p}_0$. 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=1.0\textwidth]{figures/absM2_d=0.pdf}
@@ -1407,7 +1407,9 @@ Vsi nasledni ploti so v tocki $T_1=1.2 T_c, T_2 = 0.2 T_c$ in uporablajo fotonsk
 \label{pic1}
 \end{figure}
 
-\subsection{Solata od numerike (konvergenca in povprecenje)}
+\FloatBarrier
+
+\subsection{Numerika detajli (konvergenca in povprecenje)}
 \begin{figure}[h!]
     \centering
     \includegraphics[width=1\textwidth]{figures/N_k_convergence.pdf}
@@ -1423,6 +1425,7 @@ Vsi nasledni ploti so v tocki $T_1=1.2 T_c, T_2 = 0.2 T_c$ in uporablajo fotonsk
     \caption{Mixed disperzije: $c=10.0$, $\omega_0^{(1)}=2.2$,  $\omega_0^{(2)}=0.1$ in  $\vec{d} = 2(1, 0, 0)$ ter $\gamma=0.1$. KOnvergenca pri $T_1 = 2.5T_c$ in $T_2 = 0.2T_c$. TO je za primer ko je $q\ll k_F$, tako da so small momentum prehodi, vecinoma interband (diagonalna baza) (dlje od diagonale $T_1=T_2$ pocasneje konvergira).}
 \label{pic1}
 \end{figure}
+\FloatBarrier
 \subsection{Primer NESS za BEC}
 \begin{figure}[h!]
     \centering
