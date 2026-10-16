@@ -1,6 +1,6 @@
 model:
   nk:
-    scan: 50
+    scan: 60
     reference: 50
 
   band:
@@ -62,7 +62,7 @@ open_system:
       w0: 2.2
       gam: 0.15
 
-      nsub: 32   # 0: line at the grid points, > 0: avg., idealno nsub>= 4pi cs /(gam * nk) 
+      nsub: 32  # 0: line at the grid points, > 0: avg., idealno nsub>= 4pi cs /(gam * nk) 
 
   solve:
     dt: 0.03

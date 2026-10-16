@@ -1,5 +1,3 @@
-"""Solve one two-bath state and save four diagnostic plots with Sacred."""
-
 from __future__ import annotations
 
 from pathlib import Path
@@ -32,10 +30,9 @@ import EI.ei_phonon as pb
 CFG = Path("/home/kzeleznikar/IJS-F1/Koda/EI_baths/config/config_test.yaml")
 RUNS = Path("/home/kzeleznikar/IJS-F1/Koda/EI_baths/runs")
 
-# Edit these two ratios to select the plotted state.
+# select state
 T1_TC = 2.0
 T2_TC = 0.2
-N_CONT = 10
 SHOW = False
 
 
@@ -45,7 +42,6 @@ with CFG.open("r", encoding="utf-8") as f:
 cfg["selected_state"] = {
     "t1_tc": T1_TC,
     "t2_tc": T2_TC,
-    "n_cont": N_CONT,
     "show": SHOW,
 }
 cfg["effective_temperature"] = {
@@ -234,7 +230,7 @@ def plot_energy(pt, st, sf, t1, t2, mu, d0, path = None):
     with pt.figure(name="occupations_energy", h=0.6) as q:
         a = q.ax
         l1, = a.plot(x, fd_t(x * d0, t1), color="k", ls="--", lw=0.6)
-        l2, = a.plot(x, fd_t(x * d0, t2), color="k", ls="--", lw=0.6)
+        l2, = a.plot(x, fd_t(x * d0, t2), color="grey", ls="--", lw=0.6)
         a.plot(x, fd(sf.beta * x * d0), color="hotpink", lw=1.1, alpha=0.8,
                label=r"$f(E,T_{\mathrm{eff}})$", zorder=0)
         a.scatter(en[0], nn[0], color=SET1_LIST[1], s=3, alpha=0.55,
@@ -289,7 +285,7 @@ def plot_xi(pt, bd, p, eq, st, sf, bs, t1, t2, d0, path=None):
     with pt.figure(name="occupations_xi", h=0.6) as q:
         a = q.ax
         l1, = a.plot(x, fd_t(x * d0, t1), color="k", ls="--", lw=0.6)
-        l2, = a.plot(x, fd_t(x * d0, t2), color="k", ls="--", lw=0.6)
+        l2, = a.plot(x, fd_t(x * d0, t2), color="grey", ls="-.", lw=0.6)
         a.plot(x, fd(sf.beta * x * d0), color="hotpink", lw=1.1, alpha=0.8,
                 label=r"$f(E,T_{\mathrm{eff}})$", zorder=0)
         sc = a.scatter(xn, nn[0], c=lb[0], cmap=cmaps.gem.cut(0.2, "right"),
@@ -307,7 +303,7 @@ def plot_xi(pt, bd, p, eq, st, sf, bs, t1, t2, d0, path=None):
         add_legend(a, top=False, ncol=1, fontsize=7)
 
         labelLine(l1, x=.4*x[-1], label=r"$T_1$", yoffset=0.05, fontsize=7, backgroundcolor="none", outline_width=0)
-        labelLine(l2, x=.4*x[-1], label=r"$T_2$", yoffset=0.05, fontsize=7, backgroundcolor="none", outline_width=0)
+        labelLine(l2, x=.2*x[-1], label=r"$T_2$", yoffset=0.05, fontsize=7, backgroundcolor="none", outline_width=0)
         q.layout((0, 0, 1, 0.84))
         if path is not None: 
             plt.savefig(path, bbox_inches="tight")
