@@ -1,0 +1,61 @@
+model:
+  nk:
+    scan: 12
+    reference: 40
+
+  band:
+    name: tb_2d
+    pars:
+      gap: 2.0
+      ta: 1.0
+      tb: -1.0
+
+  mean_field:
+    v: 4.4
+    n: 1.0
+    uh: null
+
+  dipole:
+    dip: 0.5
+    th: 0.0
+
+
+equilibrium:
+  initial:
+    t: 0.0
+    d: 1.0
+    m: 0.0
+
+  solve:
+    mix: [0.3, 0.3]
+    tol: 1.0e-12
+    nmax: 20000
+    chk: 20
+    prog: false
+
+  critical:
+    tlo: 1.0e-4
+    thi: 2.0
+    tol: 1.0e-7
+    nmax: 100
+    prog: false
+
+
+open_system:
+  bath:
+    pars:
+      w0: 2.2
+      c: 1.6
+      gam: 0.3
+      amp: 1.0
+
+  solve:
+    tol: 1.0e-10
+    nmax: 30
+    cap: 10.0
+    ph: false
+
+
+state:
+  t1_tc: 3.1
+  t2_tc: 0.2

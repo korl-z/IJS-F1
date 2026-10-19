@@ -1410,6 +1410,97 @@ Vsi naslednji grafi so v tocki $T_1=1.2 T_c, T_2 = 0.2 T_c$ in uporabjlajo foton
 \FloatBarrier
 
 \subsection{Numerika detajli (konvergenca in povprecenje)}
+Za manjše mreže nas zanima kaj se zgodi, če zgrešimo vrh resonance, ker je energija poračunana v neenakomerno razporejenih točkah. Zaradi tega lahko pogledamo, kaj se zgodi s povprečenjem čez sosednje točke. V 1D primeru je mreža definirana v točkah
+\begin{gather}
+k_i = i\,{\delta k},\qquad \mathcal C_i=\big[k_i-\tfrac{{\delta k}}{2},\,k_i+\tfrac{{\delta k}}{2}\big],\qquad
+q_{ij}=k_i-k_j,\qquad \Omega_{ij}=E_{\nu}(k_i)-E_{\mu}(k_j),\\
+\mathcal{S}(\Omega, \omega)=\mathcal{A}(\Omega)-{A}(-\Omega)
+=\frac{8\gamma\,\omega\,\Omega}{\big[(\Omega-\omega)^2+\gamma^2\big]\big[(\Omega+\omega)^2+\gamma^2\big]}\,,
+\qquad \omega_q=\sqrt{\omega_0^2+c_s^2q^2}\,.
+\end{gather}
+Po točkah bi računali:
+\begin{equation}
+\mathcal{S}^{\rm pt}_{ij}=\mathcal{S}\big(\Omega_{ij},\,\omega_{q_{ij}}\big).
+\end{equation}
+V svojih celicah sta $k$ in $p$ porazdeljena enakomerno, zato lahko napišemo povprečje čez celico kot
+\begin{equation}
+\overline{\mathcal{S}}_{ij}=\frac{1}{{\delta k}^{2}}\int_{\mathcal C_i}\!dk\int_{\mathcal C_j}\!dp\;
+\mathcal{S}\big(E_\nu(k)-E_\mu(p),\,\omega_{k-p}\big)
+=\int\! d\Omega\!\int\! dq\;\rho_{ij}(\Omega, q)\,\mathcal{S}(\Omega, \omega_q)\,,
+\end{equation}
+z vrjetnostno gostoto:
+\begin{equation}
+\rho_{ij}(\Omega, q)=\frac{1}{{\delta k}^{2}}\int_{\mathcal C_i}\!dk\int_{\mathcal C_j}\!dp\;
+\delta\big(\Omega-E_\nu(k)+E_\mu(p)\big)\,\delta\big(q-k+p\big).
+\end{equation}
+ 
+% Energy binning: cell $i$ covers the energy interval
+% \begin{equation}
+% I_i=E_\nu(\mathcal C_i)=\Big[\min_{k\in\mathcal C_i}E_\nu,\ \max_{k\in\mathcal C_i}E_\nu\Big],
+% \qquad |I_i|\simeq|E_\nu'(k_i)|\,{\delta k} ,
+% \end{equation}
+% so $\Omega$ spreads over $I_i-I_j$, of width $\simeq\big(|E_\nu'(k_i)|+|E_\mu'(k_j)|\big){\delta k}$.
+Naredil sem približek, kjer razlike energij odčitamo točno v diskretnih točkah, povprečimo pa čez momente (skupna verjentostna gostota za razliko dveh enakomernih spremeljivk $q = k-p$ je konvolucija, torej trikotna funkcija $P$)
+\begin{equation}
+\rho_{ij}(\Omega, q)\;\approx\;\delta(\Omega-\Omega_{ij})\,P(q-q_{ij}),\qquad
+P(x)=\frac{1}{{\delta k}}\Big(1-\frac{|x|}{{\delta k}}\Big)\,\Theta({\delta k}-|x|),\qquad \int P=1\,,
+\end{equation}
+kar nam da skupaj pri fiksni energijski razliki $\Omega_ij = E_\nu(k_i)-E_\mu(p_j)$:
+\begin{equation}
+{\;\overline{\mathcal{S}}_{ij}\approx\int_{q_{ij}-{\delta k}}^{\,q_{ij}+{\delta k}}\!dq\;P(q-q_{ij})\,\mathcal{S}(\Omega_{ij}, \omega_q)\;}
+\end{equation}
+V praksi to pomeni, da vzamemo $n_s$ točk in seštejemo namest integriramo: 
+\begin{equation}
+t_l=2\Big[\frac{l-\frac12}{n_s}-\frac12\Big],\qquad
+,\qquad \sum_{l=1}^{n_s}\frac{2}{n_s}\big(1-|t_l|\big)=1,
+\qquad l=1,\dots,n_s ,
+\end{equation}
+oz. diskretno (z upeljavo $t = (q-q_{ij})/\delta k$) za arbitrarno funkcijo $F(q)$:
+\begin{equation}
+\int_{-1}^{1}\!dt\,(1-|t|)\,F(q_{ij} + t\delta k)=\sum_l\frac{2}{n_s}\big(1-|t_l|\big)  F(q_{ij} + t_l \delta k)+\mathcal O(n_s^{-2}).
+\end{equation}
+V principu se lahko tu ustavimo, ampak je računanje za vsak par $\Omega_{ij}$ zahtevno $\mathcal{O}((2 N_k^2)^2 n_s^2)$ (veliko parov $\vec q_{ij}$ da enako energijo, ker je $\Omega = \Omega(s)$). Zato tabeliramo razlike energij in interpoliramo. Izbral sem $\delta \Omega = \gamma / 8$, tako je $N_\Omega = \lceil{E_\text{max} / \delta \Omega\rceil} + 2$, kjer si $E_\text{max}$ izberemo tako, da je večji od največje možne razlike energij\footnote{V kodi to oceim avtomatsko navzgor z 10\% maržo.}. Za neko funkcijo $F(\Omega)$ potem računamo le $N_\Omega$ točk in za določen $\Omega_n\leq \Omega_{ij}\leq \Omega_{n+1}$ interpoliramo linearno: 
+\begin{align}
+  F(\Omega) = (1-\alpha)F(\Omega_n) + \alpha F(\Omega_{n+1})\,,\quad \alpha = \Omega/\delta\Omega - \lfloor\Omega/\delta\Omega\rfloor
+\end{align}
+to skupaj stane $N_k^2 N_\Omega n_s^2 + (2N_k)^2$, dodatni clen je za lookup. Na koncu ne računam le povprečenih vrhov, temveč vse funkcije $\vec q$:
+$$
+\tilde M^\lambda_{\mu\mu'}(k',q)=\frac{g}{\sqrt{\omega_q}}\Big[(\epsilon_{q\lambda}\cdot h)\,C^{(1)}_{\mu\mu'}+i\,(\epsilon_{q\lambda}\cdot\hat d)\,C^{(2)}_{\mu\mu'}\Big],
+\qquad g^2=\frac{e^2}{2V\varepsilon_0},
+$$
+$$
+\vec h=\Big(\sin\big(k'_x+\tfrac{q_x}{2}\big),\ \sin\big(k'_y+\tfrac{q_y}{2}\big)\Big),\qquad
+C^{(1)}=\Big[U_k^\dagger\begin{pmatrix}2t_a&0\\0&2t_b\end{pmatrix}U_{k'}\Big],\qquad
+C^{(2)}=d\,\Big[U_k^\dagger\begin{pmatrix}0&\varepsilon_{a,k}-\varepsilon_{b,k'}\\ \varepsilon_{b,k}-\varepsilon_{a,k'}&0\end{pmatrix}U_{k'}\Big].
+$$
+
+$C^{(1)}$ in $C^{(2)}$ sta realni, tako da členi ne interferirajo. sestevek cez TE in TM z izbiro $\hat{\vec{d}}=\hat{\vec{x}}$ in $r=\omega_0/\omega_q$, je tako
+
+$$
+\sum_\lambda|\tilde M^\lambda_{\mu\mu'}|^2=\frac{g^2}{\omega_q}\Big[\big(h_x^2P_{xx}+h_y^2P_{yy}+h_xh_yP_{xy}\big)\big(C^{(1)}_{\mu\mu'}\big)^2+P_{xx}\big(C^{(2)}_{\mu\mu'}\big)^2\Big],
+$$
+$$
+P_{xx}=\sin^2\!\varphi+r^2\cos^2\!\varphi,\qquad P_{yy}=\cos^2\!\varphi+r^2\sin^2\!\varphi,\qquad P_{xy}=2\sin\varphi\cos\varphi\,(r^2-1),
+$$
+Vsa odvisnost od $q$ je v $P_c(q)$ in v funkciji
+
+$$F_q(\Omega)=\frac{\Theta(q_d-|q|)}{\omega_q}\big[A_q(\Omega)-A_q(-\Omega)\big],$$
+
+$$
+\Gamma_{\mu'k'\to\mu k}=g^2\,N(\Omega)\Big[\big(h_x^2P_{xx}F_q+h_y^2P_{yy}F_q+h_xh_yP_{xy}F_q\big)\big(C^{(1)}_{\mu\mu'}\big)^2+P_{xx}F_q\big(C^{(2)}_{\mu\mu'}\big)^2\Big],
+$$
+
+Povprečimo produkt $P_cF_q$ s trikotno funkcijo, medtem ko $h$, $C^{(1,2)}$ in $\Omega$ računamo le v centrih celic: 
+
+$$
+\overline\Gamma_{\mu'k'\to\mu k}=g^2\,N(\Omega)\,\Omega\Big[\big(h_x^2\,T_{xx}+h_y^2\,T_{yy}+h_xh_y\,T_{xy}\big)\big(C^{(1)}_{\mu\mu'}\big)^2+T_{xx}\,\big(C^{(2)}_{\mu\mu'}\big)^2\Big],
+$$
+$$
+T_c(q,|\Omega|)=\frac{1}{\Omega}\big\langle P_c\,F\big\rangle_q(\Omega),\qquad
+\langle X\rangle_q=\int d^2\delta q\;\Lambda(\delta q)\,X_{q+\delta q}\;\approx\sum_{a,b}\varpi_a\varpi_b\,X_{q+(t_a\delta k_x,\,t_b\delta k_y)}.
+$$
+
+
 \begin{figure}[h!]
     \centering
     \includegraphics[width=1\textwidth]{figures/N_k_convergence.pdf}

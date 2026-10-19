@@ -1,0 +1,76 @@
+model:
+  nk:
+    scan: 15
+    reference: 50
+
+  band:
+    name: tb_2d
+    pars: &band
+      gap: 2.0
+      ta: 1.0
+      tb: -1.0
+
+  mean_field: &mf
+    v: 7.8
+    n: 1.0
+    uh: null
+
+
+equilibrium:
+  initial:
+    t: 0.0
+    d: 1.0
+    m: 0.0
+
+  solve:
+    mix: [0.3, 0.3]
+    tol: 1.0e-8
+    nmax: 20000
+    chk: 20
+    prog: false
+
+  critical:
+    tlo: 1.0e-4
+    thi: 2.0
+    tol: 1.0e-7
+    nmax: 100
+    prog: true
+
+
+scan:
+  temperature:
+    nt: 10
+    min_ratio: 0.01
+    max_ratio: 3.0
+  t1: {min_ratio: 0.05, max_ratio: 1.5, nt: 12}
+  t2: {min_ratio: 0.05, max_ratio: 7.0, nt: 16}
+
+  continuation:
+    d_floor_frac: 0.1
+
+
+open_system:
+  bath:
+    rate: PhononBath
+    pars:
+      <<: [*band, *mf]   # gap, ta, tb and v, n, uh (zadnji trije za settanje em)
+
+      amp: 1.0
+      dip: 2.0
+
+      cs: 10.0
+      w0: 2.2
+      gam: 0.15
+
+      nsub: 32  # 0: line at the grid points, > 0: avg., idealno nsub>= 4pi cs /(gam * nk) 
+
+  solve:
+    dt: 0.03
+    td: 100.
+    tm: 100.
+    tol: 1.0e-6
+    nmax: 20000
+    chk: 100
+    prog: false
+    mode: dense
+    block: 128

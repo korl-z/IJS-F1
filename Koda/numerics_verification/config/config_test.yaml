@@ -1,0 +1,71 @@
+model:
+  nk:
+    scan: 20
+    reference: 20
+
+  band:
+    name: tb_2d
+    pars:
+      gap: 2.0
+      ta: 1.0
+      tb: -1.0
+
+  mean_field:
+    v: 4.4
+    n: 1.0
+    uh: null
+
+
+equilibrium:
+  initial:
+    t: 0.0
+    d: 1.0
+    m: 0.0
+
+  solve:
+    mix: [0.15, 0.15]
+    tol: 1.0e-10
+    nmax: 20000
+    chk: 20
+    prog: false
+
+  critical:
+    tlo: 1.0e-4
+    thi: 2.0
+    tol: 1.0e-7
+    nmax: 100
+    prog: true
+
+
+scan:
+  temperature:
+    nt: 10
+    min_ratio: 0.01
+    max_ratio: 3.0
+
+  continuation:
+    d_floor_frac: 0.1
+
+
+open_system:
+  bath:
+    rate: rate_product
+    pars:
+      wc: inf
+      kap: [0.1, 0.2, 0.1]
+      mu: 0.0 #dodatno nastavljeno v kodi na V/2, ko ta=-tb
+
+  solve:
+    dt: 0.05
+    td: 0.3
+    tm: 0.3
+    tol: 1.0e-4
+    nmax: 30000
+    chk: 20
+    prog: false
+
+ratio_sweep:
+  x0: 0.7
+  r_min: 1.0
+  r_max: 100.0
+  r_step: 10.0
