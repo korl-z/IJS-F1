@@ -1133,7 +1133,7 @@ konkretna implementacija/racun za verteks za fotone:
 % k: final momentum, k': initial momentum, q = k - k' wrapped to the first BZ, a_0 = 1
 \begin{align}
 \mathbf{q} &= q(\cos\varphi,\sin\varphi), \qquad
-\varphi = \operatorname{atan2}(q_y,q_x)\ (\varphi=0 \text{pri} \mathbf{q}=0), \qquad
+\varphi = \operatorname{atan2}(q_y,q_x)\ (\varphi=0\,\, \text{pri}\,\, \mathbf{q}=0), \qquad
 \omega_{\mathbf{q}} = \sqrt{\omega_0^2 + c^2 q^2},\\
 s_{\mathbf{k}} &= \cos k_x + \cos k_y, \qquad
 \varepsilon_{a,\mathbf{k}} = \tfrac{G}{2} - 2t_a s_{\mathbf{k}}, \qquad
@@ -1148,16 +1148,14 @@ s_{\mathbf{k}} &= \cos k_x + \cos k_y, \qquad
 
 % evaluated at the midpoint p = k' + q/2 (eq. 125)
 \begin{equation}
-\mathbf{v}_{\gamma}\!\left(\mathbf{k}'+\tfrac{\mathbf{q}}{2}\right) = 2t_\gamma\,(h_x,\ h_y), \qquad
-h_x = \sin\!\left(k'_x + \tfrac{q_x}{2}\right), \quad
-h_y = \sin\!\left(k'_y + \tfrac{q_y}{2}\right) .
+\mathbf{v}_{\gamma}\!\left(\mathbf{k}'+\tfrac{\mathbf{q}}{2}\right) = 2t_\gamma\,(\sin\!\left(k'_x + \tfrac{q_x}{2}\right),\ \sin\!\left(k'_y + \tfrac{q_y}{2}\right)),
 \end{equation}
 
 % so the diagonal elements of eq. 125 are
 \begin{equation}
 \boldsymbol{\epsilon}_{\lambda}\cdot\mathbf{v}_{\gamma}\!\left(\mathbf{k}'+\tfrac{\mathbf{q}}{2}\right)
 = 2t_\gamma\,X_\lambda, \qquad
-X_\lambda = \boldsymbol{\epsilon}_{\lambda}\cdot(h_x,\ h_y) .
+X_\lambda = \boldsymbol{\epsilon}_{\lambda}\cdot(\sin\!\left(k'_x + \tfrac{q_x}{2}\right),\ \sin\!\left(k'_y + \tfrac{q_y}{2}\right)) .
 \end{equation}
 % polarizations at z = L/2 and dipole along x
 \begin{align}
@@ -1180,12 +1178,11 @@ P_{\mathrm{TM}} &= \frac{\omega_0}{\omega_{\mathbf{q}}}\, d\cos\varphi,
 
 % orbital vertex (eq. 125), g_q^2 = A / omega_q with A = amp
 \begin{equation}
-M^{\lambda}(\mathbf{k}',\mathbf{q}) = g_{\mathbf{q}}
+M^{\lambda}(\mathbf{k}',\mathbf{q}) = \sqrt{\frac{A}{\omega_{\mathbf{q}}}}
 \begin{pmatrix}
 2t_a X_\lambda & i P_\lambda \Delta_{ab}\\
 i P_\lambda \Delta_{ba} & 2t_b X_\lambda
-\end{pmatrix},
-\qquad g_{\mathbf{q}}^2 = \frac{\mathcal{A}}{\omega_{\mathbf{q}}} .
+\end{pmatrix}
 \end{equation}
 
 % rotation (eq. 32, 157); u, v at k and u', v' at k'
@@ -1197,18 +1194,18 @@ v = \operatorname{sgn}(\Delta)\sqrt{\tfrac12\left(1-\tfrac{\xi_{\mathbf{k}}}{E_{
 \end{equation}
 
 \begin{align}
-\widetilde{M}^{\lambda}_{\alpha\alpha} &= g_{\mathbf{q}}\left[ X_\lambda\,(2t_a uu' + 2t_b vv') - i P_\lambda\,(uv'\Delta_{ab} + vu'\Delta_{ba}) \right],\\
-\widetilde{M}^{\lambda}_{\alpha\beta} &= g_{\mathbf{q}}\left[ X_\lambda\,(2t_a uv' - 2t_b vu') + i P_\lambda\,(uu'\Delta_{ab} - vv'\Delta_{ba}) \right],\\
-\widetilde{M}^{\lambda}_{\beta\alpha} &= g_{\mathbf{q}}\left[ X_\lambda\,(2t_a vu' - 2t_b uv') + i P_\lambda\,(uu'\Delta_{ba} - vv'\Delta_{ab}) \right],\\
-\widetilde{M}^{\lambda}_{\beta\beta} &= g_{\mathbf{q}}\left[ X_\lambda\,(2t_a vv' + 2t_b uu') + i P_\lambda\,(vu'\Delta_{ab} + uv'\Delta_{ba}) \right].
+\widetilde{M}^{\lambda}_{\alpha\alpha} &= \sqrt{\frac{A}{\omega_{\mathbf{q}}}} \left[ X_\lambda\,(2t_a uu' + 2t_b vv') - i P_\lambda\,(uv'\Delta_{ab} + vu'\Delta_{ba}) \right],\\
+\widetilde{M}^{\lambda}_{\alpha\beta} &= \sqrt{\frac{A}{\omega_{\mathbf{q}}}} \left[ X_\lambda\,(2t_a uv' - 2t_b vu') + i P_\lambda\,(uu'\Delta_{ab} - vv'\Delta_{ba}) \right],\\
+\widetilde{M}^{\lambda}_{\beta\alpha} &= \sqrt{\frac{A}{\omega_{\mathbf{q}}}} \left[ X_\lambda\,(2t_a vu' - 2t_b uv') + i P_\lambda\,(uu'\Delta_{ba} - vv'\Delta_{ab}) \right],\\
+\widetilde{M}^{\lambda}_{\beta\beta} &= \sqrt{\frac{A}{\omega_{\mathbf{q}}}} \left[ X_\lambda\,(2t_a vv' + 2t_b uu') + i P_\lambda\,(vu'\Delta_{ab} + uv'\Delta_{ba}) \right].
 \end{align}
 
 % the velocity part is real and the dipole part imaginary, so there is no cross term
 \begin{align}
 \sum_{\lambda}\left|\widetilde{M}^{\lambda}_{\gamma\gamma'}\right|^2
-&= \frac{\mathcal{A}}{\omega_{\mathbf{q}}}\left[
+&= \frac{A}{\omega_{\mathbf{q}}}\left[
 \left(X_{\mathrm{TE}}^2 + X_{\mathrm{TM}}^2\right) C_{\gamma\gamma'}^2
-+ \left(\sin^2\varphi + \frac{\omega_0^2}{\omega_{\mathbf{q}}^2}\cos^2\varphi\right) D_{\gamma\gamma'}^2 \right],\\
++ \left(\sin^2\varphi + \frac{\omega_0^2}{\omega_{\mathbf{q}}^2}\cos^2\varphi\right) D_{\gamma\gamma'}^2 \right]\,,\\
 C_{\alpha\alpha} &= 2t_a uu' + 2t_b vv', & D_{\alpha\alpha} &= d\,(uv'\Delta_{ab} + vu'\Delta_{ba}),\\
 C_{\alpha\beta} &= 2t_a uv' - 2t_b vu', & D_{\alpha\beta} &= d\,(uu'\Delta_{ab} - vv'\Delta_{ba}),\\
 C_{\beta\alpha} &= 2t_a vu' - 2t_b uv', & D_{\beta\alpha} &= d\,(uu'\Delta_{ba} - vv'\Delta_{ab}),\\
@@ -1216,107 +1213,21 @@ C_{\beta\beta} &= 2t_a vv' + 2t_b uu', & D_{\beta\beta} &= d\,(vu'\Delta_{ab} + 
 \end{align}
 
 % rate (eq. 186), Omega = E_{gamma k} - E_{gamma' k'}
-\begin{equation}
+\begin{tcolorbox}
+\begin{align} \label{gam_photon_numerika}
 \Gamma_{\gamma'\mathbf{k}'\to\gamma\mathbf{k}}
-= \sum_{\lambda}\left|\widetilde{M}^{\lambda}_{\gamma\gamma'}\right|^2
+&= \sum_{\lambda}\left|\widetilde{M}^{\lambda}_{\gamma\gamma'}\right|^2
 N(\Omega)\,\frac{8\gamma\,\omega_{\mathbf{q}}\,\Omega}
-{\left[(\Omega-\omega_{\mathbf{q}})^2+\gamma^2\right]\left[(\Omega+\omega_{\mathbf{q}})^2+\gamma^2\right]} .
-\end{equation}
+{\left[(\Omega-\omega_{\mathbf{q}})^2+\gamma^2\right]\left[(\Omega+\omega_{\mathbf{q}})^2+\gamma^2\right]} = \nonumber \\ 
+ &= A \Bigg[
+\Bigg(\left(\sin^2\varphi + \frac{\omega_0^2}{\omega_{\mathbf{q}}^2}\cos^2\varphi\right) \sin^2\left(k'_x + \tfrac{q_x}{2}\right) + \left(\cos^2\varphi + \frac{\omega_0^2}{\omega_{\mathbf{q}}^2}\sin^2\varphi\right) \sin^2\left(k'_y + \tfrac{q_y}{2}\right) + \nonumber \\
+&+ 2 \left(\frac{\omega_0^2}{\omega_{\mathbf{q}}^2} -1\right)\cos(\varphi)\sin(\varphi) \sin\left(k'_x + \tfrac{q_x}{2}\right)\sin\left(k'_y + \tfrac{q_y}{2}\right)\Bigg) C_{\gamma\gamma'}^2 +\nonumber \\
+&+ \left(\sin^2\varphi + \frac{\omega_0^2}{\omega_{\mathbf{q}}^2}\cos^2\varphi\right) D_{\gamma\gamma'}^2 \Bigg]\cdot\Omega N(\Omega)\cdot\frac{8\gamma}
+{\left[(\Omega-\omega_{\mathbf{q}})^2+\gamma^2\right]\left[(\Omega+\omega_{\mathbf{q}})^2+\gamma^2\right]}\,.
+\end{align}
+\end{tcolorbox}
 
-% \section{blabla2}
-% States and parametrisation. $i=(\gamma,\mathbf k)$ with $\gamma\in\{\alpha,\beta\}$, $N$ grid points, weights $w_i=w_{\mathbf k}$, $\sum_{\mathbf k}w_{\mathbf k}=1$.
 
-% $$n_i=\frac{1}{1+e^{\mu_i}},\qquad 1-n_i=\frac{1}{1+e^{-\mu_i}},\qquad \frac{\partial n_i}{\partial\mu_i}=-n_i(1-n_i).$$
-
-% Mean field at given $(d,m)$ (\_mf, unchanged; $h$ is the Hartree parameter p.h):
-
-% $$
-% \tilde\varepsilon_{a}=\varepsilon_{a}+h\,\frac{n_0-m}{2}-\frac h2,\qquad
-% \tilde\varepsilon_{b}=\varepsilon_{b}+h\,\frac{n_0+m}{2}-\frac h2,
-% $$
-% $$
-% \xi_{\mathbf k}=\tfrac12(\tilde\varepsilon_a-\tilde\varepsilon_b),\quad
-% E_{\mathbf k}=\sqrt{\xi_{\mathbf k}^2+d^2},\quad
-% E_{\alpha/\beta,\mathbf k}=\tfrac12(\tilde\varepsilon_a+\tilde\varepsilon_b)\pm E_{\mathbf k},
-% $$
-% $$
-% u_{\mathbf k}^2=\frac12\Big(1+\frac{\xi_{\mathbf k}}{E_{\mathbf k}}\Big),\quad
-% v_{\mathbf k}^2=\frac12\Big(1-\frac{\xi_{\mathbf k}}{E_{\mathbf k}}\Big),\quad
-% u_{\mathbf k}v_{\mathbf k}=\frac{d}{2E_{\mathbf k}}.
-% $$
-
-% Rates. $R_{ij}(d,m)=\sum_b\Gamma^{(b)}_{j\to i}$ is the output of `\_rates` at the current $(d,m)$; for the photon baths this is eq. 186. $R_{ii}=0$.
-
-% Kinetic equation and its form in $\mu$ (eq. 193 summed over baths):
-
-% $$
-% \dot n_i=(1-n_i)\,a_i-n_i\,b_i,\qquad
-% a_i=\sum_j R_{ij}\,w_j\,n_j,\qquad
-% b_i=\sum_j R_{ji}\,w_j\,(1-n_j),
-% $$
-% $$\dot\mu_i=-\frac{\dot n_i}{n_i(1-n_i)}=\frac{b_i}{1-n_i}-\frac{a_i}{n_i}\equiv G_i .$$
-
-% Unknowns and residual. $z=(\mu_1,\dots,\mu_{2N},\,d,\,m,\,\kappa)\in\mathbb R^{2N+3}$, with $V$ = p.v:
-
-% $$
-% \begin{aligned}
-% F_i&=G_i+\kappa,\qquad i=1,\dots,2N,\\
-% F_d&=d-V\sum_{\mathbf k}w_{\mathbf k}\,u_{\mathbf k}v_{\mathbf k}\,(n_{\beta\mathbf k}-n_{\alpha\mathbf k}),\\
-% F_m&=m-\sum_{\mathbf k}w_{\mathbf k}\,(u_{\mathbf k}^2-v_{\mathbf k}^2)\,(n_{\alpha\mathbf k}-n_{\beta\mathbf k}),\\
-% F_n&=\sum_{\mathbf k}w_{\mathbf k}\,(n_{\alpha\mathbf k}+n_{\beta\mathbf k})-n_0 .
-% \end{aligned}
-% $$
-
-% Why $\kappa$. The rates conserve the particle number for every $z$:
-
-% $$
-% \sum_i w_i\,n_i(1-n_i)\,G_i=-\sum_i w_i\,\dot n_i
-% =-\sum_{ij}w_iw_j\big[(1-n_i)R_{ij}n_j-n_iR_{ji}(1-n_j)\big]=0 .
-% $$
-
-% So the $2N$ balance equations hold only $2N-1$ independent conditions, and the system without $\kappa$ has $2N+3$ equations for $2N+2$ unknowns. Adding $\kappa$ makes it square. Multiplying $F_i=0$ by $w_in_i(1-n_i)$ and summing gives $\kappa\sum_i w_in_i(1-n_i)=0$, so $\kappa=0$ at the solution and the physical equations are unchanged.
-
-% Jacobian. With $s_j=w_j\,n_j(1-n_j)$:
-
-% $$
-% \frac{\partial F_i}{\partial\mu_j}
-% =s_j\Big[\frac{R_{ji}}{1-n_i}+\frac{R_{ij}}{n_i}\Big]
-% -\delta_{ij}\Big[\frac{b_i\,n_i}{1-n_i}+\frac{a_i\,(1-n_i)}{n_i}\Big],
-% $$
-% $$
-% \frac{\partial F_d}{\partial\mu_{\alpha\mathbf k}}=-V u_{\mathbf k}v_{\mathbf k}\,s_{\alpha\mathbf k},\qquad
-% \frac{\partial F_d}{\partial\mu_{\beta\mathbf k}}=+V u_{\mathbf k}v_{\mathbf k}\,s_{\beta\mathbf k},
-% $$
-% $$
-% \frac{\partial F_m}{\partial\mu_{\alpha\mathbf k}}=+(u_{\mathbf k}^2-v_{\mathbf k}^2)\,s_{\alpha\mathbf k},\qquad
-% \frac{\partial F_m}{\partial\mu_{\beta\mathbf k}}=-(u_{\mathbf k}^2-v_{\mathbf k}^2)\,s_{\beta\mathbf k},\qquad
-% \frac{\partial F_n}{\partial\mu_j}=-s_j,
-% $$
-% $$
-% \frac{\partial F}{\partial\kappa}=(1,\dots,1,0,0,0)^{T},\qquad
-% \frac{\partial F}{\partial x}\approx\frac{F(z+\eta\,e_x)-F(z-\eta\,e_x)}{2\eta},\quad
-% \eta=10^{-6}\max(|x|,0.1),\quad x\in\{d,m\}.
-% $$
-
-% The finite differences in $d$ and $m$ include the change of $E$, $u$, $v$ and of the whole rate matrix.
-
-% Scaling and linear solve. $C=\mathrm{diag}(c_1,\dots,c_{2N},1,1,1)$ with
-
-% $$
-% c_i=\Big(\frac{a_i}{n_i}+\frac{b_i}{1-n_i}\Big)^{-1},\qquad
-% c_i\,G_i=\frac{n_ib_i-(1-n_i)a_i}{n_ib_i+(1-n_i)a_i}\in[-1,1],
-% $$
-% $$(CJ)\,\delta z=-CF,\qquad \mathrm{err}=\max_i|c_iF_i| .$$
-
-% A scaled balance row is the relative mismatch of out and in flow, so states with very small rates count the same as the others.
-
-% Step. $\lambda_0=\min\!\big(1,\ \mathrm{cap}/\max_i|\delta\mu_i|\big)$, then $\lambda$ is halved until
-
-% $$\|C(z)\,F(z+\lambda\,\delta z)\|^2<(1-10^{-4}\lambda)\,\|C(z)\,F(z)\|^2 ,\qquad z\leftarrow z+\lambda\,\delta z .$$
-
-% The loop stops with ok=True when $\mathrm{err}<\mathrm{tol}$, and with ok=False after nmax iterations or when $\lambda<10^{-6}$.
-
-% Start and back-transform. $\mu_i^{(0)}=\ln\frac{1-n_i}{n_i}$ and $\kappa^{(0)}=0$. At the end $n_i=1/(1+e^{\mu_i})$ goes to sol.n, $\dot n_i$ at the converged $(d,m)$ to sol.cur, and $\mu_i$ to sol.eta.
 
 \section{Vizualizacije kopeli za fotone}
 Vsi naslednji grafi so v tocki $T_1=1.2 T_c, T_2 = 0.2 T_c$ in uporabjlajo fotonski verteks, kot opisano zgoraj, $\vec{q}=\vec{k}-\vec{p}_0$. 
@@ -1424,13 +1335,13 @@ Po točkah bi računali:
 \end{equation}
 V svojih celicah sta $k$ in $p$ porazdeljena enakomerno, zato lahko napišemo povprečje čez celico kot
 \begin{equation}
-\overline{\mathcal{S}}_{ij}=\frac{1}{{\delta k}^{2}}\int_{\mathcal C_i}\!dk\int_{\mathcal C_j}\!dp\;
+\overline{\mathcal{S}}_{ij}=\frac{1}{{\delta k}^{2}}\int_{\mathcal C_i}\,\dd{k}\int_{\mathcal C_j}\,\dd{p}\;
 \mathcal{S}\big(E_\nu(k)-E_\mu(p),\,\omega_{k-p}\big)
-=\int\! d\Omega\!\int\! dq\;\rho_{ij}(\Omega, q)\,\mathcal{S}(\Omega, \omega_q)\,,
+=\int\! \dd{\Omega}\!\int\! \dd{q}\;\rho_{ij}(\Omega, q)\,\mathcal{S}(\Omega, \omega_q)\,,
 \end{equation}
 z vrjetnostno gostoto:
 \begin{equation}
-\rho_{ij}(\Omega, q)=\frac{1}{{\delta k}^{2}}\int_{\mathcal C_i}\!dk\int_{\mathcal C_j}\!dp\;
+\rho_{ij}(\Omega, q)=\frac{1}{{\delta k}^{2}}\int_{\mathcal C_i}\!\,\dd{k}\int_{\mathcal C_j}\,\dd{p}\;
 \delta\big(\Omega-E_\nu(k)+E_\mu(p)\big)\,\delta\big(q-k+p\big).
 \end{equation}
  
@@ -1445,7 +1356,7 @@ Naredil sem približek, kjer razlike energij odčitamo točno v diskretnih točk
 \rho_{ij}(\Omega, q)\;\approx\;\delta(\Omega-\Omega_{ij})\,P(q-q_{ij}),\qquad
 P(x)=\frac{1}{{\delta k}}\Big(1-\frac{|x|}{{\delta k}}\Big)\,\Theta({\delta k}-|x|),\qquad \int P=1\,,
 \end{equation}
-kar nam da skupaj pri fiksni energijski razliki $\Omega_ij = E_\nu(k_i)-E_\mu(p_j)$:
+kar nam da skupaj pri fiksni energijski razliki $\Omega_{ij} = E_\nu(k_i)-E_\mu(p_j)$:
 \begin{equation}
 {\;\overline{\mathcal{S}}_{ij}\approx\int_{q_{ij}-{\delta k}}^{\,q_{ij}+{\delta k}}\!dq\;P(q-q_{ij})\,\mathcal{S}(\Omega_{ij}, \omega_q)\;}
 \end{equation}
@@ -1457,48 +1368,38 @@ t_l=2\Big[\frac{l-\frac12}{n_s}-\frac12\Big],\qquad
 \end{equation}
 oz. diskretno (z upeljavo $t = (q-q_{ij})/\delta k$) za arbitrarno funkcijo $F(q)$:
 \begin{equation}
-\int_{-1}^{1}\!dt\,(1-|t|)\,F(q_{ij} + t\delta k)=\sum_l\frac{2}{n_s}\big(1-|t_l|\big)  F(q_{ij} + t_l \delta k)+\mathcal O(n_s^{-2}).
+\int_{-1}^{1}\,\dd{t}\,(1-|t|)\,F(q_{ij} + t\delta k)=\sum_l\frac{2}{n_s}\big(1-|t_l|\big)  F(q_{ij} + t_l \delta k)+\mathcal O(n_s^{-2}).
 \end{equation}
 V principu se lahko tu ustavimo, ampak je računanje za vsak par $\Omega_{ij}$ zahtevno $\mathcal{O}((2 N_k^2)^2 n_s^2)$ (veliko parov $\vec q_{ij}$ da enako energijo, ker je $\Omega = \Omega(s)$). Zato tabeliramo razlike energij in interpoliramo. Izbral sem $\delta \Omega = \gamma / 8$, tako je $N_\Omega = \lceil{E_\text{max} / \delta \Omega\rceil} + 2$, kjer si $E_\text{max}$ izberemo tako, da je večji od največje možne razlike energij\footnote{V kodi to oceim avtomatsko navzgor z 10\% maržo.}. Za neko funkcijo $F(\Omega)$ potem računamo le $N_\Omega$ točk in za določen $\Omega_n\leq \Omega_{ij}\leq \Omega_{n+1}$ interpoliramo linearno: 
 \begin{align}
   F(\Omega) = (1-\alpha)F(\Omega_n) + \alpha F(\Omega_{n+1})\,,\quad \alpha = \Omega/\delta\Omega - \lfloor\Omega/\delta\Omega\rfloor
 \end{align}
-to skupaj stane $N_k^2 N_\Omega n_s^2 + (2N_k)^2$, dodatni clen je za lookup. Na koncu ne računam le povprečenih vrhov, temveč vse funkcije $\vec q$:
-$$
-\tilde M^\lambda_{\mu\mu'}(k',q)=\frac{g}{\sqrt{\omega_q}}\Big[(\epsilon_{q\lambda}\cdot h)\,C^{(1)}_{\mu\mu'}+i\,(\epsilon_{q\lambda}\cdot\hat d)\,C^{(2)}_{\mu\mu'}\Big],
-\qquad g^2=\frac{e^2}{2V\varepsilon_0},
-$$
-$$
-\vec h=\Big(\sin\big(k'_x+\tfrac{q_x}{2}\big),\ \sin\big(k'_y+\tfrac{q_y}{2}\big)\Big),\qquad
-C^{(1)}=\Big[U_k^\dagger\begin{pmatrix}2t_a&0\\0&2t_b\end{pmatrix}U_{k'}\Big],\qquad
-C^{(2)}=d\,\Big[U_k^\dagger\begin{pmatrix}0&\varepsilon_{a,k}-\varepsilon_{b,k'}\\ \varepsilon_{b,k}-\varepsilon_{a,k'}&0\end{pmatrix}U_{k'}\Big].
-$$
-
-$C^{(1)}$ in $C^{(2)}$ sta realni, tako da členi ne interferirajo. sestevek cez TE in TM z izbiro $\hat{\vec{d}}=\hat{\vec{x}}$ in $r=\omega_0/\omega_q$, je tako
-
-$$
-\sum_\lambda|\tilde M^\lambda_{\mu\mu'}|^2=\frac{g^2}{\omega_q}\Big[\big(h_x^2P_{xx}+h_y^2P_{yy}+h_xh_yP_{xy}\big)\big(C^{(1)}_{\mu\mu'}\big)^2+P_{xx}\big(C^{(2)}_{\mu\mu'}\big)^2\Big],
-$$
-$$
-P_{xx}=\sin^2\!\varphi+r^2\cos^2\!\varphi,\qquad P_{yy}=\cos^2\!\varphi+r^2\sin^2\!\varphi,\qquad P_{xy}=2\sin\varphi\cos\varphi\,(r^2-1),
-$$
-Vsa odvisnost od $q$ je v $P_c(q)$ in v funkciji
-
-$$F_q(\Omega)=\frac{\Theta(q_d-|q|)}{\omega_q}\big[A_q(\Omega)-A_q(-\Omega)\big],$$
-
-$$
-\Gamma_{\mu'k'\to\mu k}=g^2\,N(\Omega)\Big[\big(h_x^2P_{xx}F_q+h_y^2P_{yy}F_q+h_xh_yP_{xy}F_q\big)\big(C^{(1)}_{\mu\mu'}\big)^2+P_{xx}F_q\big(C^{(2)}_{\mu\mu'}\big)^2\Big],
-$$
-
-Povprečimo produkt $P_cF_q$ s trikotno funkcijo, medtem ko $h$, $C^{(1,2)}$ in $\Omega$ računamo le v centrih celic: 
-
-$$
-\overline\Gamma_{\mu'k'\to\mu k}=g^2\,N(\Omega)\,\Omega\Big[\big(h_x^2\,T_{xx}+h_y^2\,T_{yy}+h_xh_y\,T_{xy}\big)\big(C^{(1)}_{\mu\mu'}\big)^2+T_{xx}\,\big(C^{(2)}_{\mu\mu'}\big)^2\Big],
-$$
-$$
-T_c(q,|\Omega|)=\frac{1}{\Omega}\big\langle P_c\,F\big\rangle_q(\Omega),\qquad
-\langle X\rangle_q=\int d^2\delta q\;\Lambda(\delta q)\,X_{q+\delta q}\;\approx\sum_{a,b}\varpi_a\varpi_b\,X_{q+(t_a\delta k_x,\,t_b\delta k_y)}.
-$$
+to skupaj stane $N_k^2 N_\Omega n_s^2 + (2N_k)^2$, dodatni clen je za lookup. Na koncu se bolj splača skupaj povprečiti ne le spektralno funckijo, temvec tudi dodatne faktorje. S krajšo notacijo:  
+\begin{align}
+  \vec h=\Big(\sin\big(k'_x+\tfrac{q_x}{2}\big),\ \sin\big(k'_y+\tfrac{q_y}{2}\big)\Big)
+\end{align}
+in
+\begin{align}
+  Z_{xx}=\sin^2\!\varphi+(\omega_0/\omega_{\vec q})^2\cos^2\!\varphi,\qquad Z_{yy}=\cos^2\!\varphi+(\omega_0/\omega_{\vec q})^2\sin^2\!\varphi,\qquad Z_{xy}=2\sin\varphi\cos\varphi\,((\omega_0/\omega_{\vec q})^2-1),
+\end{align}
+definiramo še (bolj stabilno v kodi, tudi produkt $\Omega N(\Omega)$ je stabilen za $\Omega \to 0$):
+\begin{align}
+  F_\vec{q}(\Omega)=\frac{\mathcal{A}_{\vec q}(\Omega)-\mathcal{A}_{\vec q}(-\Omega)}{\Omega\omega_{\vec q}}= \frac{8\gamma}{\big[(\Omega-\omega)^2+\gamma^2\big]\big[(\Omega+\omega)^2+\gamma^2\big]}\,,
+\end{align}
+tako je po točkah (to je enaka matrika kot \eqref{gam_photon_numerika})
+\begin{align}
+  \Gamma_{\gamma'\vec{k}'\to\gamma \vec{k}}=A \cdot \Omega N(\Omega) \cdot \Big[\big(h_x^2Z_{xx}F_{\vec q}+h_y^2Z_{yy}F_{\vec q}+h_xh_yZ_{xy}F_{\vec q}\big)C_{\gamma\gamma'}^2+Z_{xx}F_{\vec q}D_{\gamma\gamma'}^2\Big]\,,
+\end{align}
+Povprečimo produkte tipa $Z_{xx}F_{\vec q}$ s trikotno funkcijo, medtem ko $\vec h$, $C_{\gamma, \gamma'}$ in $\Omega$ računamo le v centrih celic: 
+\begin{tcolorbox}
+\begin{align}
+  \overline\Gamma_{\gamma'\vec k'\to\gamma \vec k}=A \cdot \Omega N(\Omega)\cdot  \Big[\left(h_x^2 \overline{Z_{xx}F_{\vec q}}+h_y^2 \overline{Z_{yy}F_{\vec q}}+h_xh_y \overline{Z_{xy}F_{\vec q}}\right)C_{\gamma\gamma'}^2+ \overline{Z_{xx}F_{\vec q}} D_{\gamma\gamma'}^2\Big]\,,
+\end{align}
+\end{tcolorbox} \noindent
+kjer je 
+\begin{align}
+  \overline{X_{\vec{q}}(\Omega)} =\int\,\dd{x}\dd{y}P(x)P(y)\,X_{(q_x + x, q_y + y)}\;\simeq\sum_{l,m}^{n_s}\left( \frac{2}{n_s}\right)^2\big(1-|t_l|\big)\big(1-|t_m|\big)X_{\vec{q}+(t_l\delta k_x,\,t_m\delta k_y)}\,.
+\end{align}
 
 
 \begin{figure}[h!]
@@ -1526,10 +1427,20 @@ $$
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.5\textwidth]{figures/primerjava_potockah_lorentz.pdf}
+    \includegraphics[width=0.49\textwidth]{figures/primerjava_potockah_lorentz.pdf}
+    \includegraphics[width=0.49\textwidth]{figures/cut_line_01.pdf}
     \centering
     \caption{.}
 \end{figure}
+
+\subsubsection{Andersonov algoritem}
+Samokonsistenten sistem enačb je ekvivalenten reševanju fixed point problema $\vec{x} = \mathcal{G}(\vec{x})$, oziroma iskanje ničel funckije $\vec f(\vec x)=\mathcal G(\vec x)-\vec x$. Pri Picard iteracijah samo posodabljamo s prejšnjo vrednostjo:
+\begin{align}
+  \vec x_{k+1}=\vec x_k+\beta\,\vec f_k \,.
+\end{align}
+
+okoli rešitve se konvergenca ustavi, saj je: $\vec f(\vec x)\approx J(\vec x-\vec x^*)$ kjer je Jakobijan $J=\partial\mathcal G/\partial\vec x-
+\mathds{1}$. 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=1.\textwidth]{figures/gamma_D_m_sweep.pdf}
