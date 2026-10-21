@@ -627,7 +627,7 @@ operatorje polja razvijemo po lokaliziranih / Wannierovih orbitalah
 \begin{equation}
 \psi(\vec{r}) = \sum_{i,\gamma=\{a, b\}} \phi_\gamma(\vec{r} - \vec{R}_i) c_{\gamma i}\,.
 \end{equation}
-Transformiramo s FT, uvedemo $\vec{r} = \vec{R}_i + \vec{x}$ in razvijemo do dipolov $e^{-i\vec{q}\cdot\vec{x}} \simeq 1 -i\vec{q}\cdot\vec{x}$ (delamo se da se orbitale ne prekrivajo izven o.c.): 
+Transformiramo s FT, uvedemo novo spremenljivko $\vec{r} = \vec{R}_i + \vec{x}$ in razvijemo do dipolov $e^{-i\vec{q}\cdot\vec{x}} \simeq 1 -i\vec{q}\cdot\vec{x}$ (delamo se da se orbitale ne prekrivajo izven o.c., torej $\sum_{ij}\to \sum_{i}\delta_{ij}$): 
 \begin{equation}
 \rho(\vec{q}) = -e \sum_{i,j} \sum_{\gamma, \gamma'} \int \dd{\vec{r}} \, e^{-i\vec{q}\cdot\vec{r}} \phi_\gamma^*(\vec{r} - \vec{R}_i) \phi_{\gamma'}(\vec{r} - \vec{R}_j) c_{\gamma i}^\dagger c_{\gamma' j} = -e \sum_{i,\gamma,\gamma'} e^{-i\vec{q}\cdot\vec{R}_i} \langle \phi_\gamma | e^{-i\vec{q}\cdot\vec{x}} | \phi_{\gamma'} \rangle c_{\gamma i}^\dagger c_{\gamma' i} 
 \end{equation}
@@ -643,7 +643,7 @@ z negativnim argumentom je potem elektronska gostota do dipolnega člena (upošt
 \begin{equation}
 \rho(-\vec{q}) = -e \sum_{\vec{k}} \begin{pmatrix} c_{a, \vec{k}+\vec{q}}^\dagger & c_{b, \vec{k}+\vec{q}}^\dagger \end{pmatrix} \left( \mathds{1} + i\, \vec{q} \cdot \vec{d} \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix} \right) \begin{pmatrix} c_{a\vec{k}} \\ c_{b\vec{k}} \end{pmatrix}
 \end{equation}
-Zdaj poračunamo komutator, da dobimo tok. \textbf{Lahko vzamemo $H_e^0$, ker za local $V$ se cleni z $\Delta_k \to \Delta$ pokrajsajo!!}, načeloma pa (nisem še preveru, z dipolnim členom ne komutira). Delam z vektorji $\psi_k = \begin{pmatrix} c_{a, \vec{k}} & c_{b, \vec{k}}\end{pmatrix}^\mathsf{T}$: 
+Zdaj poračunamo komutator, da dobimo tok. Delam z vektorji $\psi_k = \begin{pmatrix} c_{a, \vec{k}} & c_{b, \vec{k}}\end{pmatrix}^\mathsf{T}$: 
 
 
 \begin{equation}
@@ -776,7 +776,7 @@ in približek da se polje ne spremeni velko do najbližjih sosedov
 \end{align}
 računamo 
 \begin{align}
-  H_{e\gamma}^{(2)} &= -\sum_{j, \bm{\delta}, \gamma} t_\gamma \left( -\frac{\theta_{j\bm{\delta}}^2}{2} \right) \left( c_{\gamma j}^\dagger c_{\gamma j + \bm{\delta}} + c_{\gamma j + \bm{\delta}}^\dagger c_{\gamma j}^{\vphantom{\dagger}}\right) = \\ &= \sum_{j, \bm{\delta}, \gamma} t_\gamma \cdot \frac{e^2}{2} \int_{\vec{R}_j}^{\vec{R}_j + \bm{\delta}} \vec{A}(\vec{r}, t) \cdot d\vec{r} \int_{\vec{R}_j}^{\vec{R}_j + \bm{\delta}} \vec{A}(\vec{r}, t) \cdot d\vec{r} \left( c_{\gamma j}^\dagger c_{\gamma j + \bm{\delta}} + \text{h.c.} \right) = \\ &= \sum_{j, \bm{\delta}, \gamma} t_\gamma \frac{e^2}{2} \left( \sum_{\vec{q}, \lambda} \frac{1}{\sqrt{2\varepsilon_0 \mathcal{V} \omega_{\vec{q}\lambda}}} \left( \vec{\varepsilon}_{\vec{q}\lambda} \cdot \bm{\delta} \right) e^{i \vec{q} \cdot \left(\vec{R}_j + \frac{\bm{\delta}}{2}\right)} \left( b_{\vec{q}\lambda} + b_{-\vec{q}\lambda}^\dagger \right) \right) \left( \sum_{\vec{q}', \lambda'} \frac{1}{\sqrt{2\varepsilon_0 \mathcal{V} \omega_{\vec{q}'\lambda'}}} \left( \vec{\varepsilon}_{\vec{q}'\lambda'} \cdot \bm{\delta} \right) e^{i \vec{q}' \cdot \left(\vec{R}_j + \frac{\bm{\delta}}{2}\right)} \left( b_{\vec{q}'\lambda'} + b_{-\vec{q}'\lambda'}^\dagger \right) \right) \\ &\quad \cdot \sum_{\vec{k}, \vec{k}'} \frac{1}{\mathcal{V}} c_{\gamma \vec{k}'}^\dagger c_{\gamma \vec{k}} e^{-i(\vec{k}' - \vec{k}) \cdot \vec{R}_j} \left( e^{i \vec{k} \cdot \bm{\delta}} + e^{i \vec{k}' \cdot \bm{\delta}} \right)
+  H_{e\gamma}^{(2)} &= -\sum_{j, \bm{\delta}, \gamma} t_\gamma \left( -\frac{\theta_{j\bm{\delta}}^2}{2} \right) \left( c_{\gamma j}^\dagger c_{\gamma j + \bm{\delta}} + c_{\gamma j + \bm{\delta}}^\dagger c_{\gamma j}^{\vphantom{\dagger}}\right) = \\ &= \sum_{j, \bm{\delta}, \gamma} t_\gamma \cdot \frac{e^2}{2} \int_{\vec{R}_j}^{\vec{R}_j + \bm{\delta}} \vec{A}(\vec{r}, t) \cdot d\vec{r} \int_{\vec{R}_j}^{\vec{R}_j + \bm{\delta}} \vec{A}(\vec{r}, t) \cdot d\vec{r} \left( c_{\gamma j}^\dagger c_{\gamma j + \bm{\delta}} + \text{h.c.} \right) = \\ &= \sum_{j, \bm{\delta}, \gamma} t_\gamma \frac{e^2}{2} \left( \sum_{\vec{q}, \lambda} \frac{1}{\sqrt{2\varepsilon_0 \mathcal{V} \omega_{\vec{q}\lambda}}} \left( \bm{\epsilon}_{\vec{q}\lambda} \cdot \bm{\delta} \right) e^{i \vec{q} \cdot \left(\vec{R}_j + \frac{\bm{\delta}}{2}\right)} \left( a_{\vec{q}\lambda} + a_{-\vec{q}\lambda}^\dagger \right) \right) \left( \sum_{\vec{q}', \lambda'} \frac{1}{\sqrt{2\varepsilon_0 \mathcal{V} \omega_{\vec{q}'\lambda'}}} \left( \bm{\epsilon}_{\vec{q}'\lambda'} \cdot \bm{\delta} \right) e^{i \vec{q}' \cdot \left(\vec{R}_j + \frac{\bm{\delta}}{2}\right)} \left( a_{\vec{q}'\lambda'} + a_{-\vec{q}'\lambda'}^\dagger \right) \right) \\ &\quad \cdot \sum_{\vec{k}, \vec{k}'} \frac{1}{\mathcal{V}} c_{\gamma \vec{k}'}^\dagger c_{\gamma \vec{k}} e^{-i(\vec{k}' - \vec{k}) \cdot \vec{R}_j} \left( e^{i \vec{k} \cdot \bm{\delta}} + e^{i \vec{k}' \cdot \bm{\delta}} \right)
 \end{align}
 ven pade ohranitev momenta za dvofotonske procese
 \begin{align}
@@ -784,9 +784,9 @@ ven pade ohranitev momenta za dvofotonske procese
 \end{align}
 kar da na koncu 
 \begin{align}
-  = \sum_{\substack{\gamma, \vec{k}, \vec{q}, \vec{q}' \\ \lambda, \lambda', \bm{\delta}}} t_\gamma \frac{e^2}{2} \frac{1}{2\varepsilon_0 \mathcal{V} \sqrt{\omega_{\vec{q}\lambda} \omega_{\vec{q}'\lambda'}}} \left( \vec{\varepsilon}_{\vec{q}\lambda} \cdot \bm{\delta} \right) \left( \vec{\varepsilon}_{\vec{q}'\lambda'} \cdot \bm{\delta} \right) \left( b_{\vec{q}\lambda} + b_{-\vec{q}\lambda}^\dagger \right) \left( b_{\vec{q}'\lambda'} + b_{-\vec{q}'\lambda'}^\dagger \right) c_{\gamma, \vec{k} + \vec{q} + \vec{q}'}^\dagger c_{\gamma \vec{k}} \\ \cdot \left( e^{i \vec{k} \cdot \bm{\delta}} + e^{-i (\vec{k} + \vec{q} + \vec{q}') \cdot \bm{\delta}} \right) \cdot e^{i (\vec{q} + \vec{q}') \cdot \frac{\bm{\delta}}{2}}
+  = \sum_{\substack{\gamma, \vec{k}, \vec{q}, \vec{q}' \\ \lambda, \lambda', \bm{\delta}}} t_\gamma \frac{e^2}{2} \frac{1}{2\varepsilon_0 \mathcal{V} \sqrt{\omega_{\vec{q}\lambda} \omega_{\vec{q}'\lambda'}}} \left( \bm{\epsilon}_{\vec{q}\lambda} \cdot \bm{\delta} \right) \left( \bm{\epsilon}_{\vec{q}'\lambda'} \cdot \bm{\delta} \right) \left( a_{\vec{q}\lambda} + a_{-\vec{q}\lambda}^\dagger \right) \left( a_{\vec{q}'\lambda'} + a_{-\vec{q}'\lambda'}^\dagger \right) c_{\gamma, \vec{k} + \vec{q} + \vec{q}'}^\dagger c_{\gamma \vec{k}} \\ \cdot \left( e^{i \vec{k} \cdot \bm{\delta}} + e^{-i (\vec{k} + \vec{q} + \vec{q}') \cdot \bm{\delta}} \right) \cdot e^{i (\vec{q} + \vec{q}') \cdot \frac{\bm{\delta}}{2}}
 \end{align}
-POenostavimo zadnji člen v kosinus:
+Poenostavimo zadnjifaktor v kosinus:
 \begin{tcolorbox}
 \begin{align}
   H_{e\gamma}^{(2)} &= \sum_{\substack{\mathbf{k}, \mathbf{q}, \mathbf{q}' \\ \lambda, \lambda'}} \psi_{\mathbf{k}+\mathbf{q}+\mathbf{q}'}^\dagger {M^{\lambda \lambda'}(\mathbf{k}, \mathbf{q}, \mathbf{q}')} \psi_{\mathbf{k}} \cdot (a_{\mathbf{q},\lambda} + a_{-\mathbf{q},\lambda}^\dagger)(a_{\mathbf{q}',\lambda'} + a_{-\mathbf{q}',\lambda'}^\dagger) \\[8pt]
