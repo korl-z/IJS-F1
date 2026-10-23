@@ -220,12 +220,19 @@ def plot_dispersion(pt, bd, st, mu):
         q.layout((0, 0, 1, 0.86))
 
 
-def plot_energy(pt, st, sf, t1, t2, mu, d0, path = None):
+def plot_energy(pt, st, sf, t1, t2, mu, d0, path = None, nb=60):
     """NESS zasedenosti vs E"""
     en = (np.asarray(st.st.e) - mu) / d0
     ef = (np.asarray(sf.st.e) - mu) / d0
     nn = np.asarray(st.n)
     x = np.linspace(0.5 * min(en.min(), ef.min()), 0.5 * max(en.max(), ef.max()), 600)
+
+    # mean occupation per energy bin, both bands together
+    eb = np.linspace(en.min(), en.max(), nb + 1)
+    ns, _ = np.histogram(en.ravel(), eb, weights=nn.ravel())
+    nc, _ = np.histogram(en.ravel(), eb)
+    ec = 0.5 * (eb[1:] + eb[:-1])
+    nbar = np.where(nc > 0, ns / np.maximum(nc, 1), np.nan)
 
     with pt.figure(name="occupations_energy", h=0.6) as q:
         a = q.ax
@@ -233,17 +240,19 @@ def plot_energy(pt, st, sf, t1, t2, mu, d0, path = None):
         l2, = a.plot(x, fd_t(x * d0, t2), color="grey", ls="--", lw=0.6)
         a.plot(x, fd(sf.beta * x * d0), color="hotpink", lw=1.1, alpha=0.8,
                label=r"$f(E,T_{\mathrm{eff}})$", zorder=0)
-        a.scatter(en[0], nn[0], color=SET1_LIST[1], s=3, alpha=0.55,
-                  edgecolors="none", label=r"$n_{\alpha\mathbf{k}}^{\mathrm{NESS}}$")
-        a.scatter(en[1], nn[1], color=SET1_LIST[2], s=3, alpha=0.55,
-                  edgecolors="none", label=r"$n_{\beta\mathbf{k}}^{\mathrm{NESS}}$")
+        # a.scatter(en[0], nn[0], color=SET1_LIST[1], s=3, alpha=0.1,
+        #           edgecolors="none", label=r"$n_{\alpha\mathbf{k}}^{\mathrm{NESS}}$")
+        # a.scatter(en[1], nn[1], color=SET1_LIST[2], s=3, alpha=0.55,
+        #           edgecolors="none", label=r"$n_{\beta\mathbf{k}}^{\mathrm{NESS}}$")
+        a.plot(ec, nbar, color=SET1_LIST[1], lw=1.0,
+               label=r"$n(E)$")
         format_ax(a, x=x, xlabel=r"$(E-V/2)/\Delta_0$", ylabel=r"$n$",
                   ylim=(0.0, 1.0))
         add_legend(a, ncol=1, fontsize=7)
         q.layout((0, 0, 1, 0.84))
 
         labelLine(l1, x=.4*x[-1], label=r"$T_1$", yoffset=0.05, fontsize=7, backgroundcolor="none", outline_width=0)
-        labelLine(l2, x=.4*x[-1], label=r"$T_2$", yoffset=0.05, fontsize=7, backgroundcolor="none", outline_width=0)
+        labelLine(l2, x=-0.4*x[-1], label=r"$T_2$", yoffset=0.05, fontsize=7, backgroundcolor="none", outline_width=0)
         if path is not None: 
             plt.savefig(path, bbox_inches="tight")
 
@@ -269,7 +278,7 @@ def bath_rate(bd, st, bs):
     return lam.reshape(np.shape(st.n))
 
 
-def plot_xi(pt, bd, p, eq, st, sf, bs, t1, t2, d0, path=None):
+def plot_xi(pt, bd, p, eq, st, sf, bs, t1, t2, d0, path=None, nb=100):
     """NESS okupacije vs xi"""
     eh = np.stack((np.asarray(st.st.eah), np.asarray(st.st.ebh)))
     hf = np.stack((np.asarray(sf.st.eah), np.asarray(sf.st.ebh)))
@@ -282,6 +291,19 @@ def plot_xi(pt, bd, p, eq, st, sf, bs, t1, t2, d0, path=None):
     nn = np.asarray(st.n)
 
     wb = bath_mix(bd, st, bs)
+
+    xs = np.r_[xn, xn]
+    ys = np.r_[nn[0], 1.0 - nn[1]]
+    ls_ = np.log(np.r_[lb[0], lb[1]])
+    eb = np.linspace(0.0, xs.max(), nb + 1)
+    nc, _ = np.histogram(xs, eb)
+    ny, _ = np.histogram(xs, eb, weights=ys)
+    nl, _ = np.histogram(xs, eb, weights=ls_)
+    ok = nc > 0
+    xc = 0.5 * (eb[1:] + eb[:-1])[ok]
+    ybar = ny[ok] / nc[ok]
+    lbar = np.exp(nl[ok] / nc[ok])
+
     with pt.figure(name="occupations_xi", h=0.6) as q:
         a = q.ax
         l1, = a.plot(x, fd_t(x * d0, t1), color="k", ls="--", lw=0.6)
@@ -293,9 +315,16 @@ def plot_xi(pt, bd, p, eq, st, sf, bs, t1, t2, d0, path=None):
                 edgecolors="none",
                 label=r"$n_{\alpha\mathbf{k}}^{\mathrm{NESS}}$")
         a.scatter(xn, 1.0 - nn[1], c=lb[1], cmap=cmaps.gem.cut(0.2, "right"),
-                norm=nr, s=4, marker="^",
+                norm=nr, s=4, marker="^", alpha=0.1,
                 edgecolors="none",
                 label=r"$1-n_{\beta\mathbf{k}}^{\mathrm{NESS}}$")
+        # pts = np.column_stack((xc, ybar))[:, None, :]
+        # sg = np.concatenate((pts[:-1], pts[1:]), axis=1)
+        # lc = LineCollection(sg, cmap=cmaps.gem.cut(0.2, "right"), norm=nr,
+        #                     lw=1.2, label=r"$n(|\xi|)$")
+        # lc.set_array(np.sqrt(lbar[:-1] * lbar[1:]))
+        # a.add_collection(lc)
+
         # cbar = q.fig.colorbar(sc, ax=a)
         # cbar.set_label("relativen coupling", rotation=90, labelpad=5)
         format_ax(a, x=x, xlabel=r"$|\xi_{\mathbf{k}}|/\Delta_0$",

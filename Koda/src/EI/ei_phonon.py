@@ -24,6 +24,9 @@ class PhononBath:
     qd: float = 4.4428829381583662470158809900606936986146216893756902230853956069
     a0: float = 1.0
     name: str = "phonon"
+    kind: str = "photon"  # photon: eq. 232, phonon: eq. 96 with D = 0
+    ta_prime: float = 0.0  # Peierls slope t'_a, phonon only
+    tb_prime: float = 0.0  # Peierls slope t'_b, phonon only
 
     w0: float = 1.0
     gam: float = 1.0e-3
@@ -47,8 +50,13 @@ class PhononBath:
             self.t, self.cs,
             self.amp, self.gap, self.ta, self.tb, self.dip, self.qd,
             self.a0, self.w0,
-            self.gam, self.eh, self.em,
+            self.gam, self.eh, self.em, self.ta_prime, self.tb_prime,
         ))
+
+        if self.kind not in ("photon", "phonon"):
+            raise ValueError("kind must be photon or phonon")
+        if self.kind == "phonon" and self.dip != 0.0:
+            raise ValueError("the phonon vertex has no dipole term, set dip = 0")
 
         if not np.isrealobj(z) or not np.isfinite(z).all():
             raise ValueError("bath parameters must be finite and real")
@@ -89,7 +97,7 @@ def em_bound(gap, ta, tb, v, n=1.0, uh=None, mar=0.1):
 
 class Pack(NamedTuple):
     k: Any
-    b: Any  # rows (t, cs, amp, ta, tb, dip, gap, qd, w0, gam)
+    b: Any  # rows (t, cs, amp, ta, tb, dip, gap, qd, w0, gam, phn, pa, pb)
     per: Any
     eh: Any
     em: Any
@@ -102,7 +110,7 @@ def omega_q(q, b):
     return jnp.hypot(b.w0, b.cs * q)
 
 @lru_cache(maxsize=8)
-def _ltab(nx, ny, per, cs, w0, gam, qd, nsub, dw, nw):
+def _ltab(nx, ny, per, cs, w0, gam, qd, nsub, dw, nw, phn=False):
     """Pair cell average of P_c(q) [A(w) - A(-w)] / (w_q w), c = xx, yy, xy.
 
     For every grid transfer q_n the average runs over q_n + dq with the tent
@@ -110,6 +118,7 @@ def _ltab(nx, ny, per, cs, w0, gam, qd, nsub, dw, nw):
     k - p for k and p uniform in their two cells. Pxx = sin^2 + r2 cos^2,
     Pyy = cos^2 + r2 sin^2, Pxy = 2 sin cos (r2 - 1), r2 = (w0 / w_q)^2.
     The line over w is regular at w = 0, so its value there is the slope.
+    phn: phonon bath, r2 = 1, so P = (1, 1, 0) (L and T modes summed).
     """
     dkx, dky = per / nx, per / ny
     qx0 = np.mod(np.arange(nx) * dkx + 0.5 * per, per) - 0.5 * per
@@ -127,7 +136,7 @@ def _ltab(nx, ny, per, cs, w0, gam, qd, nsub, dw, nw):
             ph = np.arctan2(qy, qx)
             cp, sn = np.cos(ph), np.sin(ph)
             om = np.hypot(w0, cs * qm)
-            r2 = (w0 / om) ** 2
+            r2 = 1.0 if phn else (w0 / om) ** 2
             ok = (qm <= qd) * (ax * ay)
             pc = np.stack((sn * sn + r2 * cp * cp, cp * cp + r2 * sn * sn,
                            2.0 * sn * cp * (r2 - 1.0))) * ok
@@ -172,7 +181,8 @@ def pack(bs):
 
     pa = [
         (q.t, q.cs, q.amp,
-         q.ta, q.tb, q.dip, q.gap, q.qd, q.w0, q.gam)
+         q.ta, q.tb, q.dip, q.gap, q.qd, q.w0, q.gam,
+         float(q.kind == "phonon"), q.ta_prime, q.tb_prime)
         for q in bs
     ]
 
@@ -183,7 +193,8 @@ def pack(bs):
         nw = int(np.ceil(b.em / dw)) + 2
         lt = jnp.asarray(np.stack([
             _ltab(nx, ny, float(per), float(q.cs), float(q.w0), float(q.gam),
-                  float(q.qd), int(q.nsub), float(dw), nw) for q in bs]), dtype=F)
+                  float(q.qd), int(q.nsub), float(dw), nw,
+                  q.kind == "phonon") for q in bs]), dtype=F)
         dw = F(dw)
 
     return Pack(jnp.asarray(b.k, dtype=F), jnp.asarray(pa, dtype=F), F(per),
@@ -208,10 +219,16 @@ def g_mat(st, b, k, p, q):
 
     ph = jnp.arctan2(q[1], q[0])
     cp, sn = jnp.cos(ph), jnp.sin(ph)
-    ep = jnp.stack((jnp.stack((-sn, cp)), (b.w0 / os) * jnp.stack((cp, sn))))
+    phn = b.kind == "phonon"  # pol 0 is T, pol 1 is L for phonons
+    rt = 1.0 if phn else b.w0 / os
+    ep = jnp.stack((jnp.stack((-sn, cp)), rt * jnp.stack((cp, sn))))
 
-    xv = ep @ (b.a0 * jnp.sin(b.a0 * (ki + 0.5 * q)))
+    if phn:
+        xv = ep @ (jnp.sin(b.a0 * kf) - jnp.sin(b.a0 * ki))  # eq. 98
+    else:
+        xv = ep @ (b.a0 * jnp.sin(b.a0 * (ki + 0.5 * q)))
     pv = b.dip * ep[:, 0]
+    ca, cb = (b.ta_prime, b.tb_prime) if phn else (b.ta, b.tb)
 
     sf = jnp.sum(jnp.cos(b.a0 * kf))
     si = jnp.sum(jnp.cos(b.a0 * ki))
@@ -219,8 +236,8 @@ def g_mat(st, b, k, p, q):
     eba = -b.gap - 2.0 * b.tb * sf + 2.0 * b.ta * si
 
     mm = jnp.stack((
-        jnp.stack((2.0 * b.ta * xv, 1j * pv * eab), axis=-1),
-        jnp.stack((1j * pv * eba, 2.0 * b.tb * xv), axis=-1),
+        jnp.stack((2.0 * ca * xv, 1j * pv * eab), axis=-1),
+        jnp.stack((1j * pv * eba, 2.0 * cb * xv), axis=-1),
     ), axis=-2)
 
     uk = jnp.array([
@@ -325,7 +342,7 @@ def _pair(x, y, bp):
     xa = x[:, 2, None] * y[None, :, 1]
     bb = x[:, 2, None] * y[None, :, 2]
 
-    # photon vertex
+    # fotonski vertex
     a0 = 2.0 * jnp.pi / bp.per
     ph = jnp.arctan2(qy, qx)
     cp, sn = jnp.cos(ph), jnp.sin(ph)
@@ -334,6 +351,10 @@ def _pair(x, y, bp):
     xt, xm = (-sn * hx + cp * hy)**2, (cp * hx + sn * hy)**2
     si = jnp.cos(a0 * x[:, 3, None]) + jnp.cos(a0 * x[:, 4, None])
     sj = jnp.cos(a0 * y[None, :, 3]) + jnp.cos(a0 * y[None, :, 4])
+
+    # phonon vertex, eq. 98: sin k - sin k', x final, y source
+    gx = jnp.sin(a0 * x[:, 3, None]) - jnp.sin(a0 * y[None, :, 3])
+    gy = jnp.sin(a0 * x[:, 4, None]) - jnp.sin(a0 * y[None, :, 4])
 
     if bp.lt is not None:
         # cell averaged line: grid index of q and linear interpolation in w
@@ -345,7 +366,7 @@ def _pair(x, y, bp):
         fw = z - iw
 
     def body(i, rr):
-        (t, cs, amp, ta, tb, dip, gap, qd, w0, gam) = bp.b[i]
+        (t, cs, amp, ta, tb, dip, gap, qd, w0, gam, phn, ta_prime, tb_prime) = bp.b[i]
         om = jnp.hypot(w0, cs * qm)
         os = jnp.maximum(om, F(1.0e-30))
         r2 = jnp.square(w0 / os)
@@ -358,6 +379,10 @@ def _pair(x, y, bp):
         af = ((xt + r2 * xm) * jnp.square(c1)
               + (sn * sn + r2 * cp * cp) * jnp.square(c2))
 
+        # phonon, eq. 96 with D = 0: t -> t', h -> sin k - sin k', Z -> 1
+        c1 = jnp.where(phn > 0, 2.0 * (ta_prime * aa + tb_prime * bb), c1)
+        af = jnp.where(phn > 0, (gx * gx + gy * gy) * jnp.square(c1), af)
+
         g2 = amp * af / os
 
         ok = qm <= qd
@@ -369,7 +394,9 @@ def _pair(x, y, bp):
             # vertex with P(q) and the line averaged over the cell pair
             tt = bp.lt[i]
             tv = (1.0 - fw) * tt[:, ix, iy, iw] + fw * tt[:, ix, iy, iw + 1]
-            sl = amp * ((hx * hx * tv[0] + hy * hy * tv[1] + hx * hy * tv[2])
+            ux = jnp.where(phn > 0, gx, hx)
+            uy = jnp.where(phn > 0, gy, hy)
+            sl = amp * ((ux * ux * tv[0] + uy * uy * tv[1] + ux * uy * tv[2])
                         * jnp.square(c1) + tv[0] * jnp.square(c2))
             sl = jnp.where(w <= bp.em, sl, jnp.nan)
             sp, gm = sl * w, F(1.0)
