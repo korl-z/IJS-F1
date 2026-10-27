@@ -1,6 +1,6 @@
 model:
   nk:
-    scan: 40
+    scan: 30
     reference: 50
 
   band:
@@ -67,31 +67,29 @@ open_system:
     rate: PhononBath
     pars:  # shared by all baths, pack needs equal k, a0, eh, em, nsub
       <<: [*band, *mf]   # gap, ta, tb and v, n, uh (zadnji trije za settanje em)
-      # gam: 0.15
-      nsub: 8  # 0: line at the grid points, > 0: avg., idealno nsub >= 4pi cs / (gam * nk) for the largest cs
+      gam: 0.15
+      nsub: 0  # 0: line at the grid points, > 0: avg., idealno nsub >= 4pi cs / (gam * nk)
 
-    baths:  # one entry per temperature (T1, T2), merged over pars
+    baths:  
       - kind: photon
         amp: 1.0
-        dip: 0.1
-        cs: 20.0
-        w0: 2.0
-        gam: 0.2
+        dip: 0.0
+        cs: 200.
+        w0: 1.0
 
       # - kind: photon
-        # amp: 0.044
-        # dip: 2.0
-        # cs: 10.0
-        # w0: 0.1
+      #   amp: 1.0
+      #   dip: 0.0
+      #   cs: 0.02
+      #   w0: 0.0
 
       - kind: phonon
-        amp: 0.0001
+        amp: 0.03567708105
         dip: 0.0        # fononi nimajo offdiag clenov
         ta_prime: -10.0     # t'_a
         tb_prime: 10.0      # t'_b
-        cs: 0.3
-        w0: 1.0e-6      # acoustic
-        gam: 0.1
+        cs: 0.0033
+        w0: 0.0      
 
   solve:
     dt: 0.03

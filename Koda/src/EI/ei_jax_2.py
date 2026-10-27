@@ -798,6 +798,7 @@ def solve_fixed(
     nmax: int = 5000,
     chk: int = 10,
     prog: bool = True,
+    jtol: float | None = 1.0e-3,  
 ) -> eu.OpenSol:
     """Dense Picard iteration with a rate refresh every chk iterations.
 
@@ -818,8 +819,8 @@ def solve_fixed(
     xn, xd, xm = map(F32, mx)
     st = _mf(ea, eb, pn, ph, d, m)
     r = _rates_jit(st, bp, rf)
-    hs = {q: [] for q in ("it", "t", "err", "cur", "ed", "em", "d", "m", "n0", "gn", "na")}
-    ok, it, erp = False, 0, None
+    hs = {q: [] for q in ("it", "t", "err", "cur", "ed", "em", "d", "m", "n0", "gn", "na", "jn")}
+    ok, it, erp, jmax = False, 0, None, 0.0
     bar = tqdm(range(0, int(nmax), int(chk)), desc="Fixed EI JAX", disable=not prog)
     for i0 in bar:
         ns = min(int(chk), int(nmax) - i0)
@@ -830,8 +831,9 @@ def solve_fixed(
         tg = _targets(st, n, w, pv)
         gj = jnp.where(jnp.abs(d) > F32(1.0e-14), tg.d / d, jnp.nan)
         aj = jnp.sum(w * n[0])
-        er, ec0, ed0, em0, n00, d0, m0, g0, a0 = map(
-            float, jax.device_get((erj, ec, ed, em, n0, d, m, gj, aj))
+        jj = jnp.sum(w * dn[0])                     
+        er, ec0, ed0, em0, n00, d0, m0, g0, a0, jn = map(                              
+            float, jax.device_get((erj, ec, ed, em, n0, d, m, gj, aj, jj))                
         )
         if not np.all(np.isfinite([er, ec0, ed0, em0, n00, d0, m0, a0])):
             raise RuntimeError("nonfinite state or current during fixed iteration")
@@ -847,10 +849,13 @@ def solve_fixed(
         hs["n0"].append(n00)
         hs["gn"].append(g0)
         hs["na"].append(a0)
+        hs["jn"].append(jn)                         # NEW
+        jmax = max(jmax, abs(jn))                   # NEW
+        slow = jtol is None or jmax == 0.0 or abs(jn) <= jtol * jmax   # NEW
         if prog:
-            bar.set_postfix(err=f"{er:.2e}", d=f"{d0:.5f}", m=f"{m0:.5f}")
+            bar.set_postfix(err=f"{er:.2e}", jn=f"{jn:.1e}", d=f"{d0:.5f}", m=f"{m0:.5f}")  # CHANGED
         falling = erp is not None and er < erp
-        if er < tol and (falling or er == 0.0):
+        if er < tol and slow and (falling or er == 0.0):                                  # CHANGED
             ok = True
             break
         erp = er

@@ -1363,18 +1363,18 @@ kar nam da skupaj pri fiksni energijski razliki $\Omega_{ij} = E_\nu(k_i)-E_\mu(
 V praksi to pomeni, da vzamemo $n_s$ točk in seštejemo namest integriramo: 
 \begin{equation}
 t_l=2\Big[\frac{l-\frac12}{n_s}-\frac12\Big],\qquad
-,\qquad \sum_{l=1}^{n_s}\frac{2}{n_s}\big(1-|t_l|\big)=1,
+,\qquad \sum_{l=1}^{n_s}\frac{2}{n_s}\big(1-|t_l|\big)=1\,(n_s\,\text{sod}),
 \qquad l=1,\dots,n_s ,
 \end{equation}
 oz. diskretno (z upeljavo $t = (q-q_{ij})/\delta k$) za arbitrarno funkcijo $F(q)$:
 \begin{equation}
 \int_{-1}^{1}\,\dd{t}\,(1-|t|)\,F(q_{ij} + t\delta k)=\sum_l\frac{2}{n_s}\big(1-|t_l|\big)  F(q_{ij} + t_l \delta k)+\mathcal O(n_s^{-2}).
 \end{equation}
-V principu se lahko tu ustavimo, ampak je računanje za vsak par $\Omega_{ij}$ zahtevno $\mathcal{O}((2 N_k^2)^2 n_s^2)$ (veliko parov $\vec q_{ij}$ da enako energijo, ker je $\Omega = \Omega(s)$). Zato tabeliramo razlike energij in interpoliramo. Izbral sem $\delta \Omega = \gamma / 8$, tako je $N_\Omega = \lceil{E_\text{max} / \delta \Omega\rceil} + 2$, kjer si $E_\text{max}$ izberemo tako, da je večji od največje možne razlike energij\footnote{V kodi to oceim avtomatsko navzgor z 10\% maržo.}. Za neko funkcijo $F(\Omega)$ potem računamo le $N_\Omega$ točk in za določen $\Omega_n\leq \Omega_{ij}\leq \Omega_{n+1}$ interpoliramo linearno: 
+V principu se lahko tu ustavimo, ampak je računanje za vsak par $\Omega_{ij}$ zahtevno $\mathcal{O}((2 N_k^2)^2 n_s^2)$ (veliko parov $\vec q_{ij}$ da enako energijo, ta pa se z iteracijami spreminja, zato ga tabeliram in v vsaki iteraciji odčitam). Zato tabeliramo razlike energij in interpoliramo. Izbral sem $\delta \Omega = \gamma / 8$, tako je $N_\Omega = \lceil{E_\text{max} / \delta \Omega\rceil} + 2$, kjer si $E_\text{max}$ izberemo tako, da je večji od največje možne razlike energij\footnote{V kodi to ocenim avtomatsko navzgor z 10\% maržo.}. Za neko funkcijo $F(\Omega)$ potem računamo le $N_\Omega$ točk in za določen $\Omega_n\leq \Omega_{ij}\leq \Omega_{n+1}$ interpoliramo linearno: 
 \begin{align}
-  F(\Omega) = (1-\alpha)F(\Omega_n) + \alpha F(\Omega_{n+1})\,,\quad \alpha = \Omega/\delta\Omega - \lfloor\Omega/\delta\Omega\rfloor
+  F(\Omega) = (1-\alpha)F(\Omega_n) + \alpha F(\Omega_{n+1})\,,\quad \alpha = |\Omega|/\delta\Omega - \lfloor|\Omega|/\delta\Omega\rfloor
 \end{align}
-to skupaj stane $N_k^2 N_\Omega n_s^2 + (2N_k)^2$, dodatni clen je za lookup. Na koncu se bolj splača skupaj povprečiti ne le spektralno funckijo, temvec tudi dodatne faktorje. S krajšo notacijo:  
+to skupaj stane $N_k^2 N_\Omega n_s^2 + (2N_k)^2$, dodatni člen je za odčitavanje energije. Na koncu se bolj splača skupaj povprečiti ne le spektralno funkcijo, temveč tudi dodatne faktorje. S krajšo notacijo:  
 \begin{align}
   \vec h=\Big(\sin\big(k'_x+\tfrac{q_x}{2}\big),\ \sin\big(k'_y+\tfrac{q_y}{2}\big)\Big)
 \end{align}
@@ -1390,7 +1390,7 @@ tako je po točkah (to je enaka matrika kot \eqref{gam_photon_numerika})
 \begin{align}
   \Gamma_{\gamma'\vec{k}'\to\gamma \vec{k}}=A \cdot \Omega N(\Omega) \cdot \Big[\big(h_x^2Z_{xx}F_{\vec q}+h_y^2Z_{yy}F_{\vec q}+h_xh_yZ_{xy}F_{\vec q}\big)C_{\gamma\gamma'}^2+Z_{xx}F_{\vec q}D_{\gamma\gamma'}^2\Big]\,,
 \end{align}
-Povprečimo produkte tipa $Z_{xx}F_{\vec q}$ s trikotno funkcijo, medtem ko $\vec h$, $C_{\gamma, \gamma'}$ in $\Omega$ računamo le v centrih celic: 
+Povprečimo produkte tipa $Z_{xx}F_{\vec q}$ s trikotno funkcijo, medtem ko $\vec h$, $C_{\gamma, \gamma'}$ in $\Omega$ računamo le v centrih celic. Povprečenje $N(\Omega)$ po energiji bi lahko zlomilo detailed balance glede na mrežo. Faktorji $\vec h$ v argumentu ne vsebujejo razlike momentov (če je $\vec k = \vec{k}_i + \vec{x}$ in $\vec k' = \vec{k}'_j + \vec{y}$ kjer sta $\vec{x}$ in $\vec y$ naključni spremenljivki v celici, potem povprečimo po $\vec{x}-\vec{y}$, argument $\vec{h}$ pa je $(\vec{k}_i +\vec{k}'_j)/2 + (\vec{x}+\vec{y})/2$) 
 \begin{tcolorbox}
 \begin{align}
   \overline\Gamma_{\gamma'\vec k'\to\gamma \vec k}=A \cdot \Omega N(\Omega)\cdot  \Big[\left(h_x^2 \overline{Z_{xx}F_{\vec q}}+h_y^2 \overline{Z_{yy}F_{\vec q}}+h_xh_y \overline{Z_{xy}F_{\vec q}}\right)C_{\gamma\gamma'}^2+ \overline{Z_{xx}F_{\vec q}} D_{\gamma\gamma'}^2\Big]\,,
@@ -1498,12 +1498,12 @@ Primer NESS v BCS režimu: $G=2, t_a=-t_b=1$ in $V=4.4$, kjer je $\Delta_0=1.0$.
     \includegraphics[width=0.49\textwidth]{figures/gap_map_BCS_test.pdf}
     \includegraphics[width=0.49\textwidth]{figures/m_map_BCS_test.pdf}
     \centering
-    \caption{Disperziji sta: $c=10.0$, $\omega_0^{(1)}=3$,  $\omega_0^{(2)}=0.01$, BEC režim. Obe s fotonskim veterksom.}
+    \caption{Disperziji sta: $c=10.0$, $\omega_0^{(1)}=3$,  $\omega_0^{(2)}=0.01$, BCS režim. Obe s fotonskim verteksom.}
 \end{figure}
 \FloatBarrier
 
 \section{Pretvorbe enot}
-Do zdaj smo uporabljali $\hbar=k_B=1$ in delali v enotah $a_0=1$ ter $t_a=1$. Za pretvobe si moramo izbrati konkretne vrednosti za $a_0 = 10\, \textup{~\AA}$ in $t_a = 1\, \text{eV}$. Za brezdimenzijske količine bom uporabljal kačo, le v tem odseku. Od tod so naravne pretvorbe za hitrosti: 
+Do zdaj smo uporabljali $\hbar=k_B=1$ in delali v enotah $a_0=1$ ter $t_a=1$. Za pretvorbe si moramo izbrati konkretne vrednosti za $a_0 = 10\, \textup{~\AA}$ in $t_a = 1\, \text{eV}$. Za brezdimenzijske količine bom uporabljal kačo, le v tem odseku. Od tod so naravne pretvorbe za hitrosti: 
 \begin{align}
   v_0 = \frac{t_a a_0}{\hbar} \simeq 1519 \,\text{km/s}
 \end{align}
@@ -1511,9 +1511,9 @@ za izbrane vrednosti parametrov je potem hitrost svetlobe $\tilde{c} = c/v_0 \si
 \begin{align}
  \tau_0 = \frac{\hbar}{t_a} \simeq 0.66 \, \text{fs}
 \end{align}
-in torej $\tilde{\omega}_0 = \tau_0 \omega_0 \simeq 0.66 \, \text{fs} \cdot 1.5\cdot 10^{15} \,\text{Hz} = 1$. Dolžina resonatorja je v tem primeru $\tilde{L} = L / a_0 = \pi \tilde{c} / \tilde{\omega}_0 \simeq 300$. Za fotonsko sklopitveno konstanto velja: 
+in torej $\tilde{\omega}_0 = \tau_0 \omega_0 \simeq 0.66 \, \text{fs} \cdot 1.5\cdot 10^{15} \,\text{Hz} = 1$. Dolžina resonatorja je v tem primeru $\tilde{L} = L / a_0 = \pi \tilde{c} / \tilde{\omega}_0 \simeq 620$. Za fotonsko sklopitveno konstanto velja: 
 \begin{align}
-  \tilde{g} = \frac{g}{t_a^2} = \frac{e^2\hbar}{2\mathcal{V}\varepsilon_0\omega_\vec{q}} \left(\frac{t_a a_0}{\hbar}\right)^2\frac{1}{t_a^2} = 2\pi \alpha \frac{\tilde{c}}{\tilde{\omega}_0} \frac{a_0^3}{\mathcal{V}} = 2 \alpha \frac{\tilde{\omega}_0}{\tilde{\omega}_\vec{q}}\frac{1}{N_k^2}\,.
+  \tilde{g} = \frac{g}{t_a^2} = \frac{e^2\hbar}{2\mathcal{V}\varepsilon_0\omega_\vec{q}} \left(\frac{t_a a_0}{\hbar}\right)^2\frac{1}{t_a^2} = 2\pi \alpha \frac{\tilde{c}}{\tilde{\omega}_\vec{q}} \frac{a_0^3}{\mathcal{V}} = 2 \alpha \frac{\tilde{\omega}_0}{\tilde{\omega}_\vec{q}}\frac{1}{N_k^2}\,.
 \end{align}
 Tu sem za volumen vzel $\mathcal{V} = N_k^2a_0^3 \tilde{L}$. Uteži $1/N_k^2$ so že vštete v vsote in povprečja po momentih, zato je v končnem izrazu ne upoštevamo. V kodi ja tako vrednost za amplitudo 
 \begin{align}
@@ -1523,13 +1523,13 @@ Drugi red je sorazmeren z $\tilde{A}^2 \ll \tilde{A}$. Za fonone velja
 \begin{align}
   \tilde{g} = \frac{g}{t_a^2} = \frac{\hbar}{2MN_k^2 \omega_\vec{q}} = \frac{1}{2\tilde{M}} \frac{1}{N_k^2}\frac{1}{\tilde{\omega}_\vec{q}}\,
 \end{align}
-kjer je brezdimenzijska masa ionov $\tilde{M} = M \frac{a_0^2}{\hbar^2 t_a}$. V kodi je torej amplituda za fononsko sklopitev
+kjer je brezdimenzijska masa ionov $\tilde{M} = M \frac{a_0^2 t_a}{\hbar^2} \simeq 23900 M[\text{u}]$. V kodi je torej amplituda za fononsko sklopitev
 \begin{align}
   \tilde{A} = \frac{1}{2\tilde{M}}
 \end{align}
 razmerje med amplitudama je
 \begin{align}
-  \frac{\tilde{g}_\text{fon.}}{\tilde{g}_\text{fot.}} = \frac{\sqrt{\tilde{\omega}_0^2 + q^2 \tilde{c}^2}}{4\alpha \tilde{M} \tilde{\omega}_0 |q| \tilde{c}_s}\,.
+  \frac{\tilde{g}_\text{fon.}}{\tilde{g}_\text{fot.}} = \frac{\sqrt{\tilde{\omega}_0^2 + q^2 \tilde{c}^2}}{4\alpha \tilde{M} \tilde{\omega}_0 |q| \tilde{c}_s}\,,
 \end{align}
 torej za $q\to 0$ fononi dominirajo v verteksu: 
 \begin{align}
@@ -1539,7 +1539,7 @@ za večje momente pa:
 \begin{align}
    \frac{\tilde{g}_\text{fon.}}{\tilde{g}_\text{fot.}} = \frac{\tilde{c}}{\tilde{c}_s} \frac{1}{4\alpha \tilde{M} \tilde{\omega}_0}
 \end{align}
-realistični dipol znotraj celice znača okoli $d = 0.1  - 1\, \textup{~\AA}$, torej $\tilde{d} \simeq 0.01-0.1$. 
+realistični dipol znotraj celice znaša okoli $d = 0.1  - 1\, \textup{~\AA}$, torej $\tilde{d} \simeq 0.01-0.1$. 
 \nocite{*}
 \printbibliography
 \end{document} 

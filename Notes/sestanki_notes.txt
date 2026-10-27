@@ -1,0 +1,34 @@
+-sestanki srede ob: 11:00
+
+Sestanek sredi septembra idk
+-porcunaj se na drugin nacin - double komutatorji za vse variante?
+-latex file z vsem napredkom
+
+-N_k >> 1 needed za dobro resolucijo, ker delta(dE\pm \omega)
+-Euler nestabilen
+-time constraints, cudna konvergenca, plateus
+
+
+-risi gamme, G, posebej vse faktorje
+-samo intraband in spremeni disperizijo z flat, in v sqrt(...), dodaj se interband transitione v navadni bazi in poglej kaj se spremeni s tremi fonon amplitudami
+-poglej diskretizacijo energije in grida za delte
+
+
+Sestanek 30.9.
+- poglrj ce lah v kartezicnem in drugem sistemu konvergiras za eno tocko za veliko mrezo
+- tocno poracunaj vse disperzije, phonon, photon, fix coupling,
+
+Sestanek 21.10.
+- dipoli preveri literaturo, eq 124
+- Toyama preveri  O(A^2)
+- geometrija narisi sliko - setp, model mateirala (minimal),
+- numericno preveri n=1 (simplekticnost)
+- enote za c pretvorba
+- n(epsilon) risi, ne n(k)
+
+vprasanja:
+-ce imamo fonone in fotone hkrati, a bi morali upostevati tudi sklopitve phonon-photon-electron?
+-kako pridejo dipoli v drugi red notri?
+-dipoli prakticno ne prispevajo, / ne lomijo simetrije za q->0.
+-za p_x orbitale je hopping integral anizotropen...
+analiticna limita za q->0 fotoni in analiticna limita za fonone okoli c~0.??

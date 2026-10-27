@@ -1,0 +1,48 @@
+model:
+  band: &band
+    gap: 2.0
+    ta: 1.0
+    tb: -1.0
+  mf: &mf
+    v: 4.4
+    n: 1.0
+    uh: null
+
+grid:
+  ns: 401              # odd, so no cell face sits on the s = 0 van Hove point
+
+photon:                # bath 1 at T1, vertical interband limit (q -> 0)
+  amp: 1.0
+  dip: 2.0
+  c: 990.0
+  w0: 1.0
+  gam: 0.15            # cavity width, exact closed form; 0 gives the delta limit
+
+phonon:                # bath 2 at T2, intraband limit (c_s -> 0)
+  amp: 1.0
+  ta_prime: -1.0       # t'_a, keep t'_a = -t'_b (no cross branch terms)
+  tb_prime: 1.0        # t'_b
+  line: lorentz             # fp: gam -> 0 Fokker-Planck, lorentz: finite gam kernel
+  gam: 0.15            # used by line: lorentz and by the old code comparison
+
+ness:
+  t1: 0.6              # T1 / Tc (at t2 = 0.2 the ordered branch ends at t1 = 0.742, above it d = 0)
+  t2: 0.2              # T2 / Tc
+
+solve:
+  mix: [0.5, 0.5, 0.1] # (mu, d, m), as ej.solve_fixed
+  tol: 1.0e-8
+  nmax: 20000
+  chk: 100
+  newton_tol: 1.0e-10
+  newton_nmax: 60
+
+compare:               # notebook section 1, old code (src/EI/ei_phonon.py)
+  old_src: ../src/EI   # folder of ei_phonon.py, relative to this folder
+  nk: 48
+  nsub: 0             # cell average of the old photon line
+  cs: 0.003           # old phonon sound velocity
+  p0: [0.0, 0.0]       # source momentum / pi for the phonon pair rates
+  nkf: 256             # fine grid for the limit kernel moments
+  nw: 3000             # light cone quadrature of the old photon vertex
+  nph: 48
