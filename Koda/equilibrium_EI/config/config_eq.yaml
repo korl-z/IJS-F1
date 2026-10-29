@@ -5,18 +5,18 @@ model:
   band:
     name: tb_2d
     pars:
-      gap: 0.2
-      ta: 0.1
-      tb: -0.1
+      gap: 2.0
+      ta: 1.0
+      tb: -1.0
 
   mean_field:
-    v: 0.44  #5.110  # primera za nesimetricne bands
+    v: 8.3 #5.110  # primera za nesimetricne bands
     n: 1.0
     uh: null
 
 equilibrium:
   initial:
-    t: 0.001
+    t: 0.00
     d: 1.0
     m: 0.0
 
@@ -28,8 +28,8 @@ equilibrium:
     prog: false
 
   critical:
-    tlo: 1.0e-4
-    thi: 10.0
+    tlo: 1.0e-8
+    thi: 4.0
     tol: 1.0e-7
-    nmax: 100
+    # nmax: 100
     prog: true

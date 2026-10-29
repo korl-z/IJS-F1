@@ -177,21 +177,35 @@ def reshape_mode(a: ArrayLike, bd: Bands) -> Arr:
     return a.reshape(a.shape[:-1] + bd.shape)
 
 
+# def mf_state(bd: Bands, p: MFPars, d: float, m: float) -> MFState:
+#     """diagonalizira Hamiltonko, poracuna u_k, v_k, E_pm, in okupacije in ostale parametre"""
+#     na = 0.5 * (p.n + m)
+#     nb = 0.5 * (p.n - m)
+#     eah = bd.ea + p.h * nb
+#     ebh = bd.eb + p.h * na
+#     av = 0.5 * (eah + ebh)
+#     xi = 0.5 * (eah - ebh)
+#     ek = np.maximum(np.sqrt(xi * xi + d * d), 1.0e-14)
+#     z = np.clip(xi / ek, -1.0, 1.0)
+#     u = np.sqrt(0.5 * (1.0 + z))
+#     v = np.copysign(np.sqrt(0.5 * (1.0 - z)), d)
+#     e = np.stack((av + ek, av - ek))
+#     return MFState(bd, p, float(d), float(m), na, nb, eah, ebh, e, u, v)
 def mf_state(bd: Bands, p: MFPars, d: float, m: float) -> MFState:
-    """diagonalizira Hamiltonko, poracuna u_k, v_k, E_pm, in okupacije in ostale parametre"""
+    """Diagonalizes the Hamiltonian, computes u_k, v_k, E_pm, occupations, and parameters."""
     na = 0.5 * (p.n + m)
     nb = 0.5 * (p.n - m)
     eah = bd.ea + p.h * nb
     ebh = bd.eb + p.h * na
     av = 0.5 * (eah + ebh)
     xi = 0.5 * (eah - ebh)
-    ek = np.maximum(np.sqrt(xi * xi + d * d), 1.0e-14)
+    ek = np.maximum(np.hypot(xi, d), 1.0e-14)
     z = np.clip(xi / ek, -1.0, 1.0)
     u = np.sqrt(0.5 * (1.0 + z))
     v = np.copysign(np.sqrt(0.5 * (1.0 - z)), d)
+
     e = np.stack((av + ek, av - ek))
     return MFState(bd, p, float(d), float(m), na, nb, eah, ebh, e, u, v)
-
 
 def _fill(n: Arr, w: Arr) -> float:
     return float(np.sum(w * np.sum(n, axis=0)))
@@ -363,19 +377,84 @@ def solve_normal(
     return NormalSol(float(m), fs.mu, fs.n, st, float(er), it, ok or er < tol)
 
 
+def compute_kernel_q(ek: np.ndarray, t: float) -> np.ndarray:
+    """Evaluates tanh(ek / (2*t)) / (2 * ek) accurately without loss of precision."""
+    x = ek / (2.0 * t)
+    q = np.empty_like(ek)
+
+    # Use Taylor expansion for very small x to avoid 0/0 division
+    small = np.abs(x) < 1e-5
+    q[small] = (1.0 - (x[small] ** 2) / 3.0 + (2.0 / 15.0) * (x[small] ** 4)) / (
+        4.0 * t
+    )
+
+    # For general x, evaluate using tanh directly
+    q[~small] = np.tanh(x[~small]) / (2.0 * ek[~small])
+    return q
+
 def pair_lambda(
     bd: Bands, p: MFPars, t: float, m: float = 0.0, tol: float = 1.0e-11
 ) -> tuple[float, NormalSol]:
-    """pogleda, ce je lam>1, stanje s fiksim OP Delta =0 nestabilno, prehod pri lam=1, lam<1, stabilno"""
+    """Evaluates the pairing susceptibility eigenvalue lambda(T)."""
     s = solve_normal(bd, p, t, m=m, tol=tol)
+
+    # Energy difference between bands/states
     ek = 0.5 * (s.st.e[0] - s.st.e[1])
-    q = np.empty_like(ek)
-    ix = ek > 1.0e-12
-    q[ix] = (s.n[1, ix] - s.n[0, ix]) / (2.0 * ek[ix])
-    f0 = 0.5 * (s.n[0, ~ix] + s.n[1, ~ix])
-    q[~ix] = f0 * (1.0 - f0) / t
-    la = p.v * np.sum(bd.w * q)  # λ​=V ∑​wk (​nβk​−nαk​​) / ​2xik.
+
+    # Compute stable kernel values
+    q = compute_kernel_q(ek, t)
+
+    # Evaluate pairing eigenvalue
+    la = p.v * np.sum(bd.w * q)
     return float(la), s
+
+# def pair_lambda(
+#     bd: Bands, p: MFPars, t: float, m: float = 0.0, tol: float = 1.0e-11
+# ) -> tuple[float, NormalSol]:
+#     """pogleda, ce je lam>1, stanje s fiksim OP Delta =0 nestabilno, prehod pri lam=1, lam<1, stabilno"""
+#     s = solve_normal(bd, p, t, m=m, tol=tol)
+#     ek = 0.5 * (s.st.e[0] - s.st.e[1])
+#     q = np.empty_like(ek)
+#     ix = ek > 1.0e-12
+#     q[ix] = (s.n[1, ix] - s.n[0, ix]) / (2.0 * ek[ix])
+#     f0 = 0.5 * (s.n[0, ~ix] + s.n[1, ~ix])
+#     q[~ix] = f0 * (1.0 - f0) / t
+#     la = p.v * np.sum(bd.w * q)  # λ​=V ∑​wk (​nβk​−nαk​​) / ​2xik.
+#     return float(la), s
+
+
+# def critical_temperature(
+#     bd: Bands,
+#     p: MFPars,
+#     tlo: float = 1.0e-4,
+#     thi: float = 5.0,
+#     tol: float = 1.0e-8,
+#     nmax: int = 80,
+#     prog: bool = True,
+# ) -> float:
+#     """iz zgornje funkcije najde max transition temp."""
+#     ll, sl = pair_lambda(bd, p, tlo)
+#     lh, sh = pair_lambda(bd, p, thi)
+#     if ll <= 1.0:
+#         raise ValueError("ni nestabilnosti")
+#     if lh >= 1.0:
+#         raise ValueError("povecaj thi")
+
+#     ml = sl.m
+#     mh = sh.m
+#     for _ in trange(nmax, desc="kriticna temp bisekcija", disable=not prog):
+#         tm = 0.5 * (tlo + thi)
+#         lm, sm = pair_lambda(bd, p, tm, m=0.5 * (ml + mh))
+#         if lm >= 1.0:
+#             tlo, ml = tm, sm.m
+#         else:
+#             thi, mh = tm, sm.m
+#         if thi - tlo <= tol * max(1.0, tm):
+#             return 0.5 * (tlo + thi)
+#     raise RuntimeError("T_c ne konvergira")
+
+
+from scipy.optimize import brentq
 
 
 def critical_temperature(
@@ -384,30 +463,30 @@ def critical_temperature(
     tlo: float = 1.0e-4,
     thi: float = 5.0,
     tol: float = 1.0e-8,
-    nmax: int = 80,
     prog: bool = True,
 ) -> float:
-    """iz zgornje funkcije najde max transition temp."""
-    ll, sl = pair_lambda(bd, p, tlo)
-    lh, sh = pair_lambda(bd, p, thi)
-    if ll <= 1.0:
-        raise ValueError("ni nestabilnosti")
-    if lh >= 1.0:
-        raise ValueError("povecaj thi")
+    """Finds the maximum critical temperature T_c where lambda(T_c) = 1."""
 
-    ml = sl.m
-    mh = sh.m
-    for _ in trange(nmax, desc="kriticna temp bisekcija", disable=not prog):
-        tm = 0.5 * (tlo + thi)
-        lm, sm = pair_lambda(bd, p, tm, m=0.5 * (ml + mh))
-        if lm >= 1.0:
-            tlo, ml = tm, sm.m
-        else:
-            thi, mh = tm, sm.m
-        if thi - tlo <= tol * max(1.0, tm):
-            return 0.5 * (tlo + thi)
-    raise RuntimeError("T_c ne konvergira")
+    # Cache last solved state m to pass as initial guess to solve_normal
+    state = {"m": 0.0}
 
+    def target(t: float) -> float:
+        la, s = pair_lambda(bd, p, t, m=state["m"], tol=tol)
+        state["m"] = s.m  # update initial guess for next step
+        return la - 1.0
+
+    # Verify bracket bounds
+    f_lo = target(tlo)
+    f_hi = target(thi)
+
+    if f_lo <= 0.0:
+        raise ValueError("No pairing instability in the range [tlo, thi] (lambda(tlo) <= 1)")
+    if f_hi >= 0.0:
+        raise ValueError("Increase thi; pairing instability still present at thi (lambda(thi) >= 1)")
+
+    # Brent's method: Fast, accurate hybrid root finder
+    tc = brentq(target, tlo, thi, xtol=tol, rtol=tol)
+    return float(tc)
 
 def gam_db(
     t: float, kap: float = 1.0, wc: float = np.inf, orb: str | None = None

@@ -176,35 +176,35 @@
 \subsection{BCS teorija pri končni temperaturi}
 BCS model, kjer je $\xi_{\vec{k}, \sigma} = \epsilon_{\vec{k}, \sigma} - E_F$ in $k := (\vec{k}, \uparrow)$, $-k := (\vec{-k}, \downarrow)$:
 \begin{align}
-  H = \sum_k \xi_k (c_k^\dagger c_k + c_{-k}^\dagger c_{-k}) - V \sum_{k,k'} c_k^\dagger c_{-k}^\dagger c_{-k'} c_{k'}
+  H = \sum_k \xi_k (c_k^\dagger c_k + c_{-k}^\dagger c_{-k}) - V \sum_{k,k'} c_k^\dagger c_{-k}^\dagger c_{-k'} c_{k'}\,.
 \end{align}
 Naredimo približek povprečnega polja, definiramo $b_k = c_{k} c_{-k}$ in $b_k = \langle b_k\rangle + \delta b_k = F_k  + \delta b_k$, sledi (do $\mathcal{O}(\delta b_k^2)$)
 \begin{align}
-  b_k^\dagger b_{k'} \simeq  F_k^* F_{k'} + F_k^* \delta b_{k'} + F_{k'} \delta b_k^\dagger = F_k^* b_{k'} + F_{k'} b_k^\dagger - F_k^* F_{k'} =  \langle b_k^\dagger \rangle b_{k'} + b_k^\dagger \langle b_{k'} \rangle - \langle b_k^\dagger \rangle \langle b_{k'} \rangle 
+  b_k^\dagger b_{k'} \simeq  F_k^* F_{k'} + F_k^* \delta b_{k'} + F_{k'} \delta b_k^\dagger = F_k^* b_{k'} + F_{k'} b_k^\dagger - F_k^* F_{k'} =  \langle b_k^\dagger \rangle b_{k'} + b_k^\dagger \langle b_{k'} \rangle - \langle b_k^\dagger \rangle \langle b_{k'} \rangle \,.
 \end{align}
 Iz česar sledi: 
 \begin{align}
-  H = \sum_k \begin{pmatrix} c_k^\dagger & c_{-k} \end{pmatrix} \begin{pmatrix} \xi_k & -\Delta_k \\ -\Delta_k^* & -\xi_k \end{pmatrix} \begin{pmatrix} c_k \\ c_{-k}^\dagger \end{pmatrix} + \frac{\vert{}\Delta\vert{}^2}{V} + \sum_k \xi_k
+  H = \sum_k \begin{pmatrix} c_k^\dagger & c_{-k} \end{pmatrix} \begin{pmatrix} \xi_k & -\Delta_k \\ -\Delta_k^* & -\xi_k \end{pmatrix} \begin{pmatrix} c_k \\ c_{-k}^\dagger \end{pmatrix} + \frac{\vert{}\Delta\vert{}^2}{V} + \sum_k \xi_k \,.
 \end{align}
-Ob definiciji $\Delta_k = \sum_{k'} V(k-k') \langle c_{k'}c_{-k'}\rangle$, vzamemo še lokalno interakcijo, zato je $V(q)\simeq V$ in $\Delta_k \simeq \Delta$. Naredimo Bogoljubov rotacijo, privzamemo $u_k, v_k \in \mathbb{R}$ in simetrijo okoli $E_F$: $u_k = u_{-k}$ ter $v_k = v_{-k}$. Iz  CCR sledi $u_k^2+v_k^2=1$. 
+Ob definiciji $\Delta_k = \sum_{k'} V(k-k') \langle c_{k'}c_{-k'}\rangle$, vzamemo še lokalno interakcijo, zato je $V(q)\simeq V$ in $\Delta_k \simeq \Delta$. Naredimo Bogoljubov rotacijo, privzamemo simetrijo okoli $E_F$: $u_k = u_{-k}$ ter $v_k = v_{-k}$. Iz  CCR sledi $u_k^2+v_k^2=1$. 
 Kvazidelci so definirani z rotacijo 
 \begin{align}
-  \begin{pmatrix} c_k \\ c_{-k}^\dagger \end{pmatrix} = \begin{pmatrix} u_k & v_k \\ -v_k & u_k \end{pmatrix} \begin{pmatrix} \alpha_k \\ \alpha_{-k}^\dagger \end{pmatrix}
+  \begin{pmatrix} c_k \\ c_{-k}^\dagger \end{pmatrix} = \begin{pmatrix} u_k & v_k \\ -v_k & u_k \end{pmatrix} \begin{pmatrix} \alpha_k \\ \alpha_{-k}^\dagger \end{pmatrix}\,.
 \end{align}
-nov Hamiltonjan pa postane
+Nov Hamiltonjan pa postane
 \begin{align}
-  H = \sum_k \begin{pmatrix} \alpha_k^\dagger & \alpha_{-k} \end{pmatrix}   \begin{pmatrix} \xi_k u_k^2 + u_k v_k (\Delta_k + \Delta_k^*) - \xi_k v_k^2 & -2\xi_k u_k v_k + \Delta_k u_k^2 - \Delta_k^* v_k^2 \\ -2\xi_k u_k v_k - \Delta_k v_k^2 + \Delta_k^* u_k^2 & \xi_k v_k^2 - \xi_k u_k^2 + u_k v_k (\Delta_k + \Delta_k^*) \end{pmatrix} \begin{pmatrix} \alpha_k \\ \alpha_{-k}^\dagger \end{pmatrix}\,,
+  H = \sum_k \begin{pmatrix} \alpha_k^\dagger & \alpha_{-k} \end{pmatrix}   \begin{pmatrix} \xi_k u_k^2 + u_k v_k (\Delta_k + \Delta_k^*) - \xi_k v_k^2 & -2\xi_k u_k v_k + \Delta_k u_k^2 - \Delta_k^* v_k^2 \\ -2\xi_k u_k v_k - \Delta_k v_k^2 + \Delta_k^* u_k^2 & \xi_k v_k^2 - \xi_k u_k^2 + u_k v_k (\Delta_k + \Delta_k^*) \end{pmatrix} \begin{pmatrix} \alpha_k \\ \alpha_{-k}\,,^\dagger \end{pmatrix}\,,
 \end{align} 
 kjer zahtevamo, da so izvendiagonalni členi enaki 0. Iz CCR zahteve lahko vzamemo parameterizacijo (tu sem vzel kompleksno nastavimo, da je $\Delta = \Delta^* e^{i2\phi_k}$):
 \begin{align}
-v_k &= \sin\left(\frac{\theta_k}{2}\right) e^{i\phi_k} \\
-u_k &= \cos\left(\frac{\theta_k}{2}\right) \\
-u_k v_k &= \cos\left(\frac{\theta_k}{2}\right) \sin\left(\frac{\theta_k}{2}\right) = \frac{1}{2} \sin\theta_k\\
-u_k^2 - v_k^2 &= \cos^2\left(\frac{\theta_k}{2}\right) - \sin^2\left(\frac{\theta_k}{2}\right) = \cos\theta_k 
+v_k &= \sin\left(\frac{\theta_k}{2}\right) e^{i\phi_k}\,, \\
+u_k &= \cos\left(\frac{\theta_k}{2}\right)\,, \\
+u_k v_k &= \cos\left(\frac{\theta_k}{2}\right) \sin\left(\frac{\theta_k}{2}\right) = \frac{1}{2} \sin\theta_k\,,\\
+u_k^2 - v_k^2 &= \cos^2\left(\frac{\theta_k}{2}\right) - \sin^2\left(\frac{\theta_k}{2}\right) = \cos\theta_k\,,
 \end{align}
 skupaj dobimo (od tu naprej $\Delta := |\Delta|$): 
 \begin{align}
-  \xi_k \sin(\theta_k) =  \Delta \cos(\theta_k)
+  \xi_k \sin(\theta_k) =  \Delta \cos(\theta_k)\,.
 \end{align}
 kar fiksira 
 \begin{align}
@@ -212,8 +212,8 @@ kar fiksira
 \end{align}
 Tako iz trikotnika preberemo
 \begin{align}
-  \sin\theta_k = \frac{\vert{}\Delta_k\vert{}}{E_k} = \frac{\vert{}\Delta_k\vert{}}{\sqrt{\xi_k^2 + \vert{}\Delta_k\vert{}^2}} \\
-  \cos\theta_k = \frac{\xi_k}{E_k} = \frac{\xi_k}{\sqrt{\xi_k^2 + \vert{}\Delta_k\vert{}^2}} \\
+  \sin\theta_k = \frac{\vert{}\Delta_k\vert{}}{E_k} = \frac{\vert{}\Delta_k\vert{}}{\sqrt{\xi_k^2 + \vert{}\Delta_k\vert{}^2}}\,, \\
+  \cos\theta_k = \frac{\xi_k}{E_k} = \frac{\xi_k}{\sqrt{\xi_k^2 + \vert{}\Delta_k\vert{}^2}}\,, \\
 \end{align}
 kjer je $E_k = \pm\sqrt{\xi_k^2 + \vert{}\Delta_k\vert{}^2}$ energija kvazidelcev:
 \begin{align}
@@ -225,11 +225,11 @@ V termičnem stanju so diagonalni delci porazdeljeni po
 \end{align}
 Uporabni sta zvezi $f(-E/T) = 1-f(E/T)$ in $1-2f(E/T) = \tanh(E/(2T))$. V definiciji ureditvenega parametra je 
 \begin{align}
-  \langle c_k c_{-k} \rangle = \left\langle \left( u_k \alpha_k - v_k \alpha_{-k}^\dagger \right) \left( u_k \alpha_{-k} + v_k \alpha_k^\dagger \right) \right\rangle= u_k v_k \left( 1 - \langle \alpha_{-k}^\dagger \alpha_{-k} \rangle - \langle \alpha_k^\dagger \alpha_k \rangle \right) = \frac{1}{2} \sin\theta_k \tanh\left(\frac{\beta E_k}{2}\right)
+  \langle c_k c_{-k} \rangle = \left\langle \left( u_k \alpha_k - v_k \alpha_{-k}^\dagger \right) \left( u_k \alpha_{-k} + v_k \alpha_k^\dagger \right) \right\rangle= u_k v_k \left( 1 - \langle \alpha_{-k}^\dagger \alpha_{-k} \rangle - \langle \alpha_k^\dagger \alpha_k \rangle \right) = \frac{1}{2} \sin\theta_k \tanh\left(\frac{\beta E_k}{2}\right)\,,
 \end{align}
-iz česar sledi enačba za režo pri $T>0$ (seštevamo po $k$ okoli $E_F$):
+iz česar sledi enačba za režo pri $T>0$ (seštevamo po $k$ okoli $E_F$, zato $'$ nad vsoto):
 \begin{align}
-  \Delta = \frac{V}{2} \sum^{'}_k \sin\theta_k \tanh\left(\frac{E_k}{2T}\right) = \frac{V \Delta}{2} \sum_k \frac{\tanh\left(\frac{1}{2T} \sqrt{\Delta^2 + \xi_k^2}\right)}{\sqrt{\Delta^2 + \xi_k^2}}
+  \Delta = \frac{V}{2} \sum^{'}_k \sin\theta_k \tanh\left(\frac{E_k}{2T}\right) = \frac{V \Delta}{2} \sum_k \frac{\tanh\left(\frac{1}{2T} \sqrt{\Delta^2 + \xi_k^2}\right)}{\sqrt{\Delta^2 + \xi_k^2}}\,.
 \end{align}
 \subsection{Minimalni model ekscitonskega izolatorja pri končni temperaturi}
 Pri izolatorju za minimalni model vzamemo dve orbitali ($a, b$) model tesne vezi v vsaki posebej in lokalno Coulombovo interakcijo na mestu $j$ med elektronskima gostotama v posameznih pasovih 

@@ -11,7 +11,8 @@ model:
       tb: -1.0
 
   mean_field: &mf
-    v: 4.4
+    # v: 8.3472601
+    v: 1.05
     n: 1.0
     uh: null
 
@@ -24,16 +25,16 @@ equilibrium:
 
   solve:
     mix: [0.3, 0.3]
-    tol: 1.0e-8
+    tol: 1.0e-10
     nmax: 20000
     chk: 20
     prog: false
 
   critical:
-    tlo: 1.0e-4
+    tlo: 1.0e-8
     thi: 2.0
-    tol: 1.0e-7
-    nmax: 100
+    tol: 1.0e-8
+    # nmax: 100
     prog: true
 
 
@@ -73,8 +74,8 @@ open_system:
     baths:  
       - kind: photon
         amp: 1.0
-        dip: 0.0
-        cs: 200.
+        dip: 0.1
+        cs: 10.
         w0: 1.0
 
       # - kind: photon
@@ -88,7 +89,7 @@ open_system:
         dip: 0.0        # fononi nimajo offdiag clenov
         ta_prime: -10.0     # t'_a
         tb_prime: 10.0      # t'_b
-        cs: 0.0033
+        cs: 10. 
         w0: 0.0      
 
   solve:
