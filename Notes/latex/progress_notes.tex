@@ -235,7 +235,7 @@ iz česar sledi enačba za režo pri $T>0$ (seštevamo po $k$ okoli $E_F$, zato 
 Pri izolatorju za minimalni model vzamemo dve orbitali ($a, b$) model tesne vezi v vsaki posebej in lokalno Coulombovo interakcijo na mestu $j$ med elektronskima gostotama v posameznih pasovih 
 \begin{align}
   H = H_0 + H_V &= \sum_{i,j} \left( \epsilon_a^{(0)} \delta_{ij} + t_{ij}^{(a)} \right) c_{a,i}^\dagger c_{a,j} + \sum_{i,j} \left( \epsilon_b^{(0)} \delta_{ij} + t_{ij}^{(b)} \right) c_{b,i}^\dagger c_{b,j} + V \sum_j c_{a,j}^\dagger c_{a,j} c_{b,j}^\dagger c_{b,j} \\
-  &= \sum_k \varepsilon_{a,k} c_{a,k}^\dagger c_{a,k} + \sum_k \varepsilon_{b,k} c_{b,k}^\dagger c_{b,k} + V \sum_j c_{a,j}^\dagger c_{a,j} c_{b,j}^\dagger c_{b,j}
+  &= \sum_{\vec{k}} \varepsilon_{a,\vec{k}} c_{a,\vec{k}}^\dagger c_{a,\vec{k}} + \sum_{\vec{k}} \varepsilon_{b,\vec{k}} c_{b,\vec{k}}^\dagger c_{b,\vec{k}} + V \sum_j c_{a,j}^\dagger c_{a,j} c_{b,j}^\dagger c_{b,j}
 \end{align}
 najprej diagonaliziramo vsako orbitalo posebej, kar da gole disperzije (vezavni energiji nastavimo na $\pm G/2$) (delamo v dveh dimenzijah in mrežna konstanta $a_0=1$): 
 \begin{align} \label{free el tb}
@@ -251,81 +251,94 @@ od tod sledi
 \end{align}
 kjer smo definirali: 
 \begin{align}
-  n_a = \langle c_{a,j}^\dagger c_{a,j} \rangle = \frac{1}{N} \sum_k \langle c_{a,k}^\dagger c_{a,k} \rangle
+  n_a = \langle c_{a,j}^\dagger c_{a,j} \rangle = \frac{1}{N} \sum_{\vec{k}} \langle c_{a,\vec{k}}^\dagger c_{a,\vec{k}} \rangle
 \end{align}
 \begin{align}
-  n_b = \langle c_{b,j}^\dagger c_{b,j} \rangle = \frac{1}{N} \sum_k \langle c_{b,k}^\dagger c_{b,k} \rangle
+  n_b = \langle c_{b,j}^\dagger c_{b,j} \rangle = \frac{1}{N} \sum_{\vec{k}} \langle c_{b,\vec{k}}^\dagger c_{b,\vec{k}} \rangle
 \end{align}
 \begin{align}
-  \phi = \langle c_{a,j}^\dagger c_{b,j} \rangle = \frac{1}{N} \sum_k \langle c_{a,k}^\dagger c_{b,k} \rangle \\
-  \Delta = -\frac{V}{N} \sum_k \langle c_{a,k}^\dagger c_{b,k} \rangle, \quad \Delta^* = -\frac{V}{N} \sum_k \langle c_{b,k}^\dagger c_{a,k} \rangle
+  \phi = \langle c_{a,j}^\dagger c_{b,j} \rangle = \frac{1}{N} \sum_{\vec{k}} \langle c_{a,\vec{k}}^\dagger c_{b,\vec{k}} \rangle \\
+  \Delta = -\frac{V}{N} \sum_{\vec{k}} \langle c_{a,\vec{k}}^\dagger c_{b,\vec{k}} \rangle, \quad \Delta^* = -\frac{V}{N} \sum_{\vec{k}} \langle c_{b,\vec{k}}^\dagger c_{a,\vec{k}} \rangle
 \end{align}
 \begin{align}
-  \Delta_k = \frac{1}{N} \sum_{k'} V(k - k') \langle a_{k'}^\dagger b_{k'} \rangle, \quad V(q) = \int e^{-i \vec{q} \cdot \vec{r}} V(\vec{r}) \, \dd{\vec{r}}
+  \Delta_\vec{k} = \frac{1}{N} \sum_{\vec{k}'} V(\vec{k} - \vec{k}') \langle a_{\vec{k}'}^\dagger b_{\vec{k}'} \rangle, \quad V(\vec{q}) = \int e^{-i \vec{q} \cdot \vec{r}} V(\vec{r}) \, \dd{\vec{r}}
 \end{align}
 Uporabimo FT še na celotnem Hamiltonjanu
 \begin{align}
-  c_{a,j}^\dagger = \frac{1}{\sqrt{N}} \sum_k e^{-i \vec{k} \cdot \vec{r}_j} c_{a,k}^\dagger
+  c_{a,j}^\dagger = \frac{1}{\sqrt{N}} \sum_{\vec{k}} e^{-i \vec{k} \cdot \vec{r}_j} c_{a,\vec{k}}^\dagger
 \end{align}
 \begin{align}
-  H^{\text{MF}} = \sum_k \left( [\varepsilon_{a,k} + V n_b] c_{a,k}^\dagger c_{a,k} + [\varepsilon_{b,k} + V n_a] c_{b,k}^\dagger c_{b,k} + \Delta^* c_{a,k}^\dagger c_{b,k} + \Delta c_{b,k}^\dagger c_{a,k} \right) + \left( \frac{\vert{}\Delta\vert{}^2}{V} N - V N n_a n_b \right)
+  H^{\text{MF}} = \sum_{\vec{k}} \left( [\varepsilon_{a,\vec{k}} + V n_b] c_{a,\vec{k}}^\dagger c_{a,\vec{k}} + [\varepsilon_{b,\vec{k}} + V n_a] c_{b,\vec{k}}^\dagger c_{b,\vec{k}} + \Delta^* c_{a,\vec{k}}^\dagger c_{b,\vec{k}} + \Delta c_{b,\vec{k}}^\dagger c_{a,\vec{k}} \right) + \left( \frac{\vert{}\Delta\vert{}^2}{V} N - V N n_a n_b \right)
 \end{align}
 oziroma: 
 \begin{align}
-  H^{\text{MF}} = \sum_k \begin{pmatrix} c_{a,k}^\dagger & c_{b,k}^\dagger \end{pmatrix} \begin{pmatrix} {\varepsilon}^H_{a,k} & \Delta^* \\ \Delta & {\varepsilon}^H_{b,k} \end{pmatrix} \begin{pmatrix} c_{a,k} \\ c_{b,k} \end{pmatrix} + \text{konst.}\,,
+  H^{\text{MF}} = \sum_{\vec{k}} \begin{pmatrix} c_{a,\vec{k}}^\dagger & c_{b,\vec{k}}^\dagger \end{pmatrix} \begin{pmatrix} {\varepsilon}^H_{a,\vec{k}} & \Delta^* \\ \Delta & {\varepsilon}^H_{b,\vec{k}} \end{pmatrix} \begin{pmatrix} c_{a,\vec{k}} \\ c_{b,\vec{k}} \end{pmatrix} + \text{konst.}\,,
 \end{align}
 kjer definiramo Hartree energiji ${\varepsilon}^H_{a(b),k} = \varepsilon_{a(b),k} + V n_{b(a)}$. Transformacija v diagonalno  / Bogoljubov bazo je podobna kot pri BCS, le da ne meša kreatorjev in anihilatorjev / ohranja število delcev:
 \begin{align} \label{EI_uintana_rotacija}
-  \begin{pmatrix} c_{a,k} \\ c_{b,k} \end{pmatrix} = \begin{pmatrix} u_k & v_k \\ -v_k & u_k \end{pmatrix} \begin{pmatrix} \alpha_k \\ \beta_k \end{pmatrix}
+  \begin{pmatrix} c_{a,\vec{k}} \\ c_{b,\vec{k}} \end{pmatrix} = \begin{pmatrix} u_{\vec{k}} & v_{\vec{k}} \\ -v_{\vec{k}} & u_{\vec{k}} \end{pmatrix} \begin{pmatrix} \alpha_{\vec{k}} \\ \beta_{\vec{k}} \end{pmatrix}
 \end{align}
 od tod po enakem postopku kot prej dobimo energiji kvazidelcev
+\begin{tcolorbox}
 \begin{align}
-E_{\alpha(\beta)}(k) = \frac{{\varepsilon}^H_{a,k} + {\varepsilon}^H_{b,k}}{2} \pm \sqrt{\left(\frac{{\varepsilon}^H_{a,k} - {\varepsilon}^H_{b,k}}{2}\right)^2 + \vert{}\Delta\vert{}^2} := \eta_k \pm \sqrt{\xi_k^2 +\Delta^2}
+E_{\alpha(\beta), \vec{k}} = \frac{{\varepsilon}^H_{a,\vec{k}} + {\varepsilon}^H_{b,\vec{k}}}{2} \pm \sqrt{\left(\frac{{\varepsilon}^H_{a,\vec{k}} - {\varepsilon}^H_{b,\vec{k}}}{2}\right)^2 + \vert{}\Delta\vert{}^2} := \eta_{\vec{k}} \pm \sqrt{\xi_{\vec{k}}^2 +\Delta^2}
 \end{align}
+\end{tcolorbox}
 Za bookkeeping: 
 \begin{align}
-  \left( \frac{\varepsilon_a^H - \varepsilon_b^H}{2} \right)& \sin \theta_k + \Delta \cos \theta_k = 0 \implies \tan \theta_k = \frac{-2 \Delta}{\varepsilon_a^H - \varepsilon_b^H} = \frac{-\Delta}{\xi_k}\\
-  u_k v_k &= -\frac{\sin \theta_k}{2}\,.
+  \left( \frac{\varepsilon_a^H - \varepsilon_b^H}{2} \right)& \sin \theta_{\vec{k}} + \Delta \cos \theta_{\vec{k}} = 0 \implies \tan \theta_{\vec{k}} = \frac{-2 \Delta}{\varepsilon_a^H - \varepsilon_b^H} = \frac{-\Delta}{\xi_{\vec{k}}}\\
+  u_{\vec{k}} v_{\vec{k}} &= -\frac{\sin \theta_{\vec{k}}}{2}\,.
 \end{align}
 Za samousklajeno enačbo zdaj potrebujemo
 \begin{align}
-  \langle c_{a,k}^\dagger c_{b,k} \rangle = \langle (u_k \alpha_k^\dagger + v_k \beta_k^\dagger)(-v_k \alpha_k + u_k \beta_k) \rangle = u_k v_k \left( \langle \beta_k^\dagger \beta_k \rangle - \langle \alpha_k^\dagger \alpha_k \rangle \right) = -\frac{1}{2} \sin\theta_k (f(E_{\beta}) - f(E_{\alpha}))
+  \langle c_{a,\vec{k}}^\dagger c_{b,\vec{k}} \rangle = \langle (u_{\vec{k}} \alpha_{\vec{k}}^\dagger + v_{\vec{k}} \beta_{\vec{k}}^\dagger)(-v_{\vec{k}} \alpha_{\vec{k}} + u_{\vec{k}} \beta_{\vec{k}}) \rangle = u_{\vec{k}} v_{\vec{k}} \left( \langle \beta_{\vec{k}}^\dagger \beta_{\vec{k}} \rangle - \langle \alpha_{\vec{k}}^\dagger \alpha_{\vec{k}} \rangle \right) = -\frac{1}{2} \sin\theta_{\vec{k}} (f(E_{\beta}) - f(E_{\alpha}))
 \end{align}
 od tod
 \begin{align}
-  \Delta = -\frac{V}{N}\sum_k \langle c_{a,k}^\dagger c_{b,k} \rangle = \frac{V}{N} \sum_k \frac{ \Delta}{2\sqrt{\xi_k^2 + \vert{}\Delta\vert{}^2}} (f(E_{\beta}) - f(E_{\alpha}))
+  \Delta = -\frac{V}{N}\sum_{\vec{k}} \langle c_{a,\vec{k}}^\dagger c_{b,\vec{k}} \rangle = \frac{V}{N} \sum_{\vec{k}} \frac{ \Delta}{2\sqrt{\xi_{\vec{k}}^2 + \vert{}\Delta\vert{}^2}} (f(E_{\beta}) - f(E_{\alpha}))
 \end{align}
 Opomba, lahko definiramo tudi $n = n_a + n_b = \text{konst.} = 1$ in $n_a-n_b =: m$ od tod sledi
 
 \begin{align}
-  H^{\text{MF}} = \sum_k \left( \left[\varepsilon_{a,k} + \frac{V}{2}n - \frac{V}{2}m\right] c_{a,k}^\dagger c_{a,k} + \left[\varepsilon_{b,k} + \frac{V}{2}n +\frac{V}{2}m\right] c_{b,k}^\dagger c_{b,k} + \Delta^* c_{a,k}^\dagger c_{b,k} + \Delta c_{b,k}^\dagger c_{a,k} \right)
+  H^{\text{MF}} = \sum_{\vec{k}} \left( \left[\varepsilon_{a,\vec{k}} + \frac{V}{2}n - \frac{V}{2}m\right] c_{a,\vec{k}}^\dagger c_{a,\vec{k}} + \left[\varepsilon_{b,\vec{k}} + \frac{V}{2}n +\frac{V}{2}m\right] c_{b,\vec{k}}^\dagger c_{b,\vec{k}} + \Delta^* c_{a,\vec{k}}^\dagger c_{b,\vec{k}} + \Delta c_{b,\vec{k}}^\dagger c_{a,\vec{k}} \right)
 \end{align}
 od koder je v 2D Hartree gap enak: 
 \begin{align}
   G^H = G-4(t_a-t_b) - V m\,. 
 \end{align}
-Note: v praksi je $m<0$
-V dveh dimenzijah se Hartree pasova srečata na 
+Note: v praksi je $-1<m<0$, več elektronov je v valenčnem pasu. V dveh dimenzijah se Hartree pasova srečata na energiji, ki jo lahko definiramo prek $\xi_{\vec{k}} = 0$ v semimetal primeru. Sicer pa je to enako zamiku pasov, ki še ne hibiridizirata: 
 \begin{align}
-  \mu_B = \frac{V}{2}n - \frac{t_a + t_b}{t_a-t_b}\frac{G-Vm}{2}\,.
+  E_F = \frac{V}{2}n - \frac{t_a + t_b}{t_a-t_b}\frac{G-Vm}{2}\,.
 \end{align}
 Zamik je enak $V/2$, ko sta osnovna pasova simetrična in je zasedenost polovična. V primeru simetričnih pasov sta disperziji kvazidelcev
 \begin{align}
-  E_{\alpha(\beta)}(k) - V/2 = \pm \sqrt{\left(\frac{{\epsilon}_{a,k} - {\epsilon}_{b,k} - Vm}{2}\right)^2 + \vert{}\Delta\vert{}^2}\,.
+  E_{\alpha(\beta), \vec{k}} - V/2 = \pm \sqrt{\left(\frac{{\epsilon}_{a, \vec{k}} - {\epsilon}_{b,\vec{k}} - Vm}{2}\right)^2 + \vert{}\Delta\vert{}^2}\,.
 \end{align}
 Velja še
 \begin{align}
-  n_a &= \frac{1}{N} \sum_k \left( u_k^2 f(E_\alpha) + v_k^2 f(E_{\beta}) \right) \\
-  n_b &= \frac{1}{N} \sum_k \left( v_k^2 f(E_\alpha) + u_k^2 f(E_{\beta}) \right)
+  n_a &= \frac{1}{N} \sum_{\vec{k}} \left( u_{\vec{k}}^2 f(E_\alpha) + v_{\vec{k}}^2 f(E_{\beta}) \right) \\
+  n_b &= \frac{1}{N} \sum_{\vec{k}} \left( v_{\vec{k}}^2 f(E_\alpha) + u_{\vec{k}}^2 f(E_{\beta}) \right)
 \end{align}
 
 \begin{align}
-  u_k^2 &= \frac{1}{2}\left(1 + \frac{\xi_k}{\sqrt{\Delta^2 + \xi_k^2}}\right) \\
-  v_k^2 &= \frac{1}{2}\left(1 - \frac{\xi_k}{\sqrt{\Delta^2 + \xi_k^2}}\right)
+  u_{\vec{k}}^2 &= \frac{1}{2}\left(1 + \frac{\xi_{\vec{k}}}{\sqrt{\Delta^2 + \xi_{\vec{k}}^2}}\right) \\
+  v_{\vec{k}}^2 &= \frac{1}{2}\left(1 - \frac{\xi_{\vec{k}}}{\sqrt{\Delta^2 + \xi_{\vec{k}}^2}}\right)
 \end{align}
+V termičnem stanju (equlibrium case), rešujemo sistem treh enačb. Prva za razliko okupacij
+\begin{tcolorbox}
 \begin{align}
-  m = n_a-n_b = \frac{1}{N}\sum_{\vec{k}} \frac{\xi_\vec{k}}{\sqrt{\xi_\vec{k}^2+\Delta^2}} (f(E_\alpha) - f(E_{\beta}))
+  m = n_a-n_b = \frac{1}{N}\sum_{\vec{k}} \frac{\xi_\vec{k}}{\sqrt{\xi_\vec{k}^2+\Delta^2}} (f(E_{\alpha, \vec{k}}) - f(E_{\beta, \vec{k}}))\,,
 \end{align}
+druga za ohranitev števila delev/kvazidelcev:
+\begin{align}
+  1 = n = n_a+n_b = \frac{1}{N}\sum_{\vec{k}} (f(E_{\alpha, \vec{k}}) + f(E_{\beta, \vec{k}}))\,,
+\end{align}
+in enačbo reže: 
+\begin{align}
+  \frac{1}{V} = \frac{1}{N} \sum_{\vec{k}} \frac{f(E_{\beta, \vec{k}}) - f(E_{\alpha, \vec{k}})}{2\sqrt{\xi_\vec{k}^2+\Delta^2}}\,,
+\end{align}
+\end{tcolorbox}\noindent
+kjer dobimo rešitev za par $m, \Delta$ glede na izbrane parametre. 
 \subsection{Numerika/psevdokoda}
 
 \subsection{Odprti sistemi in modeliranje kopeli}
@@ -601,7 +614,7 @@ Kar da končne sklopitve pri $\vec q \to 0$ ($\Omega_s \equiv \omega_{\vec q\to 
 \subsection{Fotonske sklopitve v resonatorju}
 Začnemo z minimalnim modelom za elektrone: 
 \begin{align}
-  H_e = H_e^{(0)} + H_V = \sum_k \varepsilon_{a,k} c_{a,k}^\dagger c_{a,k} + \sum_k \varepsilon_{b,k} c_{b,k}^\dagger c_{b,k} + V \sum_j c_{a,j}^\dagger c_{a,j} c_{b,j}^\dagger c_{b,j}
+  H_e = H_e^{(0)} + H_V = \sum_{\vec{k}} \varepsilon_{a,\vec{k}} c_{a,\vec{k}}^\dagger c_{a,\vec{k}} + \sum_{\vec{k}} \varepsilon_{b,\vec{k}} c_{b,\vec{k}}^\dagger c_{b,\vec{k}} + V \sum_j c_{a,j}^\dagger c_{a,j} c_{b,j}^\dagger c_{b,j}
 \end{align}
 in privzamemo 2D plast, kjer sta dve orbitali na o.c., ki hibridizirata samo preko Coulombske interakcije. Disperzije za model neinteragirajoč sistem so v tem primeru enake \eqref{free el tb}. Interakcija pa je v prvem redu oblike: 
 \begin{equation}
@@ -743,7 +756,7 @@ s FT dobimo
 \begin{equation}
 \vec{j}_e(\vec{-q}) = \int \dd{\vec{r}} \, \vec{j}_e(\vec{r}) e^{i\vec{q}\cdot\vec{r}} = -\frac{e}{2m} \sum_{\gamma, \vec{k}} \left( c_{\gamma, \vec{k}+\vec{q}}^\dagger c_{\gamma \vec{k}} \, \vec{k} + (\vec{k}+\vec{q}) c_{\gamma, \vec{k}+\vec{q}}^\dagger c_{\gamma \vec{k}} \right) = -\frac{e}{m} \sum_{\vec{k}} \left( \vec{k} + \frac{\vec{q}}{2} \right) \psi_{\vec{k}+\vec{q}}^\dagger \psi_{\vec{k}}
 \end{equation}
-kar bi dobili tudi iz bolj splošne relacije. V tem primeru dobimo enako kot Curtis, $m = 1/2t$
+kar bi dobili tudi iz bolj splošne relacije. V tem primeru dobimo enako kot Curtis z $m^* = 1/2t$, oziroma $m^* = \hbar^2/(2ta_0^2)$
 \begin{tcolorbox}
 \begin{equation}
 H_{e\gamma}^{(1)} = \frac{e}{m} \sum_{\vec{k}, \vec{q}, \lambda}  \frac{1}{\sqrt{2\mathcal{V} \epsilon_0 \omega_{\vec{q}, \lambda}}} \left( \vec{k} + \frac{\vec{q}}{2} \right) \cdot \bm{\epsilon}_{\vec{q}\lambda} \, \psi_{\vec{k}+\vec{q}}^\dagger \psi_{\vec{k}} \left( a_{\vec{q}\lambda} + a_{-\vec{q}\lambda}^\dagger \right)

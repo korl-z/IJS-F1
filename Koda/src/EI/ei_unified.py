@@ -5,6 +5,8 @@ from typing import Any, Callable, Iterable
 
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
+from scipy.special import expit, log_expit, logsumexp
+from scipy.optimize import brentq
 
 from tqdm.auto import tqdm, trange
 
@@ -246,6 +248,34 @@ def fermi(
     return FDState(n, float(mu))
 
 
+def fermi_slow(
+    st: MFState, t: float, tol: float = 1.0e-13, nmax: int = 120, prog: bool = False
+) -> FDState:
+    """poracuna mu za FD pri fiksnem fillingu"""
+    n0 = st.p.n
+    lw = np.log(st.bd.w)
+    es = max(np.ptp(st.e), t, 1.0)
+    lo = float(st.e.min() - 50.0 * es)
+    hi = float(st.e.max() + 50.0 * es)
+    mu = 0.5 * (lo + hi)
+
+    for _ in trange(nmax, desc="FD kemijski potencial", disable=not prog):
+        mu = 0.5 * (lo + hi)
+        if n0 == 1.0:   # filling below 1 <=> sum w n_alpha < sum w (1 - n_beta), in logs
+            low = logsumexp(lw + log_expit(-(st.e[0] - mu) / t)) < logsumexp(lw + log_expit((st.e[1] - mu) / t))
+        else:
+            low = _fill(expit(-(st.e - mu) / t), st.bd.w) < n0
+        if low:
+            lo = mu
+        else:
+            hi = mu
+        if hi - lo <= tol * max(1.0, abs(mu)):
+            break
+
+    mu = 0.5 * (lo + hi)
+    return FDState(expit(-(st.e - mu) / t), float(mu))
+
+
 def fermi_zero(st: MFState) -> FDState:
     """zero temp filling na gridu"""
     n0 = st.p.n
@@ -377,117 +407,89 @@ def solve_normal(
     return NormalSol(float(m), fs.mu, fs.n, st, float(er), it, ok or er < tol)
 
 
-def compute_kernel_q(ek: np.ndarray, t: float) -> np.ndarray:
-    """Evaluates tanh(ek / (2*t)) / (2 * ek) accurately without loss of precision."""
-    x = ek / (2.0 * t)
-    q = np.empty_like(ek)
-
-    # Use Taylor expansion for very small x to avoid 0/0 division
-    small = np.abs(x) < 1e-5
-    q[small] = (1.0 - (x[small] ** 2) / 3.0 + (2.0 / 15.0) * (x[small] ** 4)) / (
-        4.0 * t
-    )
-
-    # For general x, evaluate using tanh directly
-    q[~small] = np.tanh(x[~small]) / (2.0 * ek[~small])
-    return q
-
 def pair_lambda(
     bd: Bands, p: MFPars, t: float, m: float = 0.0, tol: float = 1.0e-11
 ) -> tuple[float, NormalSol]:
-    """Evaluates the pairing susceptibility eigenvalue lambda(T)."""
+    """pogleda, ce je lam>1, stanje s fiksim OP Delta =0 nestabilno, prehod pri lam=1, lam<1, stabilno"""
     s = solve_normal(bd, p, t, m=m, tol=tol)
-
-    # Energy difference between bands/states
     ek = 0.5 * (s.st.e[0] - s.st.e[1])
-
-    # Compute stable kernel values
-    q = compute_kernel_q(ek, t)
-
-    # Evaluate pairing eigenvalue
-    la = p.v * np.sum(bd.w * q)
+    q = np.empty_like(ek)
+    ix = ek > 1.0e-12
+    q[ix] = (s.n[1, ix] - s.n[0, ix]) / (2.0 * ek[ix])
+    f0 = 0.5 * (s.n[0, ~ix] + s.n[1, ~ix])
+    q[~ix] = f0 * (1.0 - f0) / t
+    la = p.v * np.sum(bd.w * q)  # λ​=V ∑​wk (​nβk​−nαk​​) / ​2xik.
     return float(la), s
 
-# def pair_lambda(
-#     bd: Bands, p: MFPars, t: float, m: float = 0.0, tol: float = 1.0e-11
-# ) -> tuple[float, NormalSol]:
-#     """pogleda, ce je lam>1, stanje s fiksim OP Delta =0 nestabilno, prehod pri lam=1, lam<1, stabilno"""
-#     s = solve_normal(bd, p, t, m=m, tol=tol)
-#     ek = 0.5 * (s.st.e[0] - s.st.e[1])
-#     q = np.empty_like(ek)
-#     ix = ek > 1.0e-12
-#     q[ix] = (s.n[1, ix] - s.n[0, ix]) / (2.0 * ek[ix])
-#     f0 = 0.5 * (s.n[0, ~ix] + s.n[1, ~ix])
-#     q[~ix] = f0 * (1.0 - f0) / t
-#     la = p.v * np.sum(bd.w * q)  # λ​=V ∑​wk (​nβk​−nαk​​) / ​2xik.
-#     return float(la), s
-
-
-# def critical_temperature(
-#     bd: Bands,
-#     p: MFPars,
-#     tlo: float = 1.0e-4,
-#     thi: float = 5.0,
-#     tol: float = 1.0e-8,
-#     nmax: int = 80,
-#     prog: bool = True,
-# ) -> float:
-#     """iz zgornje funkcije najde max transition temp."""
-#     ll, sl = pair_lambda(bd, p, tlo)
-#     lh, sh = pair_lambda(bd, p, thi)
-#     if ll <= 1.0:
-#         raise ValueError("ni nestabilnosti")
-#     if lh >= 1.0:
-#         raise ValueError("povecaj thi")
-
-#     ml = sl.m
-#     mh = sh.m
-#     for _ in trange(nmax, desc="kriticna temp bisekcija", disable=not prog):
-#         tm = 0.5 * (tlo + thi)
-#         lm, sm = pair_lambda(bd, p, tm, m=0.5 * (ml + mh))
-#         if lm >= 1.0:
-#             tlo, ml = tm, sm.m
-#         else:
-#             thi, mh = tm, sm.m
-#         if thi - tlo <= tol * max(1.0, tm):
-#             return 0.5 * (tlo + thi)
-#     raise RuntimeError("T_c ne konvergira")
-
-
-from scipy.optimize import brentq
-
-
+#_______________root finding za T_c_____________________
 def critical_temperature(
     bd: Bands,
     p: MFPars,
     tlo: float = 1.0e-4,
     thi: float = 5.0,
     tol: float = 1.0e-8,
+    nmax: int = 80,
     prog: bool = True,
 ) -> float:
-    """Finds the maximum critical temperature T_c where lambda(T_c) = 1."""
+    """iz zgornje funkcije najde max transition temp."""
+    ll, sl = pair_lambda(bd, p, tlo)
+    lh, sh = pair_lambda(bd, p, thi)
+    if ll <= 1.0:
+        raise ValueError("ni nestabilnosti")
+    if lh >= 1.0:
+        raise ValueError("povecaj thi")
 
-    # Cache last solved state m to pass as initial guess to solve_normal
-    state = {"m": 0.0}
+    ml = sl.m
+    mh = sh.m
+    for _ in trange(nmax, desc="kriticna temp bisekcija", disable=not prog):
+        tm = 0.5 * (tlo + thi)
+        lm, sm = pair_lambda(bd, p, tm, m=0.5 * (ml + mh))
+        if lm >= 1.0:
+            tlo, ml = tm, sm.m
+        else:
+            thi, mh = tm, sm.m
+        if thi - tlo <= tol * max(1.0, tm):
+            return 0.5 * (tlo + thi)
+    raise RuntimeError("T_c ne konvergira")
 
-    def target(t: float) -> float:
-        la, s = pair_lambda(bd, p, t, m=state["m"], tol=tol)
-        state["m"] = s.m  # update initial guess for next step
-        return la - 1.0
+#__________________ROOT FINDING ZA T_c v BEC rezimu, supplyas d_0, returna V in T_c pri tem d_0_______________
+def bec_zero(bd, d0, uh=None, vhi=20.0):
+    """BEC root at fixed d0 (ta = -tb, n = 1): V, delta0 = 1 + m0, xi0, E0."""
+    x = 0.5 * (bd.ea - bd.eb)
 
-    # Verify bracket bounds
-    f_lo = target(tlo)
-    f_hi = target(thi)
+    def parts(v):
+        h, dl = (v if uh is None else uh), 0.0
+        for _ in range(200):
+            x0 = x + 0.5 * h * (1 - dl)
+            e0 = np.hypot(x0, d0)
+            new = np.sum(bd.w * d0**2 / (e0 * (e0 + x0)))
+            if abs(new - dl) <= 1e-15 * new:
+                break
+            dl = new
+        return dl, x0, e0
 
-    if f_lo <= 0.0:
-        raise ValueError("No pairing instability in the range [tlo, thi] (lambda(tlo) <= 1)")
-    if f_hi >= 0.0:
-        raise ValueError("Increase thi; pairing instability still present at thi (lambda(thi) >= 1)")
+    vlo = -x.min() * 2 + 1e-9 if uh is None else 1e-9       # no ring in the polarized state
+    v = brentq(lambda v: v * np.sum(bd.w * 0.5 / parts(v)[2]) - 1, vlo, vhi, xtol=1e-15)
+    return (v, *parts(v))
 
-    # Brent's method: Fast, accurate hybrid root finder
-    tc = brentq(target, tlo, thi, xtol=tol, rtol=tol)
-    return float(tc)
+def bec_lam1(bd, v, d0, dl0, x0, e0, t, uh=None):
+    """lambda(T) - 1 of the BEC normal state, margin and thermal part summed directly."""
+    h = v if uh is None else uh
+    xn, dl = 0.5 * (bd.ea - bd.eb + h), 0.0
+    for _ in range(200):                                     # delta(T) = 1 + m = 2 sum w f(xi)
+        new = 2 * np.sum(bd.w * expit(-(xn - 0.5 * h * dl) / t))
+        if new == 0 or abs(new - dl) <= 1e-14 * new:
+            dl = new
+            break
+        dl = new
+    xi = xn - 0.5 * h * dl
+    if xi.min() <= 0:
+        raise ValueError("the normal state has a ring at this T, lower thi")
+    mg = v * np.sum(bd.w * (d0**2 / (e0 + x0) - 0.5 * h * (dl0 - dl)) / (2 * xi * e0))
+    return mg - v * np.sum(bd.w * expit(-xi / t) / xi)
 
+
+#_______________koenc root findinga za T_c_____________________
 def gam_db(
     t: float, kap: float = 1.0, wc: float = np.inf, orb: str | None = None
 ) -> GamFn:

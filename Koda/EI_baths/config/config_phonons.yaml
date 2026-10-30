@@ -1,18 +1,18 @@
 model:
   nk:
-    scan: 30
+    scan: 60
     reference: 50
 
   band:
     name: tb_2d
     pars: &band
-      gap: 2.0
+      gap: 4.1
       ta: 1.0
       tb: -1.0
 
   mean_field: &mf
-    # v: 8.3472601
-    v: 1.05
+    # v: 8.347260206186296
+    v: 4.0
     n: 1.0
     uh: null
 
@@ -31,7 +31,7 @@ equilibrium:
     prog: false
 
   critical:
-    tlo: 1.0e-8
+    tlo: 1.0e-9
     thi: 2.0
     tol: 1.0e-8
     # nmax: 100
@@ -68,29 +68,29 @@ open_system:
     rate: PhononBath
     pars:  # shared by all baths, pack needs equal k, a0, eh, em, nsub
       <<: [*band, *mf]   # gap, ta, tb and v, n, uh (zadnji trije za settanje em)
-      gam: 0.15
-      nsub: 0  # 0: line at the grid points, > 0: avg., idealno nsub >= 4pi cs / (gam * nk)
+      gam: 0.1
+      nsub: 16  # 0: line at the grid points, > 0: avg., idealno nsub >= 4pi cs / (gam * nk)
 
     baths:  
       - kind: photon
         amp: 1.0
         dip: 0.1
-        cs: 10.
-        w0: 1.0
+        cs: 5.
+        w0: 0.6
 
-      # - kind: photon
+      - kind: photon
+        amp: 1.0
+        dip: 0.1
+        cs: 5.0
+        w0: 0.0
+
+      # - kind: phonon
       #   amp: 1.0
-      #   dip: 0.0
-      #   cs: 0.02
-      #   w0: 0.0
-
-      - kind: phonon
-        amp: 0.03567708105
-        dip: 0.0        # fononi nimajo offdiag clenov
-        ta_prime: -10.0     # t'_a
-        tb_prime: 10.0      # t'_b
-        cs: 10. 
-        w0: 0.0      
+      #   dip: 0.0        # fononi nimajo offdiag clenov
+      #   ta_prime: -10.0     # t'_a
+      #   tb_prime: 10.0      # t'_b
+      #   cs: 10. 
+      #   w0: 0.0      
 
   solve:
     dt: 0.03

@@ -1,16 +1,16 @@
 model:
-  nk: 50
+  nk: 60
   nt: 30
 
   band:
     name: tb_2d
     pars:
-      gap: 2.0
+      gap: 4.11
       ta: 1.0
       tb: -1.0
 
   mean_field:
-    v: 8.3 #5.110  # primera za nesimetricne bands
+    v: 4.0 # 8.347260206186296
     n: 1.0
     uh: null
 

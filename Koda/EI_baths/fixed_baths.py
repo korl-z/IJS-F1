@@ -222,8 +222,8 @@ def plot_dispersion(pt, bd, st, mu):
 
 def plot_energy(pt, st, sf, t1, t2, mu, d0, path = None, nb=60):
     """NESS zasedenosti vs E"""
-    en = (np.asarray(st.st.e) - mu) / d0
-    ef = (np.asarray(sf.st.e) - mu) / d0
+    en = (np.asarray(st.st.e) - mu) 
+    ef = (np.asarray(sf.st.e) - mu) 
     nn = np.asarray(st.n)
     x = np.linspace(0.5 * min(en.min(), ef.min()), 0.5 * max(en.max(), ef.max()), 600)
 
@@ -282,8 +282,8 @@ def plot_xi(pt, bd, p, eq, st, sf, bs, t1, t2, d0, path=None, nb=100):
     """NESS okupacije vs xi"""
     eh = np.stack((np.asarray(st.st.eah), np.asarray(st.st.ebh)))
     hf = np.stack((np.asarray(sf.st.eah), np.asarray(sf.st.ebh)))
-    xn = np.abs(0.5 * (eh[0] - eh[1])) / d0
-    xf = np.abs(0.5 * (hf[0] - hf[1])) / d0
+    xn = np.abs(0.5 * (eh[0] - eh[1])) 
+    xf = np.abs(0.5 * (hf[0] - hf[1])) 
     x = np.linspace(0.0, max(xn.max(), xf.max()), 600)
 
     lb = bath_rate(bd, st, bs)
@@ -346,24 +346,23 @@ def plot_bz(pt, bd, st, path=None):
     nf = np.pad(nf, ((0, 0), (0, 1), (0, 1)), mode="wrap")
     kf = np.linspace(kx[0], kx[-1], 401)
 
+    hf = np.ones_like(nf[1]) - nf[1]
     XX, YY = np.meshgrid(kf, kf, indexing="xy")
     Z = np.cos(XX * np.pi) + np.cos(YY * np.pi)
     levels = np.arange(-2.0, 2.001, 0.22)
 
     with pt.figure(name="occupations_bz", shape=(1, 2), h=0.62,
                    sharex=True, sharey=True) as q:
-        im0 = color_map(q.ax[0], kx, ky, nf[0].T, cmap=cmaps.lipari,
-                        vmin=0.0, vmax=1.0)
-        im1 = color_map(q.ax[1], kx, ky, nf[1].T, cmap=cmaps.lipari,
-                        vmin=0.0, vmax=1.0)
+        im0 = color_map(q.ax[0], kx, ky, nf[0].T, cmap=cmaps.lipari)
+        im1 = color_map(q.ax[1], kx, ky, hf.T, cmap=cmaps.lipari)
         
         q.ax[0].contour(XX, YY, Z, levels=levels, colors="white", linewidths=0.6, alpha=0.4)
         q.ax[1].contour(XX, YY, Z, levels=levels, colors="white", linewidths=0.6, alpha=0.4)
 
         q.ax[0].text(0.05, 0.93, r"$n_{\alpha\mathbf{k}}$",
                      transform=q.ax[0].transAxes, ha="left", va="top", color="white")
-        q.ax[1].text(0.05, 0.93, r"$n_{\beta\mathbf{k}}$",
-                     transform=q.ax[1].transAxes, ha="left", va="top")
+        q.ax[1].text(0.05, 0.93, r"$h_{\beta\mathbf{k}}$",
+                     transform=q.ax[1].transAxes, ha="left", va="top", color="white")
 
         format_ax(q.ax[0], x=kx, xlabel=r"$k_x/\pi$", ylabel=r"$k_y/\pi$",
                   grid=False)
