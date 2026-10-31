@@ -603,7 +603,7 @@ def _fixed_chunk(ea, eb, w, pv, pn, ph, r, n, d, m, xn, xd, xm, ns: int):
 def _diag_vals(st, n, w, pv, pn, d, m, dn):
     tg = _targets(st, n, w, pv)
     ec = jnp.max(jnp.abs(dn))
-    ed = jnp.abs(tg.d - d)
+    ed = jnp.abs(tg.d - d) / jnp.maximum(jnp.abs(d), F32(1.0e-12))
     em = jnp.abs(tg.m - m)
     en = jnp.abs(tg.n - pn)
     er = jnp.maximum(jnp.maximum(ec, ed), jnp.maximum(em, en))

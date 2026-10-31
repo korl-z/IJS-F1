@@ -1239,7 +1239,80 @@ N(\Omega)\,\frac{8\gamma\,\omega_{\mathbf{q}}\,\Omega}
 {\left[(\Omega-\omega_{\mathbf{q}})^2+\gamma^2\right]\left[(\Omega+\omega_{\mathbf{q}})^2+\gamma^2\right]}\,.
 \end{align}
 \end{tcolorbox}
+Za dipol v $z$ smeri, obdržimo še TM2 mode, čeprav izgine za $q\to 0$:
+\begin{align}
+\boldsymbol{\epsilon}_{\mathrm{TE1}} &= (-\sin\varphi,\ \cos\varphi,\ 0), &
+\boldsymbol{\epsilon}_{\mathrm{TM1}} &= \frac{\omega_0}{\omega_{\mathbf{q}}}(\cos\varphi,\ \sin\varphi,\ 0),\\
+\boldsymbol{\epsilon}_{\mathrm{TM2}} &= -i\,\frac{cq}{\omega_{2\mathbf{q}}}\,(0,\ 0,\ 1), &
+\mathbf{d} &= d\,(0,\ 0,\ 1),
+\end{align}
+\begin{equation}
+\omega_{2\mathbf{q}} = \sqrt{4\omega_0^2 + c^2q^2} = \sqrt{\omega_{\mathbf{q}}^2 + 3\omega_0^2},
+\qquad
+\frac{c^2q^2}{\omega_{2\mathbf{q}}^2} = \frac{\omega_{\mathbf{q}}^2-\omega_0^2}{\omega_{\mathbf{q}}^2+3\omega_0^2}.
+\end{equation}
 
+\begin{align}
+X_{\mathrm{TE1}} &= -\sin\varphi\, h_x + \cos\varphi\, h_y, &
+X_{\mathrm{TM1}} &= \frac{\omega_0}{\omega_{\mathbf{q}}}\left(\cos\varphi\, h_x + \sin\varphi\, h_y\right), &
+X_{\mathrm{TM2}} &= 0,\\
+P_{\mathrm{TE1}} &= 0, &
+P_{\mathrm{TM1}} &= 0, &
+P_{\mathrm{TM2}} &= -i\,\frac{cq}{\omega_{2\mathbf{q}}}\,d .
+\end{align}
+
+\begin{align}
+M^{\lambda 1}(\mathbf{k}',\mathbf{q}) &= \sqrt{\frac{A}{\omega_{\mathbf{q}}}}\,X_{\lambda 1}
+\begin{pmatrix} 2t_a & 0\\ 0 & 2t_b \end{pmatrix}, \qquad \lambda = \mathrm{TE},\mathrm{TM},\\
+M^{\mathrm{TM2}}(\mathbf{k}',\mathbf{q}) &= \sqrt{\frac{A}{\omega_{2\mathbf{q}}}}\,\frac{cq}{\omega_{2\mathbf{q}}}\,d
+\begin{pmatrix} 0 & \Delta_{ab}\\ \Delta_{ba} & 0 \end{pmatrix}.
+\end{align}
+
+\begin{align}
+\widetilde{M}^{\lambda 1}_{\alpha\alpha} &= \sqrt{\frac{A}{\omega_{\mathbf{q}}}}\,X_{\lambda 1}\,(2t_a uu' + 2t_b vv'), &
+\widetilde{M}^{\lambda 1}_{\alpha\beta} &= \sqrt{\frac{A}{\omega_{\mathbf{q}}}}\,X_{\lambda 1}\,(2t_a uv' - 2t_b vu'),\\
+\widetilde{M}^{\lambda 1}_{\beta\alpha} &= \sqrt{\frac{A}{\omega_{\mathbf{q}}}}\,X_{\lambda 1}\,(2t_a vu' - 2t_b uv'), &
+\widetilde{M}^{\lambda 1}_{\beta\beta} &= \sqrt{\frac{A}{\omega_{\mathbf{q}}}}\,X_{\lambda 1}\,(2t_a vv' + 2t_b uu').
+\end{align}
+
+\begin{align}
+\widetilde{M}^{\mathrm{TM2}}_{\alpha\alpha} &= -\sqrt{\frac{A}{\omega_{2\mathbf{q}}}}\,\frac{cq}{\omega_{2\mathbf{q}}}\,d\,(uv'\Delta_{ab} + vu'\Delta_{ba}), &
+\widetilde{M}^{\mathrm{TM2}}_{\alpha\beta} &= \sqrt{\frac{A}{\omega_{2\mathbf{q}}}}\,\frac{cq}{\omega_{2\mathbf{q}}}\,d\,(uu'\Delta_{ab} - vv'\Delta_{ba}),\\
+\widetilde{M}^{\mathrm{TM2}}_{\beta\alpha} &= \sqrt{\frac{A}{\omega_{2\mathbf{q}}}}\,\frac{cq}{\omega_{2\mathbf{q}}}\,d\,(uu'\Delta_{ba} - vv'\Delta_{ab}), &
+\widetilde{M}^{\mathrm{TM2}}_{\beta\beta} &= \sqrt{\frac{A}{\omega_{2\mathbf{q}}}}\,\frac{cq}{\omega_{2\mathbf{q}}}\,d\,(vu'\Delta_{ab} + uv'\Delta_{ba}).
+\end{align}
+
+\begin{align}
+\sum_{\lambda}\left|\widetilde{M}^{\lambda 1}_{\gamma\gamma'}\right|^2
+&= \frac{A}{\omega_{\mathbf{q}}}\left(X_{\mathrm{TE1}}^2 + X_{\mathrm{TM1}}^2\right) C_{\gamma\gamma'}^2, &
+\left|\widetilde{M}^{\mathrm{TM2}}_{\gamma\gamma'}\right|^2
+&= \frac{A}{\omega_{2\mathbf{q}}}\,\frac{\omega_{\mathbf{q}}^2-\omega_0^2}{\omega_{\mathbf{q}}^2+3\omega_0^2}\, D_{\gamma\gamma'}^2 .
+\end{align}
+
+\begin{tcolorbox}
+\begin{align}
+\Gamma_{\gamma'\mathbf{k}'\to\gamma\mathbf{k}}
+&= A\,\Omega N(\Omega)\Bigg[
+\Bigg(\left(\sin^2\varphi + \frac{\omega_0^2}{\omega_{\mathbf{q}}^2}\cos^2\varphi\right) h_x^2
++ \left(\cos^2\varphi + \frac{\omega_0^2}{\omega_{\mathbf{q}}^2}\sin^2\varphi\right) h_y^2 + \nonumber\\
+&\quad + 2\left(\frac{\omega_0^2}{\omega_{\mathbf{q}}^2} - 1\right)\cos\varphi\sin\varphi\, h_x h_y\Bigg)
+C_{\gamma\gamma'}^2\,
+\frac{8\gamma}{\left[(\Omega-\omega_{\mathbf{q}})^2+\gamma^2\right]\left[(\Omega+\omega_{\mathbf{q}})^2+\gamma^2\right]} + \nonumber\\
+&\quad + \frac{\omega_{\mathbf{q}}^2-\omega_0^2}{\omega_{\mathbf{q}}^2+3\omega_0^2}\, D_{\gamma\gamma'}^2\,
+\frac{8\gamma}{\left[(\Omega-\omega_{2\mathbf{q}})^2+\gamma^2\right]\left[(\Omega+\omega_{2\mathbf{q}})^2+\gamma^2\right]}
+\Bigg].
+\end{align}
+\end{tcolorbox}
+Minimal coupling v limiti $q\to 0$:
+\begin{tcolorbox}
+\begin{align}
+\Gamma_{\gamma'\mathbf{k}'\to\gamma\mathbf{k}}
+&= A \Bigg[
+ \sin^2\left(k'_x + \tfrac{q_x}{2}\right) +  \sin^2\left(k'_y + \tfrac{q_y}{2}\right) \Bigg]
+C_{\gamma\gamma'}^2 \cdot \Omega N(\Omega)\cdot
+\frac{8\gamma}{\left[(\Omega-\omega_{\mathbf{q}})^2+\gamma^2\right]\left[(\Omega+\omega_{\mathbf{q}})^2+\gamma^2\right]}.
+\end{align}
+\end{tcolorbox}
 
 
 \section{Vizualizacije kopeli za fotone}
@@ -1516,29 +1589,29 @@ Primer NESS v BCS režimu: $G=2, t_a=-t_b=1$ in $V=4.4$, kjer je $\Delta_0=1.0$.
 \FloatBarrier
 
 \section{Pretvorbe enot}
-Do zdaj smo uporabljali $\hbar=k_B=1$ in delali v enotah $a_0=1$ ter $t_a=1$. Za pretvorbe si moramo izbrati konkretne vrednosti za $a_0 = 10\, \textup{~\AA}$ in $t_a = 1\, \text{eV}$. Za brezdimenzijske količine bom uporabljal kačo, le v tem odseku. Od tod so naravne pretvorbe za hitrosti: 
+Do zdaj smo uporabljali $\hbar=k_B=1$ in delali v enotah $a_0=1$ ter $t_a=1$. Za pretvorbe si moramo izbrati konkretne vrednosti za $a_0 = 5\, \textup{~\AA}$ in $t_a = 0.1\, \text{eV}$. Za brezdimenzijske količine bom uporabljal kačo, le v tem odseku. Od tod so naravne pretvorbe za hitrosti: 
 \begin{align}
-  v_0 = \frac{t_a a_0}{\hbar} \simeq 1519 \,\text{km/s}
+  v_0 = \frac{t_a a_0}{\hbar} \simeq 76 \,\text{km/s}\,.
 \end{align}
-za izbrane vrednosti parametrov je potem hitrost svetlobe $\tilde{c} = c/v_0 \simeq 200$. Za hitrost zvoka $\tilde{c}_s= 5 \,\text{km/s} / v_0 \simeq 0.0033$. Pretvorba za količine povezane s časom je 
+Za izbrane vrednosti parametrov je potem hitrost svetlobe $\tilde{c} = c/v_0 \simeq 3950$. Za hitrost zvoka $\tilde{c}_s= 10 \,\text{km/s} / v_0 \simeq 0.13$. Pretvorba za količine povezane s časom je 
 \begin{align}
- \tau_0 = \frac{\hbar}{t_a} \simeq 0.66 \, \text{fs}
+ \tau_0 = \frac{\hbar}{t_a} \simeq 6.6 \, \text{fs}\,.
 \end{align}
-in torej $\tilde{\omega}_0 = \tau_0 \omega_0 \simeq 0.66 \, \text{fs} \cdot 1.5\cdot 10^{15} \,\text{Hz} = 1$. Dolžina resonatorja je v tem primeru $\tilde{L} = L / a_0 = \pi \tilde{c} / \tilde{\omega}_0 \simeq 620$. Za fotonsko sklopitveno konstanto velja: 
+Osnovno frekvenco izberemo, da je na vleikostni skali reže, torej nekaj 100 kelvinov, oziroma $\tilde{\omega}_0 \sim 0.1 \implies \omega_0 \simeq 15\,\text{THz}$. Dolžina resonatorja je v tem primeru $\tilde{L} = L / a_0 = \pi \tilde{c} / \tilde{\omega}_0 \simeq 1.2 \cdot 10^5 \sim \qty{62}{\micro\metre}$. Za fotonsko sklopitveno konstanto velja: 
 \begin{align}
   \tilde{g} = \frac{g}{t_a^2} = \frac{e^2\hbar}{2\mathcal{V}\varepsilon_0\omega_\vec{q}} \left(\frac{t_a a_0}{\hbar}\right)^2\frac{1}{t_a^2} = 2\pi \alpha \frac{\tilde{c}}{\tilde{\omega}_\vec{q}} \frac{a_0^3}{\mathcal{V}} = 2 \alpha \frac{\tilde{\omega}_0}{\tilde{\omega}_\vec{q}}\frac{1}{N_k^2}\,.
 \end{align}
-Tu sem za volumen vzel $\mathcal{V} = N_k^2a_0^3 \tilde{L}$. Uteži $1/N_k^2$ so že vštete v vsote in povprečja po momentih, zato je v končnem izrazu ne upoštevamo. V kodi ja tako vrednost za amplitudo 
+Tu sem za volumen vzel $\mathcal{V} = N_k^2a_0^3 \tilde{L}$. Uteži $1/N_k^2$ so že vštete v vsote in povprečja po momentih, zato je v končnem izrazu ne upoštevamo. V kodi je vrednost za amplitudo 
 \begin{align}
-  \tilde{A}=\tilde{g}\tilde{\omega}_\vec{q} = 2 \alpha \tilde{\omega}_0 = \frac{2}{137}\tilde{\omega}_0\,.
+  \tilde{A}_{\text{fot.}} = \tilde{g}\tilde{\omega}_\vec{q} = 2 \alpha \tilde{\omega}_0 \sim \frac{2}{137} \cdot 0.1 \simeq 0.00146\,.
 \end{align} 
 Drugi red je sorazmeren z $\tilde{A}^2 \ll \tilde{A}$. Za fonone velja 
 \begin{align}
   \tilde{g} = \frac{g}{t_a^2} = \frac{\hbar}{2MN_k^2 \omega_\vec{q}} = \frac{1}{2\tilde{M}} \frac{1}{N_k^2}\frac{1}{\tilde{\omega}_\vec{q}}\,
 \end{align}
-kjer je brezdimenzijska masa ionov $\tilde{M} = M \frac{a_0^2 t_a}{\hbar^2} \simeq 23900 M[\text{u}]$. V kodi je torej amplituda za fononsko sklopitev
+kjer je brezdimenzijska masa ionov $\tilde{M} = M \frac{a_0^2 t_a}{\hbar^2} \simeq 598 M[\text{u}]$. V kodi je torej amplituda za fononsko sklopitev za $M = 20$ u:
 \begin{align}
-  \tilde{A} = \frac{1}{2\tilde{M}}
+  \tilde{A}_{\text{fon.}} = \frac{1}{2\tilde{M}} \approx 4.2 \cdot 10^{-5}
 \end{align}
 razmerje med amplitudama je
 \begin{align}
@@ -1552,7 +1625,7 @@ za večje momente pa:
 \begin{align}
    \frac{\tilde{g}_\text{fon.}}{\tilde{g}_\text{fot.}} = \frac{\tilde{c}}{\tilde{c}_s} \frac{1}{4\alpha \tilde{M} \tilde{\omega}_0}
 \end{align}
-realistični dipol znotraj celice znaša okoli $d = 0.1  - 1\, \textup{~\AA}$, torej $\tilde{d} \simeq 0.01-0.1$. 
+realistični dipol znotraj celice znaša okoli $d = 0.1  - 1\, \textup{~\AA}$, torej $\tilde{d} \simeq 0.02-0.2$. 
 \nocite{*}
 \printbibliography
 \end{document} 

@@ -127,7 +127,7 @@ def _ltab(nx, ny, per, cs, w0, gam, qd, nsub, dw, nw, phn=False):
     wt = 1.0 - np.abs(t)
     wt = wt / wt.sum()
     w = dw * np.arange(nw)
-    z = np.zeros((3, nx, ny, nw))
+    z = np.zeros((4, nx, ny, nw))
     for tx, ax in zip(t, wt):
         for ty, ay in zip(t, wt):
             qx = np.mod(qx0 + tx * dkx + 0.5 * per, per)[:, None] - 0.5 * per
@@ -142,7 +142,13 @@ def _ltab(nx, ny, per, cs, w0, gam, qd, nsub, dw, nw, phn=False):
                            2.0 * sn * cp * (r2 - 1.0))) * ok
             om = om[..., None]
             ln = 8.0 * gam / (((w - om) ** 2 + gam**2) * ((w + om) ** 2 + gam**2))
-            z += pc[..., None] * ln[None]
+            z[:3] += pc[..., None] * ln[None]
+            # TM2 row, z dipole at L/2
+            o2 = np.hypot(2.0 * w0, cs * qm)
+            pz = np.zeros_like(qm) if phn else (cs * qm / o2) ** 2
+            o2 = o2[..., None]
+            l2 = 8.0 * gam / (((w - o2) ** 2 + gam**2) * ((w + o2) ** 2 + gam**2))
+            z[3] += (pz * ok)[..., None] * l2
     z.setflags(write=False)
     return z
 
@@ -215,19 +221,21 @@ def g_mat(st, b, k, p, q):
     kf, ki = kk[k], kk[p]
     qm = jnp.linalg.norm(q)
     os = jnp.maximum(omega_q(qm, b), F(1.0e-30))
-    g = jnp.where(qm <= b.qd, jnp.sqrt(b.amp / os), 0.0)
+    o2 = jnp.maximum(jnp.hypot(2.0 * b.w0, b.cs * qm), F(1.0e-30))
+    g = jnp.where(qm <= b.qd, jnp.sqrt(b.amp / jnp.stack((os, os, o2))), 0.0)
 
     ph = jnp.arctan2(q[1], q[0])
     cp, sn = jnp.cos(ph), jnp.sin(ph)
     phn = b.kind == "phonon"  # pol 0 is T, pol 1 is L for phonons
     rt = 1.0 if phn else b.w0 / os
-    ep = jnp.stack((jnp.stack((-sn, cp)), rt * jnp.stack((cp, sn))))
-
+    ep = jnp.stack((jnp.stack((-sn, cp)), rt * jnp.stack((cp, sn)),
+                    jnp.zeros(2)))  # pol 2 is TM2, no in plane part
     if phn:
         xv = ep @ (jnp.sin(b.a0 * kf) - jnp.sin(b.a0 * ki))  # eq. 98
     else:
         xv = ep @ (b.a0 * jnp.sin(b.a0 * (ki + 0.5 * q)))
-    pv = b.dip * ep[:, 0]
+
+    pv = b.dip * jnp.stack((0.0, 0.0, -1j * b.cs * qm / o2))  # only TM2 has E_z
     ca, cb = (b.ta_prime, b.tb_prime) if phn else (b.ta, b.tb)
 
     sf = jnp.sum(jnp.cos(b.a0 * kf))
@@ -249,7 +257,7 @@ def g_mat(st, b, k, p, q):
         [-st.v[p], st.u[p]],
     ])
 
-    return g * jnp.einsum("ba,lbc,cd->lad", uk, mm, up)
+    return g[:, None, None] * jnp.einsum("ba,lbc,cd->lad", uk, mm, up)
 
 
 def _bose(w, t):
@@ -370,14 +378,15 @@ def _pair(x, y, bp):
         om = jnp.hypot(w0, cs * qm)
         os = jnp.maximum(om, F(1.0e-30))
         r2 = jnp.square(w0 / os)
+        o2 = jnp.maximum(jnp.hypot(2.0 * w0, cs * qm), F(1.0e-30))  # TM2
+        pz = jnp.square(cs * qm / o2)
 
         # bare band differences ea(k) - eb(k') and eb(k) - ea(k')
         eab = gap - 2.0 * ta * si + 2.0 * tb * sj
         eba = -gap - 2.0 * tb * si + 2.0 * ta * sj
         c1 = 2.0 * (ta * aa + tb * bb)
         c2 = dip * (eab * ax + eba * xa)
-        af = ((xt + r2 * xm) * jnp.square(c1)
-              + (sn * sn + r2 * cp * cp) * jnp.square(c2))
+        af = (xt + r2 * xm) * jnp.square(c1)
 
         # phonon, eq. 96 with D = 0: t -> t', h -> sin k - sin k', Z -> 1
         c1 = jnp.where(phn > 0, 2.0 * (ta_prime * aa + tb_prime * bb), c1)
@@ -390,6 +399,10 @@ def _pair(x, y, bp):
 
         if bp.lt is None:
             sp, sl = _line(w, om, gam, bp)
+            # TM2 dipole channel, own line at o2
+            gz = jnp.where(ok, amp * pz * jnp.square(c2) / o2, F(0.0))
+            s2, l2 = _line(w, o2, gam, bp)
+            sp, sl, gm = gm * sp + gz * s2, gm * sl + gz * l2, F(1.0)
         else:
             # vertex with P(q) and the line averaged over the cell pair
             tt = bp.lt[i]
@@ -397,7 +410,7 @@ def _pair(x, y, bp):
             ux = jnp.where(phn > 0, gx, hx)
             uy = jnp.where(phn > 0, gy, hy)
             sl = amp * ((ux * ux * tv[0] + uy * uy * tv[1] + ux * uy * tv[2])
-                        * jnp.square(c1) + tv[0] * jnp.square(c2))
+                        * jnp.square(c1) + tv[3] * jnp.square(c2))
             sl = jnp.where(w <= bp.em, sl, jnp.nan)
             sp, gm = sl * w, F(1.0)
         ab, em = _therm(sp, sl, w, t)

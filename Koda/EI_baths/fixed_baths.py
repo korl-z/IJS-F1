@@ -222,8 +222,8 @@ def plot_dispersion(pt, bd, st, mu):
 
 def plot_energy(pt, st, sf, t1, t2, mu, d0, path = None, nb=60):
     """NESS zasedenosti vs E"""
-    en = (np.asarray(st.st.e) - mu) 
-    ef = (np.asarray(sf.st.e) - mu) 
+    en = (np.asarray(st.st.e) - mu) /d0
+    ef = (np.asarray(sf.st.e) - mu) /d0
     nn = np.asarray(st.n)
     x = np.linspace(0.5 * min(en.min(), ef.min()), 0.5 * max(en.max(), ef.max()), 600)
 
@@ -251,8 +251,18 @@ def plot_energy(pt, st, sf, t1, t2, mu, d0, path = None, nb=60):
         add_legend(a, ncol=1, fontsize=7)
         q.layout((0, 0, 1, 0.84))
 
-        labelLine(l1, x=.4*x[-1], label=r"$T_1$", yoffset=0.05, fontsize=7, backgroundcolor="none", outline_width=0)
-        labelLine(l2, x=-0.4*x[-1], label=r"$T_2$", yoffset=0.05, fontsize=7, backgroundcolor="none", outline_width=0)
+        #xlim
+        thresh1 = 0.01 * fd_t(x*d0, t1)[0]
+        thresh2 = 0.01 * fd_t(x*d0, t2)[0]
+        idx1 = np.where(fd_t(x*d0, t1) >= thresh1)[0]
+        idx2 = np.where(fd_t(x*d0, t2) >= thresh2)[0]
+        x_lim1 = x[idx1[-1]] if len(idx1) > 0 else x[-1]
+        x_lim2 = x[idx2[-1]] if len(idx2) > 0 else x[-1]
+        x_lim = max(x_lim1, x_lim2)
+        a.set_xlim(-x_lim, x_lim)
+
+        labelLine(l1, x= 0.4*x_lim, label=r"$T_1$", yoffset=0.05, fontsize=7, backgroundcolor="none", outline_width=0)
+        labelLine(l2, x=-0.4*x_lim, label=r"$T_2$", yoffset=0.05, fontsize=7, backgroundcolor="none", outline_width=0)
         if path is not None: 
             plt.savefig(path, bbox_inches="tight")
 
@@ -280,8 +290,8 @@ def bath_rate(bd, st, bs):
 
 def plot_xi(pt, bd, p, eq, st, sf, bs, t1, t2, d0, path=None, nb=100):
     """NESS okupacije vs xi"""
-    eh = np.stack((np.asarray(st.st.eah), np.asarray(st.st.ebh)))
-    hf = np.stack((np.asarray(sf.st.eah), np.asarray(sf.st.ebh)))
+    eh = np.stack((np.asarray(st.st.eah), np.asarray(st.st.ebh))) / d0
+    hf = np.stack((np.asarray(sf.st.eah), np.asarray(sf.st.ebh))) / d0
     xn = np.abs(0.5 * (eh[0] - eh[1])) 
     xf = np.abs(0.5 * (hf[0] - hf[1])) 
     x = np.linspace(0.0, max(xn.max(), xf.max()), 600)
@@ -290,49 +300,45 @@ def plot_xi(pt, bd, p, eq, st, sf, bs, t1, t2, d0, path=None, nb=100):
     nr = LogNorm(vmin=lb.min(), vmax=lb.max())
     nn = np.asarray(st.n)
 
-    wb = bath_mix(bd, st, bs)
-
-    xs = np.r_[xn, xn]
-    ys = np.r_[nn[0], 1.0 - nn[1]]
-    ls_ = np.log(np.r_[lb[0], lb[1]])
-    eb = np.linspace(0.0, xs.max(), nb + 1)
-    nc, _ = np.histogram(xs, eb)
-    ny, _ = np.histogram(xs, eb, weights=ys)
-    nl, _ = np.histogram(xs, eb, weights=ls_)
-    ok = nc > 0
-    xc = 0.5 * (eb[1:] + eb[:-1])[ok]
-    ybar = ny[ok] / nc[ok]
-    lbar = np.exp(nl[ok] / nc[ok])
-
     with pt.figure(name="occupations_xi", h=0.6) as q:
         a = q.ax
         l1, = a.plot(x, fd_t(x * d0, t1), color="k", ls="--", lw=0.6)
         l2, = a.plot(x, fd_t(x * d0, t2), color="grey", ls="-.", lw=0.6)
-        a.plot(x, fd(sf.beta * x * d0), color="hotpink", lw=1.1, alpha=0.8,
-                label=r"$f(E,T_{\mathrm{eff}})$", zorder=0)
-        sc = a.scatter(xn, nn[0], c=lb[0], cmap=cmaps.gem.cut(0.2, "right"),
-                norm=nr, s=3, marker="o",
-                edgecolors="none",
-                label=r"$n_{\alpha\mathbf{k}}^{\mathrm{NESS}}$")
-        a.scatter(xn, 1.0 - nn[1], c=lb[1], cmap=cmaps.gem.cut(0.2, "right"),
-                norm=nr, s=4, marker="^", alpha=0.1,
-                edgecolors="none",
-                label=r"$1-n_{\beta\mathbf{k}}^{\mathrm{NESS}}$")
-        # pts = np.column_stack((xc, ybar))[:, None, :]
-        # sg = np.concatenate((pts[:-1], pts[1:]), axis=1)
-        # lc = LineCollection(sg, cmap=cmaps.gem.cut(0.2, "right"), norm=nr,
-        #                     lw=1.2, label=r"$n(|\xi|)$")
-        # lc.set_array(np.sqrt(lbar[:-1] * lbar[1:]))
-        # a.add_collection(lc)
+        a.plot(x, fd(sf.beta * x * d0), color="hotpink", lw=0.7, alpha=0.8,
+                label=r"$f(\xi,T_{\mathrm{eff}})$", zorder=0)
+        # sc = a.scatter(xn, nn[0], c=lb[0], cmap=cmaps.gem.cut(0.2, "right"),
+        #         norm=nr, s=3, marker="o",
+        #         edgecolors="none",
+        #         label=r"$n_{\alpha\mathbf{k}}^{\mathrm{NESS}}$")
+        # a.scatter(xn, 1.0 - nn[1], c=lb[1], cmap=cmaps.gem.cut(0.2, "right"),
+        #         norm=nr, s=4, marker="^", alpha=0.1,
+        #         edgecolors="none",
+        #         label=r"$1-n_{\beta\mathbf{k}}^{\mathrm{NESS}}$")
 
-        # cbar = q.fig.colorbar(sc, ax=a)
-        # cbar.set_label("relativen coupling", rotation=90, labelpad=5)
+        sort_idx = np.argsort(xn)
+        xn_sorted = xn[sort_idx]
+        nn0_sorted = nn[0][sort_idx]
+        nn1_sorted = 1.0 - nn[1][sort_idx]
+        lb0_sorted = lb[0][sort_idx]
+
+        a.plot(xn_sorted, nn0_sorted, color="navy", lw=1.0, label=r"$n(\xi)^{\mathrm{NESS}}$")
+
         format_ax(a, x=x, xlabel=r"$|\xi_{\mathbf{k}}|/\Delta_0$",
                   ylabel=r"$n$", ylim=(0.0, 0.52))
         add_legend(a, top=False, ncol=1, fontsize=7)
 
-        labelLine(l1, x=.4*x[-1], label=r"$T_1$", yoffset=0.05, fontsize=7, backgroundcolor="none", outline_width=0)
-        labelLine(l2, x=.2*x[-1], label=r"$T_2$", yoffset=0.05, fontsize=7, backgroundcolor="none", outline_width=0)
+        #xlim
+        thresh1 = 0.01 * fd_t(x*d0, t1)[0]
+        thresh2 = 0.01 * fd_t(x*d0, t2)[0]
+        idx1 = np.where(fd_t(x*d0, t1) >= thresh1)[0]
+        idx2 = np.where(fd_t(x*d0, t2) >= thresh2)[0]
+        x_lim1 = x[idx1[-1]] if len(idx1) > 0 else x[-1]
+        x_lim2 = x[idx2[-1]] if len(idx2) > 0 else x[-1]
+        x_lim = max(x_lim1, x_lim2)
+        a.set_xlim(x[0], x_lim)
+
+        labelLine(l1, x=.7*x_lim, label=r"$T_1$", yoffset=0.05, fontsize=7, backgroundcolor="none", outline_width=0)
+        labelLine(l2, x=.15*x_lim, label=r"$T_2$", yoffset=0.05, fontsize=7, backgroundcolor="none", outline_width=0)
         q.layout((0, 0, 1, 0.84))
         if path is not None: 
             plt.savefig(path, bbox_inches="tight")
