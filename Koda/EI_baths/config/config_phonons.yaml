@@ -12,7 +12,7 @@ model:
 
   mean_field: &mf
     # v: 8.347260206186296
-    v: 0.4
+    v: 0.275
     n: 1.0
     uh: null
 
@@ -69,7 +69,7 @@ open_system:
     pars:  # shared by all baths, pack needs equal k, a0, eh, em, nsub
       <<: [*band, *mf]   # gap, ta, tb and v, n, uh (zadnji trije za settanje em)
       nsub: 16  # 0: line at the grid points, > 0: avg., idealno nsub >= 4pi cs / (gam * nk)
-      qd: 1.0
+      # qd: 3.545
     baths:  
       - kind: photon
         amp: 1.0

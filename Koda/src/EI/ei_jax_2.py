@@ -11,6 +11,7 @@ jax.config.update("jax_enable_x64", True)
 
 import EI.ei_unified as eu
 import EI.ei_phonon as pb
+import EI.ei_ibz as ibz
 
 F32 = jnp.float64
 I32 = jnp.int64
@@ -124,6 +125,10 @@ def _pars(bd: eu.Bands, p: eu.MFPars) -> tuple[Any, ...]:
 
 
 def _baths(bs):
+    if isinstance(bs, ibz.IbzBaths):
+        return ibz.pack_ibz(bs), ()
+    if isinstance(bs, ibz.WinBaths):
+        return ibz.pack_win(bs), ()
     bs = tuple(bs)
     if not bs:
         raise ValueError("at least one bath is required")
@@ -230,6 +235,10 @@ def _af(qa: Any, qb: Any, o: Any) -> Any:
 
 
 def _rates(st: JState, bp: tuple[Any, ...], rf: tuple[RateFn, ...]) -> Any:
+    if isinstance(bp, ibz.IbzPack):
+        return ibz.rates_ibz(st, bp)
+    if isinstance(bp, ibz.WinPack):
+        return ibz.rates_win(st, bp)
     if isinstance(bp, pb.Pack):
         return pb.rates(st, bp)
     bt, bk, bw, bo, bm = bp
@@ -266,6 +275,8 @@ def _cur_dense(st: JState, n: Any, w: Any, bp: tuple[Any, ...], rf: tuple[RateFn
 
 
 def _ab_mat(n: Any, w: Any, r: Any) -> tuple[Any, Any]:
+    if isinstance(r, ibz.WinRates):
+        return ibz.ab_win(n, w, r)
     y = n.reshape(-1)
     ww = jnp.tile(w, 2)
     a = r @ (ww * y)
@@ -368,6 +379,8 @@ def _cur_pair(st: JState, n: Any, bp: tuple[Any, ...], rf: tuple[RateFn, ...]) -
 def _cur(
     st: JState, n: Any, w: Any, bp: tuple[Any, ...], rf: tuple[RateFn, ...], mode: str, block: int
 ) -> Any:
+    if isinstance(bp, (ibz.IbzPack, ibz.WinPack)) and mode != "dense":
+        raise ValueError("IBZ baths require mode='dense'")
     if mode == "pair":
         return _cur_pair(st, n, bp, rf)
     if mode == "dense":
@@ -586,7 +599,10 @@ def _fixed_step(ca, _, ea, eb, w, pv, pn, ph, r, xn, xd, xm):
     qcut = F32(1.0e-12) * jnp.max(q)
     active = q > qcut
     nt = jnp.where(active, a / jnp.where(active, q, F32(1.0)), n)
-    n = _fix_fill(n + xn * (nt - n), w, pn)
+    if isinstance(r, ibz.WinRates):
+        n = ibz.fix_fill_win(n + xn * (nt - n), w, pn, r)
+    else:
+        n = _fix_fill(n + xn * (nt - n), w, pn)
     tg = _targets(st, n, w, pv)
     d = d + xd * (tg.d - d)
     m = m + xm * (tg.m - m)
@@ -915,6 +931,8 @@ def solve_newton(
     n = _init_n(bd, p, n, d, m, tol, nmax, 1)
     ea, eb, w, pv, pn, ph = _pars(bd, p)
     bp, rf = _baths(bs)
+    if isinstance(bp, ibz.WinPack):
+        raise ValueError("windowed baths support solve_fixed and solve_open only")
     nm = 2 * bd.size
     if mu is None:
         nc = jnp.clip(n, 1.0e-300, 1.0 - 1.0e-16)

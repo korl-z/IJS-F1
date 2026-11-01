@@ -261,8 +261,8 @@ def plot_energy(pt, st, sf, t1, t2, mu, d0, path = None, nb=60):
         x_lim = max(x_lim1, x_lim2)
         a.set_xlim(-x_lim, x_lim)
 
-        labelLine(l1, x= 0.4*x_lim, label=r"$T_1$", yoffset=0.05, fontsize=7, backgroundcolor="none", outline_width=0)
-        labelLine(l2, x=-0.4*x_lim, label=r"$T_2$", yoffset=0.05, fontsize=7, backgroundcolor="none", outline_width=0)
+        labelLine(l1, x= 0.7*x_lim, label=r"$T_1$", yoffset=0.05, fontsize=7, backgroundcolor="none", outline_width=0)
+        labelLine(l2, x=0.6*x_lim, label=r"$T_2$", yoffset=0.05, fontsize=7, backgroundcolor="none", outline_width=0)
         if path is not None: 
             plt.savefig(path, bbox_inches="tight")
 
@@ -287,6 +287,10 @@ def bath_rate(bd, st, bs):
         lam = lam + r @ (w * y) + r.T @ (w * (1.0 - y))
     return lam.reshape(np.shape(st.n))
 
+def _gap(bd, p, t, d0, m0=0.0, **kw):
+    """Self consistent equilibrium gap at temperature t, 0 above Tc."""
+    s = eu.solve_eq(bd, p, t=t, d=max(abs(d0), 1.0e-3), m=m0, **kw)
+    return abs(float(s.d))
 
 def plot_xi(pt, bd, p, eq, st, sf, bs, t1, t2, d0, path=None, nb=100):
     """NESS okupacije vs xi"""
@@ -296,47 +300,48 @@ def plot_xi(pt, bd, p, eq, st, sf, bs, t1, t2, d0, path=None, nb=100):
     xf = np.abs(0.5 * (hf[0] - hf[1])) 
     x = np.linspace(0.0, max(xn.max(), xf.max()), 600)
 
-    lb = bath_rate(bd, st, bs)
-    nr = LogNorm(vmin=lb.min(), vmax=lb.max())
-    nn = np.asarray(st.n)
+    g1 = _gap(bd, p, t1, d0, **eq["solve"])
+    g2 = _gap(bd, p, t2, d0, **eq["solve"])
+    ge = abs(float(sf.d))  
+    e1, e2, ef = (np.hypot(x * d0, g) for g in (g1, g2, ge))
 
+    nn = np.asarray(st.n)
+    kk = np.asarray(bd.k)
+    ph = np.mod(np.abs(np.arctan2(kk[:, 1], kk[:, 0])), 0.5 * np.pi)
+    ph = np.minimum(ph, 0.5 * np.pi - ph)  # fold to [0, pi/4] by C4v
+    
     with pt.figure(name="occupations_xi", h=0.6) as q:
         a = q.ax
-        l1, = a.plot(x, fd_t(x * d0, t1), color="k", ls="--", lw=0.6)
-        l2, = a.plot(x, fd_t(x * d0, t2), color="grey", ls="-.", lw=0.6)
-        a.plot(x, fd(sf.beta * x * d0), color="hotpink", lw=0.7, alpha=0.8,
-                label=r"$f(\xi,T_{\mathrm{eff}})$", zorder=0)
-        # sc = a.scatter(xn, nn[0], c=lb[0], cmap=cmaps.gem.cut(0.2, "right"),
-        #         norm=nr, s=3, marker="o",
-        #         edgecolors="none",
-        #         label=r"$n_{\alpha\mathbf{k}}^{\mathrm{NESS}}$")
-        # a.scatter(xn, 1.0 - nn[1], c=lb[1], cmap=cmaps.gem.cut(0.2, "right"),
-        #         norm=nr, s=4, marker="^", alpha=0.1,
-        #         edgecolors="none",
-        #         label=r"$1-n_{\beta\mathbf{k}}^{\mathrm{NESS}}$")
+        l1, = a.plot(x, fd_t(e1, t1), color="k", ls="--", lw=0.6)
+        l2, = a.plot(x, fd_t(e2, t2), color="grey", ls="-.", lw=0.6)
+        a.plot(x, fd(sf.beta * ef), color="hotpink", lw=0.7, alpha=0.8,
+               label=r"$f(E,T_{\mathrm{eff}})$", zorder=0)
+        sc = a.scatter(xn, nn[0], c=ph / np.pi, cmap=cmaps.gem.cut(0.2, "right"),
+                       s=2, marker="o", edgecolors="none", rasterized=True,
+                       label=r"$n_{\alpha\mathbf{k}}^{\mathrm{NESS}}$")
+        # cb = plt.colorbar(sc, ax=a)
+        # cb.set_label(r"$\varphi_{\mathbf{k}}/\pi$", rotation=90, labelpad=5)
 
         sort_idx = np.argsort(xn)
         xn_sorted = xn[sort_idx]
         nn0_sorted = nn[0][sort_idx]
-        nn1_sorted = 1.0 - nn[1][sort_idx]
-        lb0_sorted = lb[0][sort_idx]
 
-        a.plot(xn_sorted, nn0_sorted, color="navy", lw=1.0, label=r"$n(\xi)^{\mathrm{NESS}}$")
+        # a.plot(xn_sorted, nn0_sorted, color="navy", lw=1.0, label=r"$n(\xi)^{\mathrm{NESS}}$")
 
         format_ax(a, x=x, xlabel=r"$|\xi_{\mathbf{k}}|/\Delta_0$",
                   ylabel=r"$n$", ylim=(0.0, 0.52))
         add_legend(a, top=False, ncol=1, fontsize=7)
 
         #xlim
-        thresh1 = 0.01 * fd_t(x*d0, t1)[0]
-        thresh2 = 0.01 * fd_t(x*d0, t2)[0]
-        idx1 = np.where(fd_t(x*d0, t1) >= thresh1)[0]
-        idx2 = np.where(fd_t(x*d0, t2) >= thresh2)[0]
+        thresh1 = 0.01 * fd_t(e1, t1)[0]
+        thresh2 = 0.01 * fd_t(e2, t2)[0]
+        idx1 = np.where(fd_t(e1, t1) >= thresh1)[0]
+        idx2 = np.where(fd_t(e2, t2) >= thresh2)[0]
         x_lim1 = x[idx1[-1]] if len(idx1) > 0 else x[-1]
         x_lim2 = x[idx2[-1]] if len(idx2) > 0 else x[-1]
         x_lim = max(x_lim1, x_lim2)
         a.set_xlim(x[0], x_lim)
-
+        a.set_ylim(0.0, 1.05 * max(fd_t(e1, t1).max(), fd_t(e2, t2).max()))
         labelLine(l1, x=.7*x_lim, label=r"$T_1$", yoffset=0.05, fontsize=7, backgroundcolor="none", outline_width=0)
         labelLine(l2, x=.15*x_lim, label=r"$T_2$", yoffset=0.05, fontsize=7, backgroundcolor="none", outline_width=0)
         q.layout((0, 0, 1, 0.84))
