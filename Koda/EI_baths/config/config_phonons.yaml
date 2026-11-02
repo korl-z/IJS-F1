@@ -6,13 +6,13 @@ model:
   band:
     name: tb_2d
     pars: &band
-      gap: 0.4
-      ta: 0.1
-      tb: -0.1
+      gap: 4.0
+      ta: 1.0
+      tb: -1.0
 
   mean_field: &mf
     # v: 8.347260206186296
-    v: 0.275
+    v: 2.75
     n: 1.0
     uh: null
 
@@ -74,16 +74,16 @@ open_system:
       - kind: photon
         amp: 1.0
         dip: 0.2
-        cs: 3.0
+        cs: 0.026
         w0: 0.1
         gam: 0.1
 
       - kind: photon
-        amp: 0.03
+        amp: 1.0
         dip: 0.2
         cs: 0.026
         w0: 0.0
-        gam: 0.05
+        gam: 0.1
 
       # - kind: phonon
       #   amp: 1.0

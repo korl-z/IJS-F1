@@ -1,8 +1,8 @@
 \documentclass[a4paper,10pt]{article}
-\usepackage{tabularx} % extra features for tabular environment
-\usepackage{amsmath,amssymb,amsfonts,amsthm}  % improve math presentation
-\usepackage{graphicx} % takes care of graphic including machinery
-\usepackage{geometry} % decreases margins
+\usepackage{tabularx}
+\usepackage{amsmath,amssymb,amsfonts,amsthm} 
+\usepackage{graphicx} 
+\usepackage{geometry} 
 \geometry{
   a4paper,
   right=20mm,
@@ -25,16 +25,16 @@
 % chktex-file 36
 
 %REFS, CITATI
-\usepackage[final]{hyperref} % advs hyper links inside the generated pdf file
+\usepackage[final]{hyperref} 
 
 \usepackage[backend=biber, style=numeric, sorting=none]{biblatex}
-\addbibresource{ref.bib} % <-- Add your .bib file name here
+\addbibresource{ref.bib} 
 
 \hypersetup{
-	colorlinks=true,       % false: boxed links; true: colored links
-	linkcolor=blue,        % color of internal links
-	citecolor=blue,        % color of links to bibliography
-	filecolor=magenta,     % color of file links
+	colorlinks=true,       
+	linkcolor=blue,       
+	citecolor=blue,        
+	filecolor=magenta,    
 	urlcolor=blue         
 }
 \renewcommand{\figurename}{Slika}
@@ -485,7 +485,7 @@ $\chi_{ij} = \langle C_{i} C_{j} \rangle - \langle C_{i} \rangle \langle C_{j} \
 \subsection{Fononske sklopitve}
 Najprej pogledamo, kako modificiran (Peierls tip) hopping integral in modificiran orbital energy vplivata na sklopitev. Model spremenimo: orbitali znotraj o.c. sta na enakem položaju in se deformirata vedno v isto smer, torej $\vec{u}_{a,i}=\vec{u}_{b,i}=\vec{u}_{i}$. Coulombski potencial se zaradi deformacije ne spremeni veliko. Hamiltonka za nedeformiran kristal ostane enaka, višje člene pa obravnavamo perturbativno: 
 \begin{align}
-  H[\{\mathbf{u}\}] = \underbrace{\sum_{i, \gamma, \gamma'} \varepsilon_{\gamma\gamma',i}[\{\mathbf{u}\}] \, c_{\gamma,i}^\dagger c_{\gamma',i}^{\vphantom\dagger}}_{\text{on-site in CEF}} + \underbrace{\sum_{\langle i,j \rangle, \gamma} t_{\gamma}(|\mathbf{r}_{ij}|) \, c_{\gamma,i}^\dagger c_{\gamma,j}^{\vphantom\dagger}}_{\text{hopping, med oribitalami}} + \underbrace{V \sum_j n_{a,j} n_{b,j}}_{\text{Coulomb}}
+  H[\{\mathbf{u}\}] = \underbrace{\sum_{i, \gamma, \gamma'} \varepsilon_{\gamma\gamma',i}[\{\mathbf{u}\}] \, c_{\gamma,i}^\dagger c_{\gamma',i}^{\vphantom\dagger}}_{\text{on-site in CEF}} - \underbrace{\sum_{\langle i,j \rangle, \gamma} t_{\gamma}(|\mathbf{r}_{ij}|) \, c_{\gamma,i}^\dagger c_{\gamma,j}^{\vphantom\dagger}}_{\text{hopping, med oribitalami}} + \underbrace{V \sum_j n_{a,j} n_{b,j}}_{\text{Coulomb}}
 \end{align}
 Razdalje so: 
 \begin{align}
@@ -495,7 +495,7 @@ oziroma razdalje med paroma (sosedi):
 \begin{align}
 \vec r_{ij}=\bm \delta +\vec u_{j} -\vec u_{i}\,\to |\vec r_{ij}| \simeq |\bm \delta| + \bm \delta \cdot (\vec u_{j} -\vec u_{i}) + \mathcal{O}(u^2)
 \end{align}
-Predpostavimo da na hopping vpliva samo sprememba razdalje:
+Predpostavimo da na hopping vpliva samo sprememba razdalje (delam v enotah, kjer je ravnovesna razdalja med atomi $a_0=1$):
 \begin{align}
   t_{\gamma}(|\mathbf{r}_{ij}|) \simeq t_{\gamma}(|\bm \delta|) + \bm \delta \cdot (\vec u_{j} -\vec u_{i}) \dv{t_\gamma(x)}{x}\bigg|_{x=|\bm\delta|=1}
 \end{align} 
@@ -514,7 +514,7 @@ potem so popravki (lahko mešajo orbitali)
 Sklopitvena Hamiltonka v realni bazi je tako ($\sum_{\langle ij\rangle} \to \sum_i\sum_{\delta=\{x, y\}}$)
 \begin{tcolorbox}
 \begin{align}
-  H_{ep}^{(1)}=\sum_{i, \gamma, \gamma'} D^{\mu \nu}_{\gamma\gamma'}\varepsilon_{\mu \nu,i}  c_{\gamma,i}^\dagger c_{\gamma',i}^{\vphantom\dagger} + \sum_{i, \delta, \gamma} t^\prime_{\gamma} \bm \delta \cdot (\vec u_{i + \delta} -\vec u_{i}) \left(c_{\gamma,i}^\dagger c_{\gamma,i + \delta}^{\vphantom\dagger}  +\text{h.c.}\right)
+  H_{ep}^{(1)}=\sum_{i, \gamma, \gamma'} D^{\mu \nu}_{\gamma\gamma'}\varepsilon_{\mu \nu,i}  c_{\gamma,i}^\dagger c_{\gamma',i}^{\vphantom\dagger} - \sum_{i, \delta, \gamma} t^\prime_{\gamma} \bm \delta \cdot (\vec u_{i + \delta} -\vec u_{i}) \left(c_{\gamma,i}^\dagger c_{\gamma,i + \delta}^{\vphantom\dagger}  +\text{h.c.}\right)
 \end{align}
 \end{tcolorbox}
 (note):
@@ -541,7 +541,7 @@ Hamiltonka je na koncu oblike (intraband = $\gamma = \gamma'$):
   H_{ep} = \frac1{\sqrt N} \sum_{\vec k,\vec q,\lambda} \psi_{\vec k+\vec q}^{\dagger} \begin{pmatrix} g_{aa}^{\lambda}(\vec k,\vec q) & g_{ab}^{\lambda}(\vec q)\\ g_{ba}^{\lambda}(\vec q) & g_{bb}^{\lambda}(\vec k,\vec q) \end{pmatrix} \psi_{\vec k} \left( b_{\vec q\lambda}+b_{-\vec q\lambda}^{\dagger} \right)
 \end{align}
 \begin{align}
-   g^\lambda(\vec k,\vec q) = \frac{i}{\sqrt{2M\omega_{\vec q\lambda}}} \begin{pmatrix} 2t_a'T^\lambda(\vec k,\vec q) +{F_{aa}^\lambda(\vec q)} & {F_{ab}^\lambda(\vec q)}\\ {F_{ba}^\lambda(\vec q)} & 2t_b'T^\lambda(\vec k,\vec q) +{F_{bb}^\lambda(\vec q)} \end{pmatrix}.
+   g^\lambda(\vec k,\vec q) = \frac{i}{\sqrt{2M\omega_{\vec q\lambda}}} \begin{pmatrix} -2t_a'T^\lambda(\vec k,\vec q) +{F_{aa}^\lambda(\vec q)} & {F_{ab}^\lambda(\vec q)}\\ {F_{ba}^\lambda(\vec q)} & -2t_b'T^\lambda(\vec k,\vec q) +{F_{bb}^\lambda(\vec q)} \end{pmatrix}.
 \end{align}
 
 kjer so: 
@@ -551,7 +551,7 @@ kjer so:
 \right].
 \end{align}
 \end{tcolorbox}
-interband členi so neničelni, glede na izbrane orbitale (glej \eqref{deps_gamgam}) in izbran CF potencial, odvisno od simetrije. Ker smo izbrali $\vec u_{a,i} = \vec u_{b,i}$ se ti elementi sklapljajo samo z akustičnimi fononi, ce znotraj o.c. ni prostostnih stopenj(??). 
+interband členi so neničelni, glede na izbrane orbitale (glej \eqref{deps_gamgam}) in izbran CF potencial, odvisno od simetrije. Ker smo izbrali $\vec u_{a,i} = \vec u_{b,i}$ se ti elementi sklapljajo samo z akustičnimi fononi, ce znotraj o.c. ni prostostnih stopenj. 
 \subsection{Optični fononi}
 Rabimo dodatne ligande / dodatne ione znotraj celice. Še vedno obdržimo $\vec u_{a,j}=\vec u_{b,j}=\vec u_j$, okolica pa se deformira neodvisno. Odmik liganda $\ell$ v celici $j$ razvijemo po normalnih nacinih
 \begin{align}
@@ -596,7 +596,7 @@ Kar da končne sklopitve pri $\vec q \to 0$ ($\Omega_s \equiv \omega_{\vec q\to 
 % H_e^{(0)}  = \sum_{\gamma, \vec{k}} \left( \varepsilon_{\gamma}^0+ t_\gamma {k}^2 \right) c_{\gamma,\vec{k}}^\dagger c_{\gamma,\vec{k}}
 % \end{equation}
 \subsection{Fotonske sklopitve v resonatorju}
-Začnemo z minimalnim modelom za elektrone: 
+Začnemo z minimalnim modelom za elektrone, n.n. hopping + lokalni Coulumb: 
 \begin{align}
   H_e = H_e^{(0)} + H_V = \sum_{\vec{k}} \varepsilon_{a,\vec{k}} c_{a,\vec{k}}^\dagger c_{a,\vec{k}} + \sum_{\vec{k}} \varepsilon_{b,\vec{k}} c_{b,\vec{k}}^\dagger c_{b,\vec{k}} + V \sum_j c_{a,j}^\dagger c_{a,j} c_{b,j}^\dagger c_{b,j}
 \end{align}
@@ -612,7 +612,7 @@ V t.b. modelu dobimo tok iz kontinuitetne in Heisenbergove enačbe:
 \begin{align}
   \frac{\partial \rho(\vec{r})}{\partial t} + \vec{\nabla} \cdot \vec{j} = 0 \, \to\,  i\vec{q} \cdot \vec{j}(\vec{q}) = -\frac{\partial \rho(\vec{q})}{\partial t} 
 \end{align}
-(+ je od IBP) in 
+(+ predznak je od per partes intergacije) in 
 \begin{equation}
 \vec{q}\cdot \vec{j}_e(\vec{q}) = i\frac{\partial \rho(\vec{q})}{\partial t} = -[H_e, \rho(\vec{q})]
 \end{equation}
@@ -674,18 +674,18 @@ Od tod splošna Hamiltonka v prvem redu:
 \begin{align}
 H_{e\gamma}^{(1)}
 &= -\sum_{\vec{q}} \vec{j}_e(\vec{-q}) \cdot \vec{A}(\vec{q}) = \\
-&= \sum_{\vec{k},\vec{q},\lambda} \frac{e}{\sqrt{2\mathcal{V}\varepsilon_0\omega_{\vec{q}, \lambda}}}\, \psi_{\vec{k}+\vec{q}}^\dagger \underbrace{ \begin{pmatrix} \bm{\epsilon}_{\vec{q}\lambda}\cdot \vec{v}_a\!\left(\vec{k}+\frac{\vec{q}}{2}\right) & i\bigl(\bm{\epsilon}_{\vec{q}\lambda}\cdot\vec{d}\bigr) \bigl(\varepsilon_{a,\vec{k}+\vec{q}}-\varepsilon_{b,\vec{k}}\bigr) \\ i\bigl(\bm{\epsilon}_{\vec{q}\lambda}\cdot\vec{d}\bigr) \bigl(\varepsilon_{b,\vec{k}+\vec{q}}-\varepsilon_{a,\vec{k}}\bigr) & \bm{\epsilon}_{\vec{q}\lambda}\cdot \vec{v}_b\!\left(\vec{k}+\frac{\vec{q}}{2}\right) \end{pmatrix} }_{\displaystyle M^\lambda(\vec{k},\vec{q})} \psi_{\vec{k}} \left(a_{\vec{q}\lambda}+a_{-\vec{q}\lambda}^\dagger\right).
+&= \sum_{\vec{k},\vec{q},\lambda} \frac{e}{\sqrt{2\mathcal{V}\varepsilon_0\omega_{\vec{q}, \lambda}}}\, \psi_{\vec{k}+\vec{q}}^\dagger \begin{pmatrix} \bm{\epsilon}_{\vec{q}\lambda}\cdot \vec{v}_a\!\left(\vec{k}+\frac{\vec{q}}{2}\right) & i\bigl(\bm{\epsilon}_{\vec{q}\lambda}\cdot\vec{d}\bigr) \bigl(\varepsilon_{a,\vec{k}+\vec{q}}-\varepsilon_{b,\vec{k}}\bigr) \\ i\bigl(\bm{\epsilon}_{\vec{q}\lambda}\cdot\vec{d}\bigr) \bigl(\varepsilon_{b,\vec{k}+\vec{q}}-\varepsilon_{a,\vec{k}}\bigr) & \bm{\epsilon}_{\vec{q}\lambda}\cdot \vec{v}_b\!\left(\vec{k}+\frac{\vec{q}}{2}\right) \end{pmatrix} \psi_{\vec{k}} \left(a_{\vec{q}\lambda}+a_{-\vec{q}\lambda}^\dagger\right).
 \end{align}
 \end{tcolorbox}
 
-Za setup od Curtisa: material 2D v $xy$ ravnini, stoječe EM valovanje v $z$, vzamemo osnovni mode ($n=1$), ki prispeva največ, v tem primeru sta dve možni polarizaciji:
+Za setup od Curtisa: material 2D v $xy$ ravnini, stoječe EM valovanje v $z$, vzamemo osnovni mode ($m=1$), ki prispeva največ, v tem primeru sta dve možni polarizaciji:
 \begin{equation}
-\vec{\bm{\epsilon}}_{\text{TE}}(z) = \left( \hat{\mathbf{z}} \times \hat{\mathbf{q}} \right) \sin\left(\frac{\pi}{L} z\right)
+\vec{\bm{\epsilon}}_{\text{TE}}^{(m)}(z) = \left( \hat{\mathbf{z}} \times \hat{\mathbf{q}} \right) \sin\left(\frac{m\pi}{L} z\right)
 \end{equation}
 \begin{equation}
-\vec{\bm{\epsilon}}_{\text{TM}}(z) = \frac{\omega_0}{\omega_{\vec{q}}} \hat{\mathbf{q}} \sin\left(\frac{\pi}{L} z\right) + i \frac{c\, q}{\omega_{\vec{q}}} \hat{\mathbf{z}} \cos\left(\frac{\pi}{L} z\right)
+\vec{\bm{\epsilon}}_{\text{TM}}^{(m)}(z) = \frac{\omega_0}{\omega_{\vec{q}, m}} \hat{\mathbf{q}} \sin\left(\frac{m\pi}{L} z\right) + i \frac{c\, q}{\omega_{\vec{q}, m}} \hat{\mathbf{z}} \cos\left(\frac{m\pi}{L} z\right)
 \end{equation}
-kjer je $\vec{q} = q(\cos\varphi, \sin\varphi)$ valovni vektor v ravnini, $\omega_0 = \pi c / L$ in $\omega_{\vec{q}} = \sqrt{\omega_0^2 + c^2 q^2}$.
+kjer je $\vec{q} = q(\cos\varphi, \sin\varphi)$ valovni vektor v ravnini, $\omega_0 = \pi c / L$ in $\omega_{\vec{q},m} = \sqrt{m^2\omega_0^2 + c^2 q^2}$ (uporabljam notacijo $\omega_\vec{q} := \omega_{\vec{q},1}$).
 Na sredini resonatorja, pri $z = L/2$, je $\sin(\pi z / L) = 1$ in $\cos(\pi z / L) = 0$, zato:
 \begin{equation}
 \vec{\bm{\epsilon}}_{\text{TE}}\left(\tfrac{L}{2}\right) = \hat{\mathbf{z}} \times \hat{\mathbf{q}} = \begin{pmatrix} -\sin\varphi \\ \cos\varphi \\ 0 \end{pmatrix}
@@ -693,27 +693,30 @@ Na sredini resonatorja, pri $z = L/2$, je $\sin(\pi z / L) = 1$ in $\cos(\pi z /
 \begin{equation}
 \vec{\bm{\epsilon}}_{\text{TM}}\left(\tfrac{L}{2}\right) = \frac{\omega_0}{\omega_{\vec{q}}} \hat{\mathbf{q}} = \frac{\omega_0}{\omega_{\vec{q}}} \begin{pmatrix} \cos\varphi \\ \sin\varphi \\ 0 \end{pmatrix}
 \end{equation}
-Iz tega imamo pri $z = L/2$ možne sklopitve glede na model ($\vec{d} = d(\cos\theta, \sin\theta)$ v ravnini oz. $\vec{d} = d\,\hat{\mathbf{z}}$ izven ravnine):
+Iz tega imamo pri $z = L/2$ možne sklopitve glede na model ($\vec{d} = d(\cos\theta, \sin\theta, 0)$ v ravnini oz. $\vec{d} = d\,\hat{\mathbf{z}}$ izven ravnine):
 
 \begin{table}[h!]
 \centering
 \begin{tabular}{|l|l|l|l|}
   \hline
-\textbf{Nacin} & $\vec{\bm{\epsilon}} \cdot \vec{v}_\gamma\left(\vec{k} + \frac{\vec{q}}{2}\right)$ & $\vec{\bm{\epsilon}} \cdot \vec{d}$, $\vec{d}$ in plane & $\vec{\bm{\epsilon}} \cdot \vec{d}$, $\vec{d} \parallel \hat{\mathbf{z}}$ \\
+Način(m) & $\vec{\bm{\epsilon}} \cdot \vec{v}_\gamma\left(\vec{k} + \frac{\vec{q}}{2}\right)$ & $\vec{\bm{\epsilon}} \cdot \vec{d}$, $\vec{d}$ in plane & $\vec{\bm{\epsilon}} \cdot \vec{d}$, $\vec{d} \parallel \hat{\mathbf{z}}$ \\
   \hline
 
-\textbf{TE} & $2 t_\gamma \left( -\sin\varphi \sin\left(k_x + \frac{q_x}{2}\right) + \cos\varphi \sin\left(k_y + \frac{q_y}{2}\right) \right)$ & $d \sin(\theta - \varphi)$ & $0$ \\
+TE1 & $2 t_\gamma \left( -\sin\varphi \sin\left(k_x + \frac{q_x}{2}\right) + \cos\varphi \sin\left(k_y + \frac{q_y}{2}\right) \right)$ & $d \sin(\theta - \varphi)$ & $0$ \\
   \hline
 
-\textbf{TM} & $\frac{\omega_0}{\omega_{\vec{q}}} 2 t_\gamma \left( \cos\varphi \sin\left(k_x + \frac{q_x}{2}\right) + \sin\varphi \sin\left(k_y + \frac{q_y}{2}\right) \right)$ & $\frac{\omega_0}{\omega_{\vec{q}}} d \cos(\theta - \varphi)$ & $i\, d\, \frac{c\, q}{\omega_{\vec{q}}} \cos\left(\frac{\pi}{L} z\right)$ ($= 0$ pri $z = \frac{L}{2}$) \\
+TM1 & $\frac{\omega_0}{\omega_{\vec{q}}} 2 t_\gamma \left( \cos\varphi \sin\left(k_x + \frac{q_x}{2}\right) + \sin\varphi \sin\left(k_y + \frac{q_y}{2}\right) \right)$ & $\frac{\omega_0}{\omega_{\vec{q}}} d \cos(\theta - \varphi)$ & $i\, d\, \frac{c\, q}{\omega_{\vec{q}}} \cos\left(\frac{\pi}{L} z\right)$ ($= 0$ pri $z = \frac{L}{2}$) \\
   \hline
 
+TM2 & 0 & 0 & $-i\, d\, \frac{c\, q}{\omega_{\vec{q},2}}$  \\
+  \hline
 \end{tabular}
-\end{table}
-dipolni moment je neničeln za liho-sode kombinacije orbital in plane, tega gledamo samo glede na o.c.:
+\end{table} \noindent
+dipolni moment je neničeln za liho-sode kombinacije orbital, tega gledamo samo glede na o.c.:
 \begin{equation}
-\vec{d} = \langle \phi_a | \vec{x} | \phi_b \rangle = \int \phi_a^*(\vec{x}) \, \vec{x} \, \phi_b(\vec{x}) \, \dd{\vec{x}}
+\vec{d} = \langle \phi_a | \vec{x} | \phi_b \rangle = \int \phi_a^*(\vec{x}) \, \vec{x} \, \phi_b(\vec{x}) \, \dd{\vec{x}}\,.
 \end{equation}
+V nadaljevanju sem delal z dipolom in plane ($s-p_x$ tip orbital), ampak to zahteva anioztorpen prekrivalni (hopping) integral, zato ploti z $\vec{d}\propto (1, 0, 0)$ niso konsistentni za en model. Dipol znotraj celice v $z$ smeri, se ne sklaplja v $m=1$ načinu na sredini resonatorja. V tem primeru vzamemo dodatno še TM2 ($m=2$) (kjer privzamemo TM0 način ni prisoten), vendar za relevantne prehode $\vec{q}\to 0$, sklopitev s tem načinom izgine.  
 \subsubsection{Model prostih elektronov in sklopitev s fotoni}
 
 Kaj pa če gledamo namesto tight binding, proste elektrone, torej 
@@ -794,8 +797,7 @@ Za n.n. v square latticu eksplicitno:
 \begin{align}
   M^{\lambda\lambda'}(\mathbf k,\mathbf q,\mathbf q') = \frac{e^2} {2\varepsilon_0\mathcal V \sqrt{\omega_{\mathbf q,\lambda}\omega_{\mathbf q',\lambda'}}} \left[ \epsilon_{\mathbf q,\lambda}^{x} \epsilon_{\mathbf q',\lambda'}^{x} \cos\!\left(k_x+\frac{q_x+q_x'}2\right) + \epsilon_{\mathbf q,\lambda}^{y} \epsilon_{\mathbf q',\lambda'}^{y} \cos\!\left(k_y+\frac{q_y+q_y'}2\right) \right] \begin{pmatrix}t_a&0\\0&t_b\end{pmatrix}.
 \end{align}
-
-\textbf{A je to consistent z $\mathcal{O}(e\vec A)?$ Če ja, kako dobimo dipole notri v te elemente, al se sam ne sklaplajo nikoli?}
+Razen dipolnih elementov, bi to moralo biti konsistentno s prvim redom. \textbf{Kako vlkjučimo dipole v te elemente, da bo konsistentno?}
 \subsection{Populacijska dinamika}
 V splošnem sta za obe bozonski sklopitvi Hamiltonjana oblike (v prvem redu): 
 \begin{align}
@@ -853,7 +855,7 @@ kjer mora veljati $\vec{q}' = -\vec{q}$ in $\lambda=\lambda'$ (note, ta lambda n
   &= {n_A n_C \delta_{AB} \delta_{CD}} + n_A (1 - n_C) \delta_{BC} \delta_{AD} \\
   &\hookrightarrow \delta_{AB} \mapsto \delta_{\gamma \gamma'} \delta_{\vec{k}+\vec{q}, \vec{k}} = 0 \quad \text{odpade zaradi razlike delta funkcij}
 \end{align}
-oziroma (prvi člen je nič, ker se nič ne zgodi/ ni sipanje/ga ignoriramo, ker smo fiziki), upoštevamo še $\vec{q}' = -\vec{q}$:
+oziroma (prvi člen se izvrednoti v nič, zaradi razlike delta funckij, sicer pa to predstavlja ničti red sipanja), upoštevamo še $\vec{q}' = -\vec{q}$:
 \begin{align}
   \left\langle d_{\gamma \vec{k}+\vec{q}}^\dagger d_{\gamma' \vec{k}} d_{\omega \vec{k}'+\vec{q}'}^\dagger d_{\omega' \vec{k}'} \right\rangle &= n_{\gamma, \vec{k}+\vec{q}} \left(1 - n_{\omega, \vec{k}'-\vec{q}}\right) \delta_{\gamma' \omega} \delta_{\vec{k}, \vec{k}'-\vec{q}} \delta_{\gamma \omega'}  \\ \left\langle d_{\omega \vec{k}'+\vec{q}'}^\dagger d_{\omega' \vec{k}'} d_{\gamma \vec{k}+\vec{q}}^\dagger d_{\gamma' \vec{k}} \right\rangle &= n_{\omega, \vec{k}'-\vec{q}} \left(1 - n_{\gamma, \vec{k}+\vec{q}}\right) \delta_{\omega' \gamma} \delta_{\vec{k}', \vec{k}+\vec{q}} \delta_{\omega \gamma'}
 \end{align}
@@ -975,7 +977,7 @@ preverimo predznake v tabeli \ref{tabela_feynman}.
   \label{tabela_feynman}
 \end{table}
 
-Dobimo enako kot Curtis, čeprav smo fotone obravnavali v približku: za korelatorje oziroma produkte bozonov smo privzeli da imajo točno definirane resonance in dodali regulator na roke. V resnici so fotoni sklopljeni z okolico, kar jim da končno širino v disperziji. Rate matrike lahko še porenostavimo na razlike Lotentzovih vrhov: 
+Dobimo enako kot Curtis, ampak smo za fotone privzeli, da cavity ni leaky; za korelatorje oziroma produkte bozonov smo privzeli da imajo točno definirane resonance in dodali regulator na roke. V resnici so fotoni sklopljeni z okolico, kar jim da končno širino v disperziji. Rate matrike lahko še poenostavimo na razlike Lorentzovih vrhov: 
 \begin{align}
   \Gamma_{\gamma' \vec{k}' \to \gamma \vec{k}} &= | \widetilde{M}_{\gamma \gamma'}(\vec{k}', \vec{k} -\vec{k}') |^2 N(\Omega) \cdot \Big\{\mathcal{A}_{\vec{k}-\vec{k}'}(\Omega) - \mathcal{A}_{\vec{k}-\vec{k}'}(-\Omega) \Big\} \\ \Gamma_{\gamma \vec{k} \to \gamma' \vec{k}'} &= | \widetilde{M}_{\gamma \gamma'}(\vec{k}', \vec{k} - \vec{k}') |^2 (N(\Omega) + 1) \cdot \Big\{ \mathcal{A}_{\vec{k}'-\vec{k}}(\Omega) - \mathcal{A}_{\vec{k}'-\vec{k}}(-\Omega) \Big\} 
 \end{align} 
@@ -1123,7 +1125,7 @@ kjer
   \vec{k}'_1 &= \left( k_{x1}', \, k_{y1}' \right) = \left( \arccos\left(\frac{s' + u'}{2}\right), \, \arccos\left(\frac{s' - u'}{2}\right) \right) \\
   \vec{k}'_2 &= \left( k_{x2}', \, k_{y2}' \right) = \left( \arccos\left(\frac{s' - u'}{2}\right), \, \arccos\left(\frac{s' + u'}{2}\right) \right)
 \end{align}
-če je $\Gamma$ popolnoma simetrična na vse operacije vsaj vemo, da je $\mu_\gamma(s, u) = \mu_\gamma(s, -u)$, ne določa pa to odvisnosti od $u$. Recimo, da fiksiramo $\omega_\vec{q} = \sqrt{\omega_0^2+c^2q^2}$. Ta je invariantna na $C_{4v}$,  tudi $\Omega= \Omega(s)$ je, zato je $\mathcal{A}_\vec{q}(\Omega)$ invariantna. Enako velja za Bose faktorje. 
+če je $\Gamma$ popolnoma simetrična na vse operacije vsaj vemo, da je $\mu_\gamma(s, u) = \mu_\gamma(s, -u)$, ne določa pa to odvisnosti od $u$. Recimo, da fiksiramo $\omega_\vec{q} = \sqrt{\omega_0^2+c^2q^2}$. Ta je invariantna na $C_{4v}$,  tudi $\Omega= \Omega(s)$ je, zato je $\mathcal{A}_\vec{q}(\Omega)$ invariantna. Enako velja za Bose faktorje. Za dipolne elemente v $z$ smeri, je $\Gamma$ maksimalno simetrična, ampak ima še vseeno odvisnost od koordinate $u$. 
 
 \section{Konkretna implementacija za sklopitev s fotoni}
 konkretna implementacija/racun za verteks za fotone: 
@@ -1495,7 +1497,7 @@ Samokonsistenten sistem enačb je ekvivalenten reševanju fixed point problema $
 \end{align}
 
 okoli rešitve se konvergenca ustavi, saj je: $\vec f(\vec x)\approx J(\vec x-\vec x^*)$ kjer je Jakobijan $J=\partial\mathcal G/\partial\vec x-
-\mathds{1}$. 
+\mathds{1}$. ... (\href{https://users.wpi.edu/~walker/Papers/Walker-Ni,SINUM,V49,1715-1735.pdf}{see section 3.})
 \begin{figure}[h!]
     \centering
     \includegraphics[width=1.\textwidth]{figures/gamma_D_m_sweep.pdf}
@@ -1566,13 +1568,13 @@ Za izbrane vrednosti parametrov je potem hitrost svetlobe $\tilde{c} = c/v_0 \si
 \begin{align}
  \tau_0 = \frac{\hbar}{t_a} \simeq 6.6 \, \text{fs}\,.
 \end{align}
-Osnovno frekvenco izberemo, da je na vleikostni skali reže, torej nekaj 100 kelvinov, oziroma $\tilde{\omega}_0 \sim 0.1 \implies \omega_0 \simeq 15\,\text{THz}$. Dolžina resonatorja je v tem primeru $\tilde{L} = L / a_0 = \pi \tilde{c} / \tilde{\omega}_0 \simeq 1.2 \cdot 10^5 \sim \qty{62}{\micro\metre}$. Za fotonsko sklopitveno konstanto velja: 
+Osnovno frekvenco izberemo, da je na vleikostni skali reže, torej nekaj 100 kelvinov, oziroma $\tilde{\omega}_0 \sim 0.1 \implies \omega_0 \simeq 1.5\cdot 10^{13}\,\text{s}^{-1}$. Dolžina resonatorja je v tem primeru $\tilde{L} = L / a_0 = \pi \tilde{c} / \tilde{\omega}_0 \simeq 1.2 \cdot 10^5 \sim \qty{62}{\micro\metre}$. Za fotonsko sklopitveno konstanto velja: 
 \begin{align}
   \tilde{g} = \frac{g}{t_a^2} = \frac{e^2\hbar}{2\mathcal{V}\varepsilon_0\omega_\vec{q}} \left(\frac{t_a a_0}{\hbar}\right)^2\frac{1}{t_a^2} = 2\pi \alpha \frac{\tilde{c}}{\tilde{\omega}_\vec{q}} \frac{a_0^3}{\mathcal{V}} = 2 \alpha \frac{\tilde{\omega}_0}{\tilde{\omega}_\vec{q}}\frac{1}{N_k^2}\,.
 \end{align}
 Tu sem za volumen vzel $\mathcal{V} = N_k^2a_0^3 \tilde{L}$. Uteži $1/N_k^2$ so že vštete v vsote in povprečja po momentih, zato je v končnem izrazu ne upoštevamo. V kodi je vrednost za amplitudo 
 \begin{align}
-  \tilde{A}_{\text{fot.}} = \tilde{g}\tilde{\omega}_\vec{q} = 2 \alpha \tilde{\omega}_0 \sim \frac{2}{137} \cdot 0.1 \simeq 0.00146\,.
+  \tilde{A}_{\text{fot.}} = \tilde{g}\tilde{\omega}_\vec{q} =4 \alpha \tilde{\omega}_0 \sim \frac{4}{137} \cdot 0.1 \simeq 0.00292\,.
 \end{align} 
 Drugi red je sorazmeren z $\tilde{A}^2 \ll \tilde{A}$. Za fonone velja 
 \begin{align}
@@ -1588,13 +1590,26 @@ razmerje med amplitudama je
 \end{align}
 torej za $q\to 0$ fononi dominirajo v verteksu: 
 \begin{align}
-   \frac{\tilde{g}_\text{fon.}}{\tilde{g}_\text{fot.}} = \frac{1}{q} \frac{1}{4\alpha \tilde{M} \tilde{c}_s}
+   \frac{\tilde{g}_\text{fon.}}{\tilde{g}_\text{fot.}} = \frac{1}{q} \frac{1}{8\alpha \tilde{M} \tilde{c}_s}
 \end{align}
 za večje momente pa: 
 \begin{align}
-   \frac{\tilde{g}_\text{fon.}}{\tilde{g}_\text{fot.}} = \frac{\tilde{c}}{\tilde{c}_s} \frac{1}{4\alpha \tilde{M} \tilde{\omega}_0}
+   \frac{\tilde{g}_\text{fon.}}{\tilde{g}_\text{fot.}} = \frac{\tilde{c}}{\tilde{c}_s} \frac{1}{8\alpha \tilde{M} \tilde{\omega}_0}
 \end{align}
 realistični dipol znotraj celice znaša okoli $d = 0.1  - 1\, \textup{~\AA}$, torej $\tilde{d} \simeq 0.02-0.2$. 
+
+\subsection{Limita $q\to 0$ za fotone}
+\begin{align}
+  &\frac{1}{(2\pi)^2} \int \dd{\vec{q}} \Gamma_{\beta \vec{k}'\to \alpha\vec{k}} = \frac{2\alpha\omega_0}{\pi c^2} N(\Omega) \left(\sin^2(k_x) + \sin^2(k_y)\right) \left(4 t \frac{\Delta}{\Omega}\right)^2 \cdot \nonumber \\
+  &\left[ \left( 1 + \omega_0^2 \frac{\Omega^2 - \gamma^2}{(\Omega^2 + \gamma^2)^2}\right) \left( \operatorname{arctan}\left(\frac{\Omega - \omega_0}{\gamma}\right) + \operatorname{arctan}\left(\frac{\Omega + \omega_0}{\gamma}\right) \right) + \frac{\gamma \Omega \omega_0^2}{(\Omega^2 + \gamma^2)^2} \ln\left( \frac{((\Omega-\omega_0)^2 + \gamma^2)((\Omega+\omega_0)^2 + \gamma^2)}{\omega_0^4} \right)  \right] =\,, \nonumber\\
+  &=: N(\Omega)J(\Omega)\,,\qquad \Omega = 2\sqrt{\xi_\vec{k}^2+\Delta^2}\,.
+\end{align}
+Enačba za dinamiko je : 
+\begin{align}
+  \partial_t n_{\alpha,\vec{k}} \simeq J(\Omega)\left[N(\Omega)n_{\beta,\vec{k}}(1-n_{\alpha,\vec{k}}) - (1+N(\Omega)) n_{\alpha,\vec{k}}(1-n_{\beta,\vec{k}})\right]
+\end{align}
+
+\FloatBarrier
 \nocite{*}
 \printbibliography
 \end{document} 

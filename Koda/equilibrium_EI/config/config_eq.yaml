@@ -5,12 +5,12 @@ model:
   band:
     name: tb_2d
     pars:
-      gap: 0.4
-      ta: 0.1
-      tb: -0.1
+      gap: 4.0
+      ta: 1.
+      tb: -1.
 
   mean_field:
-    v: 0.275 # 8.347260206186296
+    v: 4.0 # 8.347260206186296
     n: 1.0
     uh: null
 

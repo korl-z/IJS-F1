@@ -8,6 +8,8 @@ import numpy as np
 import jax
 import jax.numpy as jnp
 
+import EI.ei_cavity as cv
+
 F = jnp.float64
 
 
@@ -103,6 +105,7 @@ class Pack(NamedTuple):
     em: Any
     lt: Any = None  # cell averaged line tables (bath, 3, nx, ny, nw), or None
     dw: Any = None  # energy step of lt
+    cav: Any = None  # cavity bath rows (cv.stack), or None
 
 
 def omega_q(q, b):
@@ -155,6 +158,8 @@ def _ltab(nx, ny, per, cs, w0, gam, qd, nsub, dw, nw, phn=False):
 
 def pack(bs):
     bs = tuple(bs)
+    cb = tuple(b for b in bs if isinstance(b, cv.CavityBath))
+    bs = tuple(b for b in bs if not isinstance(b, cv.CavityBath))
 
     if not bs:
         raise ValueError("at least one phonon bath is required")
@@ -204,7 +209,7 @@ def pack(bs):
         dw = F(dw)
 
     return Pack(jnp.asarray(b.k, dtype=F), jnp.asarray(pa, dtype=F), F(per),
-                F(b.eh), F(b.em), lt, dw)
+                F(b.eh), F(b.em), lt, dw, cv.stack(cb))
 
 def _wrap_q(q, per):
     return jnp.mod(q + 0.5 * per, per) - 0.5 * per
@@ -432,7 +437,12 @@ def rates(st, bp, j=None):
     i = jnp.arange(x.shape[0])
     j = i if j is None else j
     r, _ = _pair(x, x[j], bp)
-    return jnp.where(i[:, None] != j[None, :], r, 0.0)
+    r = jnp.where(i[:, None] != j[None, :], r, 0.0)
+    if bp.cav is not None:
+        nk = st.e.shape[1]
+        r = r + cv.loc_cols(st.e, st.u, st.v, bp.k, jnp.full(nk, 1.0 / nk),
+                            bp.cav, j)
+    return r
 
 
 @jax.jit
@@ -450,6 +460,8 @@ def source_rates(st, bs, mu, p):
 
 def cur_block(st, n, w, bp, block):
     """The existing Pauli current, evaluated in source blocks."""
+    if bp.cav is not None:
+        raise ValueError("cavity baths require mode='dense'")
     x = _data(st, bp)
     y, ww = n.reshape(-1), jnp.tile(w, 2)
     nm = y.size

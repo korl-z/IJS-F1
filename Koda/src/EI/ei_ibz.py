@@ -8,6 +8,7 @@ import jax.numpy as jnp
 
 import EI.ei_unified as eu
 import EI.ei_phonon as pb
+import EI.ei_cavity as cv
 
 
 class Ibz(NamedTuple):
@@ -111,7 +112,11 @@ def rates_ibz(st, bp):
 
     # sum the source columns over each orbit, then average
     r = jax.ops.segment_sum(r.T, jf, num_segments=2 * ni).T
-    return r / jnp.tile(bp.mult, 2)[None, :]
+    r = r / jnp.tile(bp.mult, 2)[None, :]
+    if bp.pk.cav is not None:
+        r = r + cv.loc_cols(st.e, st.u, st.v, bp.ki, bp.mult / nf, bp.pk.cav,
+                            jnp.arange(2 * ni))
+    return r
 
 
 # ---------------- s window on top of the IBZ ----------------
@@ -193,7 +198,13 @@ def rates_win(st, bp):
     no = jnp.repeat(jnp.asarray([0.0, 1.0]), bp.wo.size)
     g = gr[:, ro] @ (wo * no)
     l = lr[:, ro] @ (wo * (1.0 - no))
-    return WinRates(gr[:, rw], g, l, bp.wi)
+    gw = gr[:, rw]
+    if bp.pk.cav is not None:
+        wi = bp.wi
+        gw = gw + cv.loc_cols(st.e[:, wi], st.u[wi], st.v[wi], bp.ki[wi],
+                              bp.mult[wi] / nf, bp.pk.cav,
+                              jnp.arange(2 * wi.size))
+    return WinRates(gw, g, l, bp.wi)
 
 
 def ab_win(n, w, r):

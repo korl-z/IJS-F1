@@ -132,8 +132,9 @@ def _baths(bs):
     bs = tuple(bs)
     if not bs:
         raise ValueError("at least one bath is required")
-    if any(isinstance(b, pb.PhononBath) for b in bs):
-        if not all(isinstance(b, pb.PhononBath) for b in bs):
+    gb = (pb.PhononBath, pb.cv.CavityBath)
+    if any(isinstance(b, gb) for b in bs):
+        if not all(isinstance(b, gb) for b in bs):
             raise TypeError("use phonon baths together, without placeholder baths")
         return pb.pack(bs), ()
     oc = {None: 0, "a": 1, "b": 2}
@@ -609,10 +610,13 @@ def _fixed_step(ca, _, ea, eb, w, pv, pn, ph, r, xn, xd, xm):
     return (n, d, m), None
 
 
-@partial(jax.jit, static_argnames=("ns",))
-def _fixed_chunk(ea, eb, w, pv, pn, ph, r, n, d, m, xn, xd, xm, ns: int):
+@partial(jax.jit, static_argnames=("ns", "pc"))
+def _fixed_chunk(ea, eb, w, pv, pn, ph, r, n, d, m, xn, xd, xm, ns: int, pc: bool = False):
     fn = partial(_fixed_step, ea=ea, eb=eb, w=w, pv=pv, pn=pn, ph=ph, r=r, xn=xn, xd=xd, xm=xm)
     ca, _ = jax.lax.scan(fn, (n, d, m), xs=None, length=ns)
+    if pc:
+        n, d, m = ca
+        ca = (_pair_fix(n, w, r, pn), d, m)
     return ca
 
 
@@ -661,6 +665,40 @@ def check_db(r: Any, st: JState, t: float, eps: float = 1.0e-20) -> float:
         return float("nan")
     z = np.log(rr[ma]) - np.log(rr.T[ma]) + de[ma] / t
     return float(np.max(np.abs(z)))
+
+
+def _pair_fix(n, w, r, pn, nit=6, cap=2.0):
+    """Shift mu_alpha by eps + dl and mu_beta by eps - dl (n = 1 / (1 + e^mu)).
+
+    dl and eps are fixed by Newton so that the total alpha current
+    sum_k w dn_alpha and the filling error vanish, with r frozen. This solves
+    the slow pair number mode that Picard barely moves. Frozen window states
+    are left unchanged. cap limits each Newton step.
+    """
+    if isinstance(r, ibz.WinRates):
+        on = jnp.zeros(w.size, dtype=bool).at[r.wi].set(True)
+    else:
+        on = jnp.ones(w.size, dtype=bool)
+    nc = jnp.clip(n, F32(1.0e-300), F32(1.0) - F32(1.0e-16))
+    mu = jnp.log1p(-nc) - jnp.log(nc)
+    sg = jnp.asarray([1.0, -1.0], dtype=n.dtype)[:, None]
+
+    def occ(x):
+        y = jax.nn.sigmoid(-(mu + x[1] + sg * x[0]))
+        return jnp.where(on[None, :], y, n)
+
+    def res(x):
+        y = occ(x)
+        return jnp.stack((jnp.sum(w * _cur_mat(y, w, r)[0]),
+                          jnp.sum(w * jnp.sum(y, axis=0)) - pn))
+
+    def body(_, x):
+        dx = jnp.linalg.solve(jax.jacfwd(res)(x), -res(x))
+        dx = jnp.where(jnp.all(jnp.isfinite(dx)), dx, 0.0)
+        return x + jnp.clip(dx, -cap, cap)
+
+    x = jax.lax.fori_loop(0, nit, body, jnp.zeros(2, dtype=n.dtype))
+    return occ(x)
 
 
 def _fix_fill(n, w, pn):
@@ -814,7 +852,8 @@ def solve_fixed(
     nmax: int = 5000,
     chk: int = 10,
     prog: bool = True,
-    jtol: float | None = 1.0e-3,  
+    jtol: float | None = 1.0e-3,
+    pc: bool = True,
 ) -> eu.OpenSol:
     """Dense Picard iteration with a rate refresh every chk iterations.
 
@@ -840,7 +879,7 @@ def solve_fixed(
     bar = tqdm(range(0, int(nmax), int(chk)), desc="Fixed EI JAX", disable=not prog)
     for i0 in bar:
         ns = min(int(chk), int(nmax) - i0)
-        n, d, m = _fixed_chunk(ea, eb, w, pv, pn, ph, r, n, d, m, xn, xd, xm, ns=ns)
+        n, d, m = _fixed_chunk(ea, eb, w, pv, pn, ph, r, n, d, m, xn, xd, xm, ns=ns, pc=pc)
         st = _mf(ea, eb, pn, ph, d, m)
         r = _rates_jit(st, bp, rf)
         dn, erj, ec, ed, em, n0 = _fixed_diag(ea, eb, w, pv, pn, ph, r, n, d, m)

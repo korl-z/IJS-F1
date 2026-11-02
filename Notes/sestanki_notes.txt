@@ -32,3 +32,21 @@ vprasanja:
 -dipoli prakticno ne prispevajo, / ne lomijo simetrije za q->0.
 -za p_x orbitale je hopping integral anizotropen...
 analiticna limita za q->0 fotoni in analiticna limita za fonone okoli c~0.??
+
+
+Sestanek 28.10.
+-surface phonon polariton, STO
+-tb, approx with parabolas: energy scales: Delta (gap), scale for particles and holes scattering (alpha/beta, epsilon_F), + length scale k_alpha (kjer disperzija seka), another scale for k_B T_photons with another k_L length scale (bath T = cutoff, omega_c ~ k_B T  >> Delta, da zagotovis interband, also Delta >> epsilon_F)
+-eq 8: check the rotation term for my quasiparticles
+-d_t n_k = 0, ce q>q_cuftoff, finer grid
+-introduce a cutoff, prevedi na int po energiji, s cutoffom->delta
+
+vprasanja/opazke:
+-za Delta_0<<t_a, je dosegljivo v BCS rezimu. Problem postane v BEC, kjer je delta tezko zelo majhna / ade na 0 abruptly.
+-fix crit temp solver okoli BEC rezima, za majhne T_c.!!! (eu_unified.py)
+-v BEC rezimu, je za T_C~nekaj 100K potreben delta_0~1e-26, ni prakticno izvedljivo, i.e. vsi delta_0~100K so zelo stabilni, z visoko T_c, ker je cutoff ~nekaj T_c, zna bit to problem. -> kvazidelci ne formajo tight ringa v reemergent fazi, samo v BEC fazi so skupaj v sredini BZ, pa še to ne zelo
+-kaj če bi: 1. vzeli samo irreducible triangle, dipole dali v z ravnino in meli s, u koodrinati v obrezanem primeru?
+-najprej napiši enačbe in setup za dipole v z ravnini. -  a vzorec v resonatorju ne pokvari disperzije?
+-explain novi Picard, kako sploh dolocih kdaj konvergira.
+-dodaj fononi rates analiticno
+-preglej tocno, kak je scaling za fonon/foton coupling
