@@ -1,7 +1,7 @@
 model:
   nk:
     scan: 40
-    ibz: 150
+    ibz: 40
   band:
     name: tb_2d
     pars: &band
@@ -50,24 +50,12 @@ scan:
 
 
 open_system:
-  # bath:
-    # rate: PhononBath
-    # pars:
-      # <<: [*band, *mf]   # gap, ta, tb and v, n, uh (zadnji trije za settanje em)
-
-      # amp: 1.0
-      # dip: 2.0
-
-      # cs: 10.0
-      # w0: 2.2
-      # gam: 0.15
-
-      # nsub: 32  # 0: line at the grid points, > 0: avg., idealno nsub>= 4pi cs /(gam * nk) 
   bath:
     rate: PhononBath
     pars:  # shared by all baths, pack needs equal k, a0, eh, em, nsub
       <<: [*band, *mf]   # gap, ta, tb and v, n, uh (zadnji trije za settanje em)
       nsub: 8  # 0: line at the grid points, > 0: avg., idealno nsub >= 4pi cs / (gam * nk)
+      # qd: 3.545
 
     baths:  
       - kind: photon
@@ -77,15 +65,8 @@ open_system:
         w0: 0.1
         gam: 0.1
 
-      # - kind: photon
-      #   amp: 1.0
-      #   dip: 0.2
-      #   cs: 3.0
-      #   w0: 0.0
-      #   gam: 0.1
-
       - kind: phonon
-        amp: 0.01
+        amp: 0.05
         dip: 0.0        # fononi nimajo offdiag clenov
         ta_prime: -1.0     # t'_a
         tb_prime: 1.0      # t'_b

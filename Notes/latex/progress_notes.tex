@@ -1608,6 +1608,16 @@ Enačba za dinamiko je :
 \begin{align}
   \partial_t n_{\alpha,\vec{k}} \simeq J(\Omega)\left[N(\Omega)n_{\beta,\vec{k}}(1-n_{\alpha,\vec{k}}) - (1+N(\Omega)) n_{\alpha,\vec{k}}(1-n_{\beta,\vec{k}})\right]
 \end{align}
+\subsection{Limita za fonone}
+\begin{align}
+  &\sum_{\vec{q}} \Gamma_{\gamma \vec{k}+\vec{q} \to \gamma \vec{k}} \simeq \nonumber \\
+  &\frac{(2t')^2}{2M c_s^2} \int_0^{\omega_D} d\Omega \, \frac{1}{2\pi} \int_0^{2\pi} d\varphi \, \left( u_{\vec{k}+\vec{q}} u_{\vec{k}} - {v}_{\vec{k}+\vec{q}} {v}_{\vec{k}} \right)^2 \left[ \left(\sin(k_x+q_x) - \sin(k_x)\right)^2 + \left(\sin(k_y+q_y) - \sin(k_y)\right)^2 \right] \cdot \nonumber \\
+  &\cdot \Big[(1+N(\Omega))+N(\Omega))\Big]\delta(E_{\vec{k}+\vec{q}}-E_\vec{k}-\Omega) \,; \nonumber \\
+  &\quad \vec{q}(\Omega, \varphi) = \frac{\Omega}{c_s} (\cos\varphi, \sin\varphi)
+\end{align}
+\begin{align}
+  \left( u_{\vec{k}+\vec{q}} u_{\vec{k}} - v_{\vec{k}+\vec{q}} v_{\vec{k}} \right)^2 = \frac{1}{2} \left( 1 + \frac{\xi_{\vec{k}+\vec{q}} \xi_{\vec{k}} - \Delta^2}{\sqrt{\Delta^2 + \xi_{\vec{k}+\vec{q}}^2}\sqrt{\Delta^2 + \xi_{\vec{k}}^2}} \right)
+\end{align}
 
 \FloatBarrier
 \nocite{*}
