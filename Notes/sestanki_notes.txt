@@ -50,3 +50,4 @@ vprasanja/opazke:
 -explain novi Picard, kako sploh dolocih kdaj konvergira.
 -dodaj fononi rates analiticno
 -preglej tocno, kak je scaling za fonon/foton coupling
+-plot Gamma ph, phot vs xi v okolici k=0 in v okolici E_f za BCS case.  
