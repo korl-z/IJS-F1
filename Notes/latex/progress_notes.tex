@@ -341,6 +341,13 @@ in enačbo reže:
 kjer dobimo rešitev za par $m, \Delta$ glede na izbrane parametre. 
 \subsection{Numerika/psevdokoda}
 
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.49\textwidth]{figures/Hartree_gap_eq_vs_G-V.pdf}
+    \includegraphics[width=0.49\textwidth]{figures/OP_gap_eq_vs_G-V.pdf}
+    \centering
+    \caption{Equlibrium Hartree gap and O.P.}
+\end{figure}
 \subsection{Odprti sistemi in modeliranje kopeli}
 Born-Markov master enačbe in Redfield: ločimo kopel in sistem, 
 \begin{align}
@@ -1601,7 +1608,7 @@ realistični dipol znotraj celice znaša okoli $d = 0.1  - 1\, \textup{~\AA}$, t
 \subsection{Limita $q\to 0$ za fotone}
 \begin{align}
   &\frac{1}{(2\pi)^2} \int \dd{\vec{q}} \Gamma_{\beta \vec{k}'\to \alpha\vec{k}} = \frac{2\alpha\omega_0}{\pi c^2} N(\Omega) \left(\sin^2(k_x) + \sin^2(k_y)\right) \left(4 t \frac{\Delta}{\Omega}\right)^2 \cdot \nonumber \\
-  &\left[ \left( 1 + \omega_0^2 \frac{\Omega^2 - \gamma^2}{(\Omega^2 + \gamma^2)^2}\right) \left( \operatorname{arctan}\left(\frac{\Omega - \omega_0}{\gamma}\right) + \operatorname{arctan}\left(\frac{\Omega + \omega_0}{\gamma}\right) \right) + \frac{\gamma \Omega \omega_0^2}{(\Omega^2 + \gamma^2)^2} \ln\left( \frac{((\Omega-\omega_0)^2 + \gamma^2)((\Omega+\omega_0)^2 + \gamma^2)}{\omega_0^4} \right)  \right] =\,, \nonumber\\
+  &\cdot \left[ \left( 1 + \omega_0^2 \frac{\Omega^2 - \gamma^2}{(\Omega^2 + \gamma^2)^2}\right) \left( \operatorname{arctan}\left(\frac{\Omega - \omega_0}{\gamma}\right) + \operatorname{arctan}\left(\frac{\Omega + \omega_0}{\gamma}\right) \right) + \frac{\gamma \Omega \omega_0^2}{(\Omega^2 + \gamma^2)^2} \ln\left( \frac{((\Omega-\omega_0)^2 + \gamma^2)((\Omega+\omega_0)^2 + \gamma^2)}{\omega_0^4} \right)  \right] = \nonumber\\
   &=: N(\Omega)J(\Omega)\,,\qquad \Omega = 2\sqrt{\xi_\vec{k}^2+\Delta^2}\,.
 \end{align}
 Enačba za dinamiko je : 
@@ -1609,6 +1616,7 @@ Enačba za dinamiko je :
   \partial_t n_{\alpha,\vec{k}} \simeq J(\Omega)\left[N(\Omega)n_{\beta,\vec{k}}(1-n_{\alpha,\vec{k}}) - (1+N(\Omega)) n_{\alpha,\vec{k}}(1-n_{\beta,\vec{k}})\right]
 \end{align}
 \subsection{Limita za fonone}
+Nekaj grdega, se (vrjetno) ne da lepo integrirati. 
 \begin{align}
   &\sum_{\vec{q}} \Gamma_{\gamma \vec{k}+\vec{q} \to \gamma \vec{k}} \simeq \nonumber \\
   &\frac{(2t')^2}{2M c_s^2} \int_0^{\omega_D} d\Omega \, \frac{1}{2\pi} \int_0^{2\pi} d\varphi \, \left( u_{\vec{k}+\vec{q}} u_{\vec{k}} - {v}_{\vec{k}+\vec{q}} {v}_{\vec{k}} \right)^2 \left[ \left(\sin(k_x+q_x) - \sin(k_x)\right)^2 + \left(\sin(k_y+q_y) - \sin(k_y)\right)^2 \right] \cdot \nonumber \\
@@ -1618,8 +1626,41 @@ Enačba za dinamiko je :
 \begin{align}
   \left( u_{\vec{k}+\vec{q}} u_{\vec{k}} - v_{\vec{k}+\vec{q}} v_{\vec{k}} \right)^2 = \frac{1}{2} \left( 1 + \frac{\xi_{\vec{k}+\vec{q}} \xi_{\vec{k}} - \Delta^2}{\sqrt{\Delta^2 + \xi_{\vec{k}+\vec{q}}^2}\sqrt{\Delta^2 + \xi_{\vec{k}}^2}} \right)
 \end{align}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.49\textwidth]{figures/timing_Nk_BZ_IBZ_wIBZ.pdf}
+    \includegraphics[width=0.49\textwidth]{figures/mem_Nk_BZ_IBZ_wIBZ.pdf}
+    \centering
+    \caption{Memory and timing for the three different cutoffs/ zone reductions with stable dispersions on a grid.}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.49\textwidth]{figures/rates_xi_BCS.pdf}
+    \includegraphics[width=0.49\textwidth]{figures/rates_xi_BEC.pdf}
+    \centering
+    \caption{BCS and BEC integrated rates ($\sum_{\vec{k}'} \Gamma_{\vec{k}'\to\vec{k}}$) as a function of $\xi$ with realistic scalings: $\tilde{A}_{\text{fot.}} =4 \alpha \tilde{\omega}_0 \simeq 0.00292\,$ and $\tilde{A}_{\text{fon.}} = 1/2\tilde{M} \simeq 4.2 \cdot 10^{-6}$. Note, the spread on these is small, (larger for larger values of $s$, BCS case), so we can approximate, that $\Gamma = \Gamma(s, s')$. $\Gamma_\text{ph}$ in the main interband component, $\Gamma_\gamma$ is the photon interband component.}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.49\textwidth]{figures/gap_analytic_cav_real_scalings2.pdf}
+    \includegraphics[width=0.49\textwidth]{figures/OP_T2=0p3_rel_amplitudes.pdf}
+    \includegraphics[width=0.49\textwidth]{figures/OP_T1=0p3_rel_amplitudes.pdf}
+    \centering
+    \caption{OP phase plot with realistic scalings where $T_2$ is the phonon temp. and $T_1$ the photon temprerature. Second plot is fixed at $T_2 =0.3 T_c$ and swept for different photon temps. with different relative scalings. The case $A=1$ represents actual scaling factors, in other cases the photon amplitude is increased by a factor of $A$ (this was done at $N_k=150$). FOR SOME REASON, $T_2\ll T_c$ NESS cannot converge. Last plot is phonon temp. sweep with $T_1 = 0.3 T_c$.}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.49\textwidth]{figures/OP_T2=0p3_rel_amplitudesBEC.pdf}
+    \includegraphics[width=0.49\textwidth]{figures/OP_T1=0p3_rel_amplitudesBEC.pdf}
+    \centering
+    \caption{Same plot in the BEC regime.}
+\end{figure}
 
 \FloatBarrier
+
+
+
 \nocite{*}
 \printbibliography
 \end{document} 

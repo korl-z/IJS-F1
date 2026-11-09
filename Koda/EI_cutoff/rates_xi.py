@@ -103,9 +103,9 @@ def maps(nk, it, ia, ja, sf, zs, sw, path):
 # smin=1.25, smax=1.9 za bcs primer
 # smin=1.7, smax=2.0 za BEC
 
-def run(nk=200, smin=1.7, smax=2.0, t1=0.8, t2=0.2, gap=4.1, ta=1.0, tb=-1.0, v=4.0,
-        amp_ph=1 / (2 * 598.0 * 200), tpa=-1.0e-3, tpb=1.0e-3, cs=0.05, gam_ph=0.05, qd=np.sqrt(4 * np.pi),
-        w0=0.145, gam_ga=0.05, c=3945.0, amp_ga=4 / 137.036 * 0.145, path="rates_xi_BEC2.pdf"):
+def run(nk=200, smin=1.7, smax=2.0,  t1=0.8, t2=0.2, gap=4.1, ta=1.0, tb=-1.0, v=4.0,
+        amp_ph=1 / (2 * 598.0 * 200), tpa=-1.0, tpb=1.0, cs=0.05, gam_ph=0.05, qd=np.sqrt(4 * np.pi),
+        w0=0.1, gam_ga=0.05, c=3945.0, amp_ga=4 / 137.036 * 0.1, path="rates_xi_BEC.pdf"):
     # IBZ 0 <= ky <= kx <= pi
     k = np.linspace(-np.pi, np.pi, nk, endpoint=False) #full grid
     kx, ky = (a.ravel() for a in np.meshgrid(k, k, indexing="ij")) 
@@ -174,18 +174,19 @@ def run(nk=200, smin=1.7, smax=2.0, t1=0.8, t2=0.2, gap=4.1, ta=1.0, tb=-1.0, v=
     rat = np.where(gph > 0, gga1 / np.maximum(gph, 1e-300), 0.0)
     maps(nk, it, ia, ja, sf, (gph, gga1, rat), (smin, smax), path.replace(".pdf", "_bz.pdf"))
     x, gph, gpi, gga1, gga2, gph2, gpi2 = xf[it][win], gph[win], gpi[win], gga1[win], gga2[win], gph2[win], gpi2[win]
+    x = x / d
     cl = plt.cm.Set1.colors
     fig, (ax, bx) = plt.subplots(2, 1, sharex=True, figsize=(3.47412, 1.1 * 3.47412))
-    ax.scatter(x, gph, alpha = 0.6, s=1, color=cl[0], label=r"$\Gamma_{\mathrm{ph}}$")
-    ax.scatter(x, gpi, alpha = 0.6, s=1, color=cl[2], label=r"$\Gamma_{\mathrm{ph}}^{\alpha\to\beta}$")
-    ax.scatter(x, gph2,alpha = 1,  s=1, color=cl[4], label=r"$\Gamma_{\mathrm{ph}}$ (approx)")
-    ax.scatter(x, gpi2,alpha = 1,  s=1, color=cl[6], label=r"$\Gamma_{\mathrm{ph}}^{\alpha\to\beta}$ (approx)")
-    ax.scatter(x, gga1,alpha = 0.6,  s=1, color=cl[1], label=r"$\Gamma_{\gamma}$")
-    ax.scatter(x, gga2,alpha = 1 ,  s=1, color=cl[3], label=r"$\Gamma_{\gamma}$ (approx.)")
+    ax.scatter(x, gph, alpha = 0.8, s=1, color=cl[0], label=r"$\Gamma_{\mathrm{ph}}$")
+    ax.scatter(x, gpi, alpha = 0.8, s=1, color=cl[2], label=r"$\Gamma_{\mathrm{ph}}^{\alpha\to\beta}$")
+    # ax.scatter(x, gph2,alpha = 1,  s=1, color=cl[4], label=r"$\Gamma_{\mathrm{ph}}$ (approx)")
+    # ax.scatter(x, gpi2,alpha = 1,  s=1, color=cl[6], label=r"$\Gamma_{\mathrm{ph}}^{\alpha\to\beta}$ (approx)")
+    ax.scatter(x, gga1,alpha = 0.8,  s=1, color=cl[1], label=r"$\Gamma_{\gamma}$")
+    # ax.scatter(x, gga2,alpha = 1 ,  s=1, color=cl[3], label=r"$\Gamma_{\gamma}$ (approx.)")
     ax.set_yscale("log")
     ax.set_ylabel(r"$\Gamma\ [t_a/\hbar]$")
-    bx.scatter(x, gga1 / gph,  alpha = 0.5 , s=1, color=cl[3], label=r"$\Gamma_\gamma/\Gamma_{\mathrm{ph}}$")
-    bx.scatter(x, gga2 / gph2, alpha = 1,  s=1, color=cl[6], label=r"$\Gamma_\gamma/\Gamma_{\mathrm{ph}}$ (approx.)")
+    bx.scatter(x, gga1 / gph,  alpha = 0.8 , s=1, color=cl[3], label=r"$\Gamma_\gamma/\Gamma_{\mathrm{ph}}$")
+    # bx.scatter(x, gga2 / gph2, alpha = 1,  s=1, color=cl[6], label=r"$\Gamma_\gamma/\Gamma_{\mathrm{ph}}$ (approx.)")
     # # xi model (solid) and xi = 0 expansion (dashed), anchored at xi = 0
     # xm, mph, mpi, mga = xi_model(d, m, smin, smax, t1 * t_c, t2 * t_c, gap, ta, tb, v, amp_ph, tpa, tpb,
     #                              cs, qd, gam_ph, w0, gam_ga, c, amp_ga)
@@ -199,7 +200,7 @@ def run(nk=200, smin=1.7, smax=2.0, t1=0.8, t2=0.2, gap=4.1, ta=1.0, tb=-1.0, v=
     # bx.plot(xm, mga / mph, color=cl[3], lw=0.8, label=r"$\xi$ model")
     # bx.plot(xm, lga / lph, "--", color=cl[3], lw=0.8, label=r"$\xi\to0$")
     # bx.set_yscale("log")
-    bx.set_xlabel(r"$\xi_{\mathbf{k}}$")
+    bx.set_xlabel(r"$\xi / \Delta_0$")
     bx.set_ylabel(r"$\Gamma_\gamma/\Gamma_{\mathrm{ph}}$")
     pos = lambda *z: np.concatenate([q[q > 0] for q in z])
     for a, z in ((ax, pos(gph, gpi, gga1, gga2, gph2, gpi2)), (bx, pos(gga1 / gph, gga2 / gph2))):
@@ -209,8 +210,9 @@ def run(nk=200, smin=1.7, smax=2.0, t1=0.8, t2=0.2, gap=4.1, ta=1.0, tb=-1.0, v=
         a.legend(markerscale=4, fontsize=6)
         a.tick_params(which="both", direction="in")
     plt.tight_layout()
-    # fig.savefig(path, bbox_inches="tight")
-    plt.show()
+    # FIG_PATH = "/home/kzeleznikar/IJS-F1/Notes/latex/figures/"
+    # fig.savefig(FIG_PATH + path, bbox_inches="tight")
+    # plt.show()
     print(f"d = {d:.5f}, m = {m:.5f}, N_targets = {it.size}, "
           f"median ratio = {np.median(gga1 / gph):.2e}")
     return x, gph, gpi, gga1, gga2, gph2, gpi2
