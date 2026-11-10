@@ -1658,9 +1658,74 @@ Nekaj grdega, se (vrjetno) ne da lepo integrirati.
 \end{figure}
 
 \FloatBarrier
-
-
-
+\section{BEC analitična limita}
+Razvijemo disperzije okoli $k=0$. V BEC režimu je vedno $\xi>0$, zato lahko pišemo 
+\begin{align}
+  \xi \simeq \xi_b + tk^2 \equiv \frac{G-Vm}{2} - 4t + \epsilon 
+\end{align}
+disperzija pa je (okoli shifta $V/2$) 
+\begin{align}
+  E_{\alpha, \vec{k}} \simeq \sqrt{\xi_b^2 + \Delta^2} + \frac{2t\xi_b}{\sqrt{\xi_b^2 + \Delta^2}} \frac{k^2}{2}\,,
+\end{align}
+z neko efektivno maso. Okoli tega lahko aproksimiramo, da je gostota stanj kosntantna (2d free delci)
+\begin{align}
+  g(\xi) = \frac{1}{4\pi t} =:\rho
+\end{align}
+V BEC primeru v večini velja da je večina elektronov v spofnjem pasu $n_a - n_b m=-1+\delta_m$. PRav tako privzemam da je $\Delta \ll 8t$. Za lažje računanje sem si definiral še 
+\begin{align}
+  \xi_b = \frac{G+V}{2}-4t -\frac{V}{2}\delta_m = \xi_b^0 -\frac{V}{2}\delta_m \,.
+\end{align}
+Najprej G.S. pri $T=0$. V tem primeru imamo za gap equation: 
+\begin{align}
+  \frac{1}{V} = \frac{\rho}{2} \int_{0}^{\Lambda} \,\dd{\epsilon}\frac{1}{\sqrt{(\xi_b+\epsilon)^2+\Delta^2}}\,,
+\end{align}
+za imbalance pa 
+\begin{align}
+  \delta_m = m+1 = \rho \int_{\xi_b}^{\xi_b + \Lambda} \,\dd{\xi} \left(1-\frac{\xi}{\sqrt{\xi^2 + \Delta^2}}\right) = 2\rho \int \dd{\xi} v^2 = 2n_a\,.
+\end{align}
+Lahko še definiramo vezavno energijo ekscitona $E_B$ (podrobneje v zapiskih na roke, $2\epsilon$ je kinetična energija ekscitona): 
+\begin{align}
+  \frac{1}{V} = \frac{\rho}{2} \int_{0}^{\Lambda} \,\dd{\epsilon}\frac{1}{2\epsilon + E_B}\,,
+\end{align}
+ki jo lahko izrazimo z odštevanjem z enačbo reže, cutoff se pokrajša 
+\begin{align}
+  0 &= \int_{0}^{\Lambda} \,\dd{\epsilon} \left(\frac{1}{\sqrt{(\xi_b+\epsilon)^2+\Delta^2}} - \frac{1}{2\epsilon + E_B}\right) \,, \nonumber\\
+  &E_B = \sqrt{(\xi_b+\epsilon)^2+\Delta^2} + \xi_b\,.
+\end{align}
+V limiti $\Lambda\to \infty$ oziroma $8t \gg$ ostale energijske skale lahko pointegriramo še enačbo za razliko okupacij in dobimo
+\begin{align}
+  \frac{\delta_m}{\rho} = \sqrt{(\xi_b+\epsilon)^2+\Delta^2} - \xi_b\,.
+\end{align}
+Z množenjem zadnjih dveh enačb dobimo
+\begin{align}
+  \Delta^2 = E_B \frac{\delta_m}{\rho}\,.
+\end{align}
+Oziroma: 
+\begin{align}
+  \delta_m &= \frac{\rho (E_B - 2\xi_b^0)}{1-\rho V}\,,\\
+  \Delta^2 &= \frac{E_B(E_B - 2\xi_b^0)}{1-\rho V}\,,
+\end{align}
+od kjer vidimo, da mora biti vezavna energija vsaj $E_B \geq G - 8t + V$. Enačbi rešimo skupaj s točno enačbo za vezavno energijo, prek eliptičnih intergalov: 
+\begin{align}
+  \frac{1}{V} &= \frac{\rho}{2} \int_{-2}^{2} \,\dd{s}\frac{g(s)}{4t(2-s)+ E_B}\,,\\
+  \frac{4t}{V} &= \frac{2}{\pi (2+ E_B/4t)} K\left(\frac{2}{2+ E_B/4t}\right)\,.
+\end{align}
+Pri končni temperaturi se ustvarijo kvazidelci, kar malo spremeni enačbe. Po enakem postopku dobimo modificirane enačbe, s številom kvazidelcev:  
+\begin{align}
+  n_\text{qp} =\rho \int_{0}^{\infty} \,\dd{\epsilon} n_\alpha(\epsilon)\,,
+\end{align}
+sprememba OP je: 
+\begin{align}
+  \frac{\delta \Delta}{\Delta_0} \simeq - \frac{n_\text{qp}}{\rho \sqrt{\xi_b^2+\Delta^2}} \left(1+ \frac{E_B - \rho V \xi_b}{E_B - 2\xi_b^0}\right)\,,
+\end{align}
+ki divergira pri minimumu vezavne energije $E_B = 2\xi_b^0$. Za dvojno kopel je ideja naslednja: fononi so dokaj hitri in pretežno intraband v limiti ozke resonance, zato privzamemo, da so NESS okupacije v resnici SS okupacije, ki jih generirajo fononi (pri $T_2$)
+\begin{align}
+  n_\alpha = \frac{1}{1+e^{(\sqrt{\xi^2 + \Delta^2}-\mu)/T_2}}\,.
+\end{align} 
+Fotoni, pa premikajo interband kvazidelčne populacije in nastavijo potencial $\mu$. Z nekaj računanja dobimo enačbo za ta potencial iz zahteve po stacionarnosti za fotone pri $T_1$
+\begin{align}
+  e^{2\mu / T_2} = \frac{\sum_\vec{k} J(\Omega_\vec{k}) N(\Omega_\vec{k}, T_1)}{\sum_\vec{k} J(\Omega_\vec{k}) (1+N(\Omega_\vec{k}, T_1)) e^{-2E_{\alpha \vec{k}/T_2}}}
+\end{align}
 \nocite{*}
 \printbibliography
 \end{document} 
