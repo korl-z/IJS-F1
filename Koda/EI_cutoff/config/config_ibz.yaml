@@ -1,6 +1,6 @@
 model:
   nk:
-    scan: 150
+    scan: 100
     ibz: 60
   band:
     name: tb_2d
@@ -58,14 +58,14 @@ open_system:
 
     baths:  
       - kind: photon
-        amp: 1.0
+        amp: 100000000.0
         dip: 0.0
         cs: 3945.0
-        w0: 0.3
-        gam: 0.05
+        w0: 0.15
+        gam: 0.005
 
       - kind: phonon
-        amp: 0.001432046318
+        amp: 0.001432046318  #1.43 time 1e-7 za comparable rates
         dip: 0.0        # fononi nimajo offdiag clenov
         ta_prime: -1.0    # t'_a
         tb_prime: 1.0      # t'_b

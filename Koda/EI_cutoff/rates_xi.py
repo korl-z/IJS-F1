@@ -103,9 +103,9 @@ def maps(nk, it, ia, ja, sf, zs, sw, path):
 # smin=1.25, smax=1.9 za bcs primer
 # smin=1.7, smax=2.0 za BEC
 
-def run(nk=200, smin=1.7, smax=2.0,  t1=0.8, t2=0.2, gap=4.1, ta=1.0, tb=-1.0, v=4.0,
-        amp_ph=1 / (2 * 598.0 * 200), tpa=-1.0, tpb=1.0, cs=0.05, gam_ph=0.05, qd=np.sqrt(4 * np.pi),
-        w0=0.1, gam_ga=0.05, c=3945.0, amp_ga=4 / 137.036 * 0.1, path="rates_xi_BEC.pdf"):
+def run(nk=200, smin=1.7, smax=2.0,  t1=0.8, t2=0.2, gap=4.0, ta=1.0, tb=-1.0, v=4.1,
+        amp_ph=1 / (2 * 598.0 * 200) * 137 / 4 / 0.15, tpa=-1.0, tpb=1.0, cs=0.026, gam_ph=0.0001, qd=np.sqrt(4 * np.pi),
+        w0=0.15, gam_ga=0.005, c=3945.0, amp_ga=1.0, path="rates_xi_BEC.pdf"):
     # IBZ 0 <= ky <= kx <= pi
     k = np.linspace(-np.pi, np.pi, nk, endpoint=False) #full grid
     kx, ky = (a.ravel() for a in np.meshgrid(k, k, indexing="ij")) 
@@ -212,7 +212,7 @@ def run(nk=200, smin=1.7, smax=2.0,  t1=0.8, t2=0.2, gap=4.1, ta=1.0, tb=-1.0, v
     plt.tight_layout()
     # FIG_PATH = "/home/kzeleznikar/IJS-F1/Notes/latex/figures/"
     # fig.savefig(FIG_PATH + path, bbox_inches="tight")
-    # plt.show()
+    plt.show()
     print(f"d = {d:.5f}, m = {m:.5f}, N_targets = {it.size}, "
           f"median ratio = {np.median(gga1 / gph):.2e}")
     return x, gph, gpi, gga1, gga2, gph2, gpi2

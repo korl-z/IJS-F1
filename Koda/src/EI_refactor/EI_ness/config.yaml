@@ -1,0 +1,28 @@
+# Units: hbar = kB = a0 = 1, energies in t_a. Bath temperatures t are in units of T_c.
+
+model: {gap: 4.0, ta: 1.0, tb: -1.0, v: 4.1, n: 1.0, uh: null}   
+grid: {nk: 32, win: null}            # win: [smin, smax] restricts the kinetics to an s window
+eq: {d: 1.0, m: 0.0, mix: [0.3, 0.3], tol: 1.0e-10}
+
+backend: gpu                         # cpu or gpu (jax)
+method: solve                        # solve (Newton) or solve_fixed (Anderson)
+use: real                            # which bath set below
+t: [1.5, 0.3]                        # T1 / T_c, T2 / T_c, one per bath of the set
+
+baths:
+  toy:                               # factorizable toy rates
+    - {kind: toy, t: 1.0, kap: [0.1, 0.2, 0.1], rate: product}
+    - {kind: toy, t: 1.0, kap: [0.1, 0.2, 0.1], rate: product}
+  real:                              # analytic cavity photons + phonons on the grid, realistic amplitudes
+    - {kind: cavity, t: 1.0, w0: 0.1, gam: 0.01}
+    - {kind: phonon, t: 1.0, cs: 0.13, gam: 0.1, amp: 4.2e-5, tpa: 1.0, tpb: -1.0}
+  grid:                              # two baths with the photon vertex on the grid (sec. 4.2, 4.3 of the notes)
+    - {kind: photon, t: 1.0, c: 10.0, w0: 3.0, gam: 0.15, amp: 1.0, dip: 2.0}
+    - {kind: photon, t: 1.0, c: 10.0, w0: 0.01, gam: 0.15, amp: 1.0, dip: 2.0}
+
+solve: {tol: 1.0e-9}
+solve_fixed: {mix: [0.2, 0.2, 0.2], mem: 4, chk: 10, tol: 1.0e-7, nmax: 5000}
+
+# s binned variant (n = n(s)): use model.sgrid(ns) instead of grid, and
+#   - {kind: cavity, t: 1.0, w0: 0.1, gam: 0.01}
+#   - {kind: chord, t: 1.0, cs: 0.13, gam: 0.1, amp: 4.2e-5, tpa: 1.0, tpb: -1.0}
