@@ -44,7 +44,7 @@ class Phonon:
     tpb: float
     w0: float = 0.0  # omega_q = hypot(w0, cs q)
     qd: float = QD
-    nsub: int = 8  # tent nodes per direction in the cell average
+    nsub: int = 0  # tent nodes per direction in the cell average
     box: float = 1.0  # 1: node lines averaged over their om interval, 0: plain sum of eq. 275
 
 
@@ -57,7 +57,7 @@ class Photon:
     amp: float | None = None  # None: 4 alpha w0 (eq. 280)
     dip: float = 0.0  # z dipole
     qd: float = np.inf
-    nsub: int = 8
+    nsub: int = 0
     box: float = 1.0
 
 

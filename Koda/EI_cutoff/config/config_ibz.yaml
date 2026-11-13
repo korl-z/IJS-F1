@@ -58,10 +58,10 @@ open_system:
 
     baths:  
       - kind: photon
-        amp: 100000000.0
+        amp: 1.0e6
         dip: 0.0
         cs: 3945.0
-        w0: 0.15
+        w0: 0.08
         gam: 0.005
 
       - kind: phonon
