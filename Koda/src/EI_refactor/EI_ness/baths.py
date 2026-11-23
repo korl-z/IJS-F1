@@ -85,6 +85,21 @@ class Chord:
     nq: int = 128
     nphi: int = 64
 
+@dataclass(frozen=True)
+class SPP:
+    """Flat surface mode on the s grid (model.sgrid), plateau limit kappa_d = q.
+ 
+    amp = 2 pi alpha c ws^2 fr, fr = 1 / (einf + ed) - 1 / (e0 + ed) (Drude metal: e0 -> inf).
+    """
+ 
+    t: float
+    ws: float  # plateau omega_sp
+    gam: float  # line half width, physical: hbar Gamma_D / 2
+    amp: float
+    dip: float  # z dipole
+    z0: float  # sheet height
+    nq: int = 96
+    nphi: int = 32
 
 class Pack(NamedTuple):
     toy: Any  # rows (t, wc, orb, mu, prod, kaa, kab, kba, kbb), or None
@@ -93,9 +108,9 @@ class Pack(NamedTuple):
     hh: float  # step of the line tables
     tmin: float  # coldest bath
     cho: Any = ()  # per chord bath: (par = (t, amp, gam, tpa, tpb, cs, w0, qd), S, dq)
+    spp: Any = () #par = ((t, amp, gam, dip, omega_inf), K)
 
-
-KINDS = {"toy": Toy, "phonon": Phonon, "photon": Photon, "cavity": Cavity, "chord": Chord}
+KINDS = {"toy": Toy, "phonon": Phonon, "photon": Photon, "cavity": Cavity, "chord": Chord, "spp": SPP}
 
 
 def make(spec, ts=None, tu=1.0):
@@ -220,14 +235,37 @@ def stab(ns, nf, nq, qmax, nphi):
     S.setflags(write=False)
     return S, dq
 
-
+@lru_cache(maxsize=8)
+def ktab(ns, nf, z0, nq, nphi):
+    """K_n(I, J) = int d^2q / (2 pi)^2 q^(n - 1) e^(-2 q z0) <1[k in I] 1[k + q in J]>, n = 0, 1, 2.
+ 
+    Radial q up to 2 q z0 = 8, not folded: umklapp is included since cos is periodic.
+    """
+    dq = 8.0 / (2.0 * z0) / nq
+    k = 2.0 * np.pi * np.arange(nf) / nf
+    kx, ky = (a.ravel() for a in np.meshgrid(k, k, indexing="ij"))
+    sb = np.linspace(-2.0, 2.0, ns + 1)
+    bi = np.clip(np.digitize(np.cos(kx) + np.cos(ky), sb) - 1, 0, ns - 1) * ns  # bin of k
+    K = np.zeros((3, ns * ns))
+    for q in dq * (np.arange(nq) + 0.5):
+        wq = q * dq / (2.0 * np.pi) * np.exp(-2.0 * q * z0) * np.array([1.0 / q, 1.0, q])
+        for ph in 2.0 * np.pi * (np.arange(nphi) + 0.5) / nphi:
+            sj = np.cos(kx + q * np.cos(ph)) + np.cos(ky + q * np.sin(ph))  # s of k + q
+            c = np.bincount(bi + np.clip(np.digitize(sj, sb) - 1, 0, ns - 1), minlength=ns * ns)
+            K += wq[:, None] * c
+    K = K.reshape(3, ns, ns) / (nphi * nf**2)
+    K = 0.5 * (K + K.transpose(0, 2, 1))
+    K.setflags(write=False)
+    return K
+ 
+ 
 def pack(bs, md, g, hh=0.05):
     """Static data of the baths on the grid g, as plain arrays."""
     nk, em = int(g.nk), em_bound(md)
-    toy, lin, cav, cho = [], [], [], []
+    toy, lin, cav, cho, spp = [], [], [], [], []
     for b in bs:
         if isinstance(b, (Phonon, Photon)) != (g.ki is not None) and not isinstance(b, (Toy, Cavity)):
-            raise ValueError("Phonon and Photon need model.grid, Chord needs model.sgrid")
+            raise ValueError("Phonon and Photon need model.grid, Chord and SPP need model.sgrid")
         if isinstance(b, Toy):
             if b.rate not in ("product", "db") or b.orb not in (None, "a", "b"):
                 raise ValueError("toy rate must be product or db, orb None, a or b")
@@ -238,6 +276,12 @@ def pack(bs, md, g, hh=0.05):
             if b.gam == 0.0 and b.w0 != 0.0 or 0.0 < b.gam < b.cs * dq:
                 raise ValueError("chord: gam = 0 needs w0 = 0, gam > 0 needs gam >= cs dq (raise nq)")
             cho.append((np.array((b.t, b.amp, b.gam, b.tpa, b.tpb, b.cs, b.w0, b.qd)), S, dq))
+        elif isinstance(b, SPP):
+            if b.gam <= 0.0 or b.z0 <= 0.0:
+                raise ValueError("spp: gam and z0 must be positive")
+            K = ktab(g.s.size, nk, float(b.z0), int(b.nq), int(b.nphi))
+            dxi = abs(md.ta - md.tb) * (g.s[1] - g.s[0])  # width of an s bin in xi
+            spp.append((np.array((b.t, b.amp, b.gam, b.dip, b.ws, dxi)), K))
         elif isinstance(b, Cavity):
             cav.append((b.t, b.w0, b.gam, 4.0 * ALPHA * b.w0 if b.amp is None else b.amp, b.c))
         else:
@@ -259,4 +303,5 @@ def pack(bs, md, g, hh=0.05):
         if b.t < 0.0:
             raise ValueError("t must be nonnegative")
     arr = lambda x: np.array(x, dtype=float) if x else None
-    return Pack(arr(toy), tuple(lin), arr(cav), hh, float(min(b.t for b in bs)), tuple(cho))
+    return Pack(arr(toy), tuple(lin), arr(cav), hh, float(min(b.t for b in bs)), tuple(cho),
+                tuple(spp))

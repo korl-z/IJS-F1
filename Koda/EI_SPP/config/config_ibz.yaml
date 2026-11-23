@@ -1,0 +1,85 @@
+model:
+  nk:
+    scan: 100
+    ibz: 60
+  band:
+    name: tb_2d
+    pars: &band
+      gap: 4.0
+      ta: 1.0
+      tb: -1.0
+
+  mean_field: &mf
+    v: 4.1
+    n: 1.0
+    uh: null
+
+
+equilibrium:
+  initial:
+    t: 0.0
+    d: 1.0
+    m: 0.0
+
+  solve:
+    mix: [0.3, 0.3]
+    tol: 1.0e-10
+    nmax: 20000
+    chk: 20
+    prog: false
+
+  critical:
+    tlo: 1.0e-9
+    thi: 2.0
+    tol: 1.0e-8
+    # nmax: 100
+    prog: true
+
+
+scan:
+  temperature:
+    nt: 10
+    min_ratio: 0.01
+    max_ratio: 3.0
+  t1: {min_ratio: 0.05, max_ratio: 1.5, nt: 12}
+  t2: {min_ratio: 0.05, max_ratio: 7.0, nt: 16}
+
+  continuation:
+    d_floor_frac: 0.1
+
+
+open_system:
+  bath:
+    rate: PhononBath
+    pars:  # shared by all baths, pack needs equal k, a0, eh, em, nsub
+      <<: [*band, *mf]   # gap, ta, tb and v, n, uh (zadnji trije za settanje em)
+      nsub: 0 # 0: line at the grid points, > 0: avg., idealno nsub >= 4pi cs / (gam * nk)
+      qd: 3.545
+
+    baths:  
+      - kind: photon
+        amp: 1.0e6
+        dip: 0.0
+        cs: 3945.0
+        w0: 0.08
+        gam: 0.005
+
+      - kind: phonon
+        amp: 0.001432046318  #1.43 time 1e-7 za comparable rates
+        dip: 0.0        # fononi nimajo offdiag clenov
+        ta_prime: -1.0    # t'_a
+        tb_prime: 1.0      # t'_b
+        cs: 0.026 
+        w0: 0.0      
+        gam: 0.1
+
+  solve:
+    dt: 0.03
+    td: 100.
+    tm: 100.
+    tol: 1.0e-6
+    nmax: 20000
+    chk: 100
+    prog: false
+    mode: dense
+    block: 128

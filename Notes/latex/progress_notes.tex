@@ -1287,16 +1287,6 @@ C_{\gamma\gamma'}^2\,
 \Bigg].
 \end{align}
 \end{tcolorbox}
-Minimal coupling v limiti $q\to 0$:
-\begin{tcolorbox}
-\begin{align}
-\Gamma_{\gamma'\mathbf{k}'\to\gamma\mathbf{k}}
-&= A \Bigg[
- \sin^2\left(k'_x + \tfrac{q_x}{2}\right) +  \sin^2\left(k'_y + \tfrac{q_y}{2}\right) \Bigg]
-C_{\gamma\gamma'}^2 \cdot \Omega N(\Omega)\cdot
-\frac{8\gamma}{\left[(\Omega-\omega_{\mathbf{q}})^2+\gamma^2\right]\left[(\Omega+\omega_{\mathbf{q}})^2+\gamma^2\right]}.
-\end{align}
-\end{tcolorbox}
 
 
 \section{Vizualizacije kopeli za fotone}
@@ -1626,6 +1616,7 @@ Nekaj grdega, se (vrjetno) ne da lepo integrirati.
 \begin{align}
   \left( u_{\vec{k}+\vec{q}} u_{\vec{k}} - v_{\vec{k}+\vec{q}} v_{\vec{k}} \right)^2 = \frac{1}{2} \left( 1 + \frac{\xi_{\vec{k}+\vec{q}} \xi_{\vec{k}} - \Delta^2}{\sqrt{\Delta^2 + \xi_{\vec{k}+\vec{q}}^2}\sqrt{\Delta^2 + \xi_{\vec{k}}^2}} \right)
 \end{align}
+
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.49\textwidth]{figures/timing_Nk_BZ_IBZ_wIBZ.pdf}
@@ -1634,6 +1625,15 @@ Nekaj grdega, se (vrjetno) ne da lepo integrirati.
     \caption{Memory and timing for the three different cutoffs/ zone reductions with stable dispersions on a grid.}
 \end{figure}
 
+\subsection{Razmerja hitrosti prehodov}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.49\textwidth]{figures/Gam_avgratio_c_s.pdf}
+    \includegraphics[width=0.49\textwidth]{figures/Gam_avgratio_gamma.pdf}
+    \includegraphics[width=0.49\textwidth]{figures/Gam_avgratio_temp_dependence.pdf}
+    \centering
+    \caption{Bath dependence on $c_s$, temperatures (note the two scales on $x$ axis) and phonon interband /tail contribution vs the spectral line width $\gamma$. The average $\langle\rangle$ refers to an average over $\xi$.}
+\end{figure}
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.49\textwidth]{figures/rates_xi_BCS.pdf}
@@ -1726,6 +1726,23 @@ Fotoni, pa premikajo interband kvazidelčne populacije in nastavijo potencial $\
 \begin{align}
   e^{2\mu / T_2} = \frac{\sum_\vec{k} J(\Omega_\vec{k}) N(\Omega_\vec{k}, T_1)}{\sum_\vec{k} J(\Omega_\vec{k}) (1+N(\Omega_\vec{k}, T_1)) e^{-2E_{\alpha \vec{k}}/T_2}}
 \end{align}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.49\textwidth]{figures/gap_analytic_cav_comparable_scalingsBEC.pdf}
+    \includegraphics[width=0.49\textwidth]{figures/gap_analytic_cav_strongphotons_scalingsBEC.pdf}
+    \includegraphics[width=1.0\textwidth]{figures/gap_analytic_strongphotons.pdf}
+    \centering
+    \caption{Grid calculation vs analytic for OP in the regime of strong photons (same scalings, so interband phonons are negligible).}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.49\textwidth]{figures/NESS_strong_photons_1e8.pdf}
+    \includegraphics[width=0.49\textwidth]{figures/NESS_strong_photons_1e8_0p810.pdf}
+    \centering
+    \caption{Grid calculation vs analytic for OP in the regime of strong photons (same scalings, so interband phonons are negligible).}
+\end{figure}
+\FloatBarrier
 \nocite{*}
 \printbibliography
 \end{document} 

@@ -161,6 +161,33 @@ def _cho(g, b, e, qa, qb):
     return amp * c1**2 * jnp.block(blk) * therm(de, t) / (ww[:, None] * ww[None, :])
 
 
+def fbar(om, a, ws, gam):
+    """Pair of Lorentzians F (eq. 271) averaged over |Omega| +- a."""
+    om = jnp.maximum(jnp.abs(om), 1.0e-12)
+    a = jnp.maximum(a, 1.0e-9 * gam)
+    p = lambda x: 2.0 * jnp.arctan((x - ws) / gam) - 2.0 * jnp.arctan((x + ws) / gam)
+    return (p(om + a) - p(om - a)) / (2.0 * a * om * ws)
+
+
+@jax.jit
+def _spp(g, b, e, qa, qb):
+    """Flat surface mode on the s grid: amp [rho^2 K0 - 2 d rho sx K1 + d^2 sx^2 K2] Fbar Omega N / (w w)."""
+    par, K = b
+    t, amp, gam, dip, ws, dxi = par
+    ij = jnp.ix_(g.wi, g.wi)
+    k0, k1, k2 = (jnp.tile(K[n][ij], (2, 2)) for n in range(3))
+    rho = qa[:, None] * qa[None, :] + qb[:, None] * qb[None, :]  # density coherence factor
+    sx = qa[:, None] * qb[None, :] + qb[:, None] * qa[None, :]  # sigma_x coherence factor
+    nw = e.shape[0] // 2
+    ek = jnp.tile(jnp.maximum(0.5 * (e[:nw] - e[nw:]), 1.0e-12), 2)  # sqrt(xi^2 + d^2)
+    wd = dxi * jnp.maximum(jnp.abs(qa**2 - qb**2), dxi / (8.0 * ek))  # bin energy width, floor at xi = 0
+    de = e[:, None] - e[None, :]
+    a = 0.5 * jnp.hypot(wd[:, None], wd[None, :])
+    ww = jnp.concatenate((g.w[g.wi], g.w[g.wi]))
+    r = amp * (rho**2 * k0 - 2.0 * dip * rho * sx * k1 + dip**2 * sx**2 * k2)
+    return r * fbar(de, a, ws, gam) * therm(de, t) / (ww[:, None] * ww[None, :])
+
+
 @jax.jit
 def _cav(md, g, st, p):
     """Vertical rates up (beta_k -> alpha_k) and dn (alpha_k -> beta_k), eq. 286, 287."""
@@ -195,6 +222,8 @@ def rates(md, g, st, pk, rows=None):
                                  for ii in ch])
     for b in pk.cho:
         r = r + _cho(g, b, e, qa, qb)
+    for b in pk.spp:
+        r = r + _spp(g, b, e, qa, qb)
     r = r * (1.0 - jnp.eye(2 * nw))  # same orbit, same band: cancels in dn
     if pk.cav is not None:
         up, dn = _cav(md, g, st, pk.cav)
